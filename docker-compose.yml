@@ -1,0 +1,15 @@
+services:
+  pizzeria-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: pizzeria_delivery
+    volumes:
+      - pizzeria_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  pizzeria_postgres_data:

@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+:root {
+  --app-color-white: #ffffff;
+  --app-color-black: #171717;
+  --app-color-background: #ffffff;
+  --app-color-foreground: #241911;
+  --app-color-surface: #fffaf5;
+  --app-color-surface-muted: #f8f1eb;
+  --app-color-border: #eaded5;
+  --app-color-text: #241911;
+  --app-color-text-muted: #7d6151;
+  --app-color-primary: #ff650f;
+  --app-color-primary-hover: #f75c05;
+  --app-color-primary-active: #dc4d00;
+  --app-color-primary-soft: #fff4e6;
+  --app-color-primary-contrast: #ffffff;
+  --app-color-secondary: #5a4438;
+  --app-color-secondary-hover: #3a2a23;
+  --app-color-secondary-active: #241911;
+  --app-color-secondary-soft: #f8f1eb;
+  --app-color-secondary-contrast: #ffffff;
+  --app-color-danger: #f04438;
+  --app-color-danger-hover: #dd3429;
+  --app-color-danger-active: #ba251d;
+  --app-color-danger-soft: #fff0ee;
+}
+
+@theme inline {
+  --color-white: var(--app-color-white);
+  --color-black: var(--app-color-black);
+  --color-background: var(--app-color-background);
+  --color-foreground: var(--app-color-foreground);
+  --color-surface: var(--app-color-surface);
+  --color-surface-muted: var(--app-color-surface-muted);
+  --color-border: var(--app-color-border);
+  --color-text: var(--app-color-text);
+  --color-muted: var(--app-color-text-muted);
+  --color-primary: var(--app-color-primary);
+  --color-primary-hover: var(--app-color-primary-hover);
+  --color-primary-active: var(--app-color-primary-active);
+  --color-primary-soft: var(--app-color-primary-soft);
+  --color-primary-contrast: var(--app-color-primary-contrast);
+  --color-secondary: var(--app-color-secondary);
+  --color-secondary-hover: var(--app-color-secondary-hover);
+  --color-secondary-active: var(--app-color-secondary-active);
+  --color-secondary-soft: var(--app-color-secondary-soft);
+  --color-secondary-contrast: var(--app-color-secondary-contrast);
+  --color-danger: var(--app-color-danger);
+  --color-danger-hover: var(--app-color-danger-hover);
+  --color-danger-active: var(--app-color-danger-active);
+  --color-danger-soft: var(--app-color-danger-soft);
+  --color-orange-0: var(--mantine-color-orange-0);
+  --color-orange-5: var(--mantine-color-orange-5);
+  --color-orange-6: var(--mantine-color-orange-6);
+  --color-orange-7: var(--mantine-color-orange-7);
+  --color-dough-0: var(--mantine-color-dough-0);
+  --color-dough-1: var(--mantine-color-dough-1);
+  --color-dough-2: var(--mantine-color-dough-2);
+  --color-dough-6: var(--mantine-color-dough-6);
+  --color-dough-7: var(--mantine-color-dough-7);
+  --color-dough-8: var(--mantine-color-dough-8);
+  --color-dough-9: var(--mantine-color-dough-9);
+  --color-tomato-0: var(--mantine-color-tomato-0);
+  --color-tomato-5: var(--mantine-color-tomato-5);
+  --color-tomato-6: var(--mantine-color-tomato-6);
+  --color-tomato-7: var(--mantine-color-tomato-7);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--app-color-background);
+  color: var(--app-color-foreground);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}

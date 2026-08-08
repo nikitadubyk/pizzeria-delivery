@@ -1,0 +1,41 @@
+{
+  "name": "pizzeria-delivery",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "postinstall": "prisma generate",
+    "build": "prisma migrate deploy && next build",
+    "start": "next start",
+    "lint": "eslint",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "docker:compose": "docker compose -f docker-compose.yml up -d --build --remove-orphans",
+    "docker:compose:down": "docker compose -f docker-compose.yml down"
+  },
+  "dependencies": {
+    "@mantine/core": "^9.5.1",
+    "@mantine/hooks": "^9.5.1",
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "@tabler/icons-react": "^3.46.0",
+    "next": "16.2.10",
+    "pg": "^8.22.0",
+    "prisma": "^7.8.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@storybook/addon-docs": "^10.5.7",
+    "@storybook/nextjs-vite": "^10.5.7",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.10",
+    "storybook": "^10.5.7",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
