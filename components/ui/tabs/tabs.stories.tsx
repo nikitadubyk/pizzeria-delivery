@@ -4,7 +4,7 @@ import {
   IconTruckDelivery,
 } from "@tabler/icons-react";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { Tabs } from "./tabs";
+import { Tabs } from ".";
 
 const iconSize = 18;
 

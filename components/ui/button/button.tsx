@@ -1,11 +1,15 @@
 "use client";
 
 import { Button as MantineButton, type ButtonProps } from "@mantine/core";
-import type { ReactNode } from "react";
+import { cn, interactiveMotionTransitionClassName } from "@/lib/class-names";
+import type { ComponentPropsWithoutRef, ReactNode } from "react";
 
 export type AppButtonVariant = "primary" | "secondary" | "ghost" | "dark";
 
-export type AppButtonProps = Omit<ButtonProps, "variant" | "color"> & {
+export type AppButtonProps = Omit<
+  ButtonProps & ComponentPropsWithoutRef<"button">,
+  "color" | "variant"
+> & {
   variant?: AppButtonVariant;
   children: ReactNode;
 };
@@ -26,12 +30,11 @@ export function Button({
 }: AppButtonProps) {
   return (
     <MantineButton
-      className={[
-        "shadow-sm transition hover:-translate-y-px hover:shadow-md active:translate-y-0 active:shadow-sm",
+      className={cn(
+        "cursor-pointer shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-active hover:-translate-y-px hover:shadow-md active:translate-y-0 active:shadow-sm disabled:cursor-not-allowed disabled:translate-y-0 disabled:shadow-sm",
+        interactiveMotionTransitionClassName,
         className,
-      ]
-        .filter(Boolean)
-        .join(" ")}
+      )}
       size={size}
       {...variantMap[variant]}
       {...props}

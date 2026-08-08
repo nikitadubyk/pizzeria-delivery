@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { Toggle } from "./toggle";
+import { Toggle } from ".";
 
 const meta = {
   title: "UI/Toggle",

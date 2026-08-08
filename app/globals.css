@@ -1,6 +1,27 @@
 @import "tailwindcss";
 
 :root {
+  --app-font-sans: "Roboto Variable", Arial, Helvetica, sans-serif;
+  --app-font-mono: "Roboto Variable", Arial, Helvetica, sans-serif;
+  --app-text-xs: 0.75rem;
+  --app-text-sm: 0.875rem;
+  --app-text-md: 1rem;
+  --app-text-lg: 1.125rem;
+  --app-text-xl: 1.25rem;
+  --app-text-2xl: 1.5rem;
+  --app-text-3xl: 2rem;
+  --app-text-4xl: 2.5rem;
+  --app-leading-tight: 1.2;
+  --app-leading-snug: 1.35;
+  --app-leading-normal: 1.5;
+  --app-leading-relaxed: 1.6;
+  --app-space-2xs: 0.25rem;
+  --app-space-xs: 0.5rem;
+  --app-space-sm: 0.75rem;
+  --app-space-md: 1rem;
+  --app-space-lg: 1.5rem;
+  --app-space-xl: 2rem;
+  --app-space-2xl: 3rem;
   --app-color-white: #ffffff;
   --app-color-black: #171717;
   --app-color-background: #ffffff;
@@ -65,12 +86,33 @@
   --color-tomato-5: var(--mantine-color-tomato-5);
   --color-tomato-6: var(--mantine-color-tomato-6);
   --color-tomato-7: var(--mantine-color-tomato-7);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--app-font-sans);
+  --font-mono: var(--app-font-mono);
+  --text-xs: var(--app-text-xs);
+  --text-sm: var(--app-text-sm);
+  --text-md: var(--app-text-md);
+  --text-lg: var(--app-text-lg);
+  --text-xl: var(--app-text-xl);
+  --text-2xl: var(--app-text-2xl);
+  --text-3xl: var(--app-text-3xl);
+  --text-4xl: var(--app-text-4xl);
+  --leading-tight: var(--app-leading-tight);
+  --leading-snug: var(--app-leading-snug);
+  --leading-normal: var(--app-leading-normal);
+  --leading-relaxed: var(--app-leading-relaxed);
+  --spacing-2xs: var(--app-space-2xs);
+  --spacing-xs: var(--app-space-xs);
+  --spacing-sm: var(--app-space-sm);
+  --spacing-md: var(--app-space-md);
+  --spacing-lg: var(--app-space-lg);
+  --spacing-xl: var(--app-space-xl);
+  --spacing-2xl: var(--app-space-2xl);
 }
 
 body {
   background: var(--app-color-background);
   color: var(--app-color-foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--app-font-sans);
+  font-size: var(--app-text-md);
+  line-height: var(--app-leading-normal);
 }

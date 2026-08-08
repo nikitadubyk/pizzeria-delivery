@@ -5,7 +5,7 @@ import {
   IconUser,
 } from "@tabler/icons-react";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { Input } from "./input";
+import { Input } from ".";
 
 const iconSize = 18;
 
@@ -43,7 +43,7 @@ export const WithError: Story = {
 
 export const Examples: Story = {
   render: () => (
-    <div className="grid max-w-2xl gap-4">
+    <div className="grid w-full gap-4">
       <Input
         label="Имя"
         leftSection={<IconUser size={iconSize} />}

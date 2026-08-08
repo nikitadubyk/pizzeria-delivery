@@ -52,16 +52,73 @@ export const pizzeriaPalette = {
   tomato,
 } as const;
 
+export const pizzeriaTypography = {
+  fontFamily: '"Roboto Variable", Arial, Helvetica, sans-serif',
+  fontFamilyMonospace: '"Roboto Variable", Arial, Helvetica, sans-serif',
+  fontSizes: {
+    xs: rem(12),
+    sm: rem(14),
+    md: rem(16),
+    lg: rem(18),
+    xl: rem(20),
+  },
+  lineHeights: {
+    xs: "var(--app-leading-tight)",
+    sm: "var(--app-leading-snug)",
+    md: "var(--app-leading-normal)",
+    lg: "var(--app-leading-normal)",
+    xl: "var(--app-leading-relaxed)",
+  },
+} as const;
+
+export const pizzeriaSpacing = {
+  xs: rem(4),
+  sm: rem(8),
+  md: rem(12),
+  lg: rem(16),
+  xl: rem(24),
+} as const;
+
 export const pizzeriaTheme = createTheme({
   primaryColor: "orange",
   primaryShade: { light: 5, dark: 4 },
   white: pizzeriaPalette.white,
   black: pizzeriaPalette.black,
   defaultRadius: "xl",
-  fontFamily: "var(--font-geist-sans), Arial, Helvetica, sans-serif",
+  fontFamily: pizzeriaTypography.fontFamily,
+  fontFamilyMonospace: pizzeriaTypography.fontFamilyMonospace,
+  fontSizes: pizzeriaTypography.fontSizes,
+  lineHeights: pizzeriaTypography.lineHeights,
+  spacing: pizzeriaSpacing,
   headings: {
-    fontFamily: "var(--font-geist-sans), Arial, Helvetica, sans-serif",
+    fontFamily: pizzeriaTypography.fontFamily,
     fontWeight: "800",
+    sizes: {
+      h1: {
+        fontSize: "var(--app-text-4xl)",
+        lineHeight: "var(--app-leading-tight)",
+      },
+      h2: {
+        fontSize: "var(--app-text-3xl)",
+        lineHeight: "var(--app-leading-tight)",
+      },
+      h3: {
+        fontSize: "var(--app-text-2xl)",
+        lineHeight: "var(--app-leading-snug)",
+      },
+      h4: {
+        fontSize: "var(--app-text-xl)",
+        lineHeight: "var(--app-leading-snug)",
+      },
+      h5: {
+        fontSize: "var(--app-text-lg)",
+        lineHeight: "var(--app-leading-snug)",
+      },
+      h6: {
+        fontSize: "var(--app-text-md)",
+        lineHeight: "var(--app-leading-snug)",
+      },
+    },
   },
   colors: {
     orange: pizzeriaPalette.orange,
@@ -207,6 +264,27 @@ export const pizzeriaCssVariablesResolver: CSSVariablesResolver = (theme) => ({
     "--app-color-danger-hover": theme.colors.tomato[6],
     "--app-color-danger-active": theme.colors.tomato[7],
     "--app-color-danger-soft": theme.colors.tomato[0],
+    "--app-font-sans": pizzeriaTypography.fontFamily,
+    "--app-font-mono": pizzeriaTypography.fontFamilyMonospace,
+    "--app-text-xs": pizzeriaTypography.fontSizes.xs,
+    "--app-text-sm": pizzeriaTypography.fontSizes.sm,
+    "--app-text-md": pizzeriaTypography.fontSizes.md,
+    "--app-text-lg": pizzeriaTypography.fontSizes.lg,
+    "--app-text-xl": pizzeriaTypography.fontSizes.xl,
+    "--app-text-2xl": rem(24),
+    "--app-text-3xl": rem(32),
+    "--app-text-4xl": rem(40),
+    "--app-leading-tight": "1.2",
+    "--app-leading-snug": "1.35",
+    "--app-leading-normal": "1.5",
+    "--app-leading-relaxed": "1.6",
+    "--app-space-2xs": rem(4),
+    "--app-space-xs": pizzeriaSpacing.sm,
+    "--app-space-sm": pizzeriaSpacing.md,
+    "--app-space-md": pizzeriaSpacing.lg,
+    "--app-space-lg": pizzeriaSpacing.xl,
+    "--app-space-xl": rem(32),
+    "--app-space-2xl": rem(48),
   },
   light: {},
   dark: {},

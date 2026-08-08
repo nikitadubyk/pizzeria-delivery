@@ -5,7 +5,7 @@ import {
   IconShoppingBag,
 } from "@tabler/icons-react";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { Button } from "./button";
+import { Button } from ".";
 
 const iconSize = 18;
 

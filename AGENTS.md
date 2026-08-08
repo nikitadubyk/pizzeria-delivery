@@ -42,6 +42,9 @@ Pizzeria Delivery is a Next.js application for a pizzeria and food delivery work
 - Prefer Mantine UI components for interactive UI controls and reusable building blocks.
 - Create new shared/custom UI components under `components/`, composing Mantine primitives where possible.
 - Use Tailwind CSS for page layout, spacing, responsive behavior, and project-specific visual styling around Mantine components.
+- Use Tailwind CSS or Mantine theme customization for styling; keep reusable colors and design tokens defined in one central Mantine theme location instead of scattering hardcoded values across components.
+- Use `twMerge` or a shared class-name helper built on `tailwind-merge` whenever Tailwind classes need to be combined conditionally.
+- Build all components with accessibility in mind: use semantic HTML, accessible labels, keyboard-friendly interactions, visible focus states, and Mantine accessibility features where available.
 - Keep TypeScript types explicit at module boundaries.
 - Run lint/build checks when touching application code or Prisma schema.
 - Keep Docker, `.env`, Prisma datasource configuration, and documentation synchronized when changing database names.

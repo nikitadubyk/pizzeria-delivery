@@ -1,5 +1,6 @@
 import type { Preview } from "@storybook/nextjs-vite";
 import "@mantine/core/styles.css";
+import "@fontsource-variable/roboto";
 import "../app/globals.css";
 import { AppProvider } from "../components/app-provider";
 
@@ -7,7 +8,7 @@ const preview: Preview = {
   decorators: [
     (Story) => (
       <AppProvider>
-        <div className="min-h-screen bg-background p-6 text-text">
+        <div className="min-h-screen bg-background p-6 font-sans text-text">
           <Story />
         </div>
       </AppProvider>
@@ -29,6 +30,9 @@ const preview: Preview = {
       ],
     },
     layout: "padded",
+    a11y: {
+      test: "error",
+    },
   },
 };
 

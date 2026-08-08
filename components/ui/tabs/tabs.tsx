@@ -1,6 +1,7 @@
 "use client";
 
 import { Tabs as MantineTabs, type TabsProps } from "@mantine/core";
+import { cn, interactiveMotionTransitionClassName } from "@/lib/class-names";
 import type { ReactNode } from "react";
 
 export type TabItem = {
@@ -23,7 +24,10 @@ export function Tabs({ items, defaultValue, ...props }: AppTabsProps) {
             key={item.value}
             value={item.value}
             leftSection={item.icon}
-            className="rounded-full border border-border px-4 py-2 font-bold text-text hover:border-primary-hover data-[active]:border-primary data-[active]:bg-primary-soft data-[active]:text-primary-active"
+            className={cn(
+              "cursor-pointer rounded-full border border-border px-4 py-2 font-bold text-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-active hover:-translate-y-px hover:border-primary-hover hover:bg-primary-soft active:translate-y-0 active:border-primary-active data-[active]:border-primary data-[active]:bg-primary-soft data-[active]:text-primary-active",
+              interactiveMotionTransitionClassName,
+            )}
           >
             {item.label}
           </MantineTabs.Tab>
