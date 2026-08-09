@@ -15,7 +15,7 @@ export type AppButtonProps = Omit<
 };
 
 const variantMap: Record<AppButtonVariant, Pick<ButtonProps, "variant" | "color">> = {
-  primary: { variant: "filled", color: "orange" },
+  primary: { variant: "filled", color: "brand" },
   secondary: { variant: "outline", color: "dough" },
   ghost: { variant: "subtle", color: "dough" },
   dark: { variant: "filled", color: "dough" },

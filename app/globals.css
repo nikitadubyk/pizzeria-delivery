@@ -45,6 +45,27 @@
   --app-color-danger-hover: #dd3429;
   --app-color-danger-active: #ba251d;
   --app-color-danger-soft: #fff0ee;
+  --app-color-danger-contrast: #ffffff;
+  --app-color-failed: #f04438;
+  --app-color-failed-hover: #dd3429;
+  --app-color-failed-active: #ba251d;
+  --app-color-failed-soft: #fff0ee;
+  --app-color-failed-contrast: #ffffff;
+  --app-color-info: #2e90fa;
+  --app-color-info-hover: #1570ef;
+  --app-color-info-active: #175cd3;
+  --app-color-info-soft: #eff8ff;
+  --app-color-info-contrast: #ffffff;
+  --app-color-success: #12b76a;
+  --app-color-success-hover: #039855;
+  --app-color-success-active: #027a48;
+  --app-color-success-soft: #ecfdf3;
+  --app-color-success-contrast: #ffffff;
+  --app-color-warning: #f79009;
+  --app-color-warning-hover: #dc6803;
+  --app-color-warning-active: #b54708;
+  --app-color-warning-soft: #fffaeb;
+  --app-color-warning-contrast: #241911;
 }
 
 @theme inline {
@@ -71,6 +92,27 @@
   --color-danger-hover: var(--app-color-danger-hover);
   --color-danger-active: var(--app-color-danger-active);
   --color-danger-soft: var(--app-color-danger-soft);
+  --color-danger-contrast: var(--app-color-danger-contrast);
+  --color-failed: var(--app-color-failed);
+  --color-failed-hover: var(--app-color-failed-hover);
+  --color-failed-active: var(--app-color-failed-active);
+  --color-failed-soft: var(--app-color-failed-soft);
+  --color-failed-contrast: var(--app-color-failed-contrast);
+  --color-info: var(--app-color-info);
+  --color-info-hover: var(--app-color-info-hover);
+  --color-info-active: var(--app-color-info-active);
+  --color-info-soft: var(--app-color-info-soft);
+  --color-info-contrast: var(--app-color-info-contrast);
+  --color-success: var(--app-color-success);
+  --color-success-hover: var(--app-color-success-hover);
+  --color-success-active: var(--app-color-success-active);
+  --color-success-soft: var(--app-color-success-soft);
+  --color-success-contrast: var(--app-color-success-contrast);
+  --color-warning: var(--app-color-warning);
+  --color-warning-hover: var(--app-color-warning-hover);
+  --color-warning-active: var(--app-color-warning-active);
+  --color-warning-soft: var(--app-color-warning-soft);
+  --color-warning-contrast: var(--app-color-warning-contrast);
   --color-orange-0: var(--mantine-color-orange-0);
   --color-orange-5: var(--mantine-color-orange-5);
   --color-orange-6: var(--mantine-color-orange-6);

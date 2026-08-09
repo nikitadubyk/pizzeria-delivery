@@ -51,7 +51,7 @@ export function Card({
       padding={0}
       {...props}
     >
-      <div className="relative grid aspect-[4/3] h-[216px] max-h-[216px] min-h-[216px] overflow-hidden bg-surface [background-image:repeating-linear-gradient(135deg,rgba(255,101,15,0.12)_0_22px,rgba(255,255,255,0)_22px_44px)] place-items-center">
+      <div className="relative grid aspect-[4/3] h-[216px] max-h-[216px] min-h-[216px] overflow-hidden bg-surface [background-image:repeating-linear-gradient(135deg,color-mix(in_srgb,var(--app-color-primary)_12%,transparent)_0_22px,transparent_22px_44px)] place-items-center">
         {imageSrc ? (
           <Box
             alt={imageAlt ?? ""}

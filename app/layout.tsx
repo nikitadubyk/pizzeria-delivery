@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "@mantine/core/styles.css";
+import "@mantine/carousel/styles.css";
 import "@fontsource-variable/roboto";
 import { AppProvider } from "@/components/app-provider";
 import "./globals.css";

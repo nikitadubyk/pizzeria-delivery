@@ -1,5 +1,22 @@
+export {
+  Badge,
+  type AppBadgePadding,
+  type AppBadgeProps,
+  type AppBadgeTone,
+  type AppBadgeVariant,
+} from "./badge";
 export { Button, type AppButtonProps, type AppButtonVariant } from "./button";
 export { Card, type AppCardImageProps, type AppCardProps } from "./card";
+export {
+  CartLineItem,
+  type CartLineItemOption,
+  type CartLineItemProps,
+} from "./cart-line-item";
+export {
+  CategoryTabs,
+  type CategoryTabItem,
+  type CategoryTabsProps,
+} from "./category-tabs";
 export {
   Checkbox,
   CheckboxGroup,
@@ -7,7 +24,22 @@ export {
   type CheckboxGroupOption,
   type CheckboxGroupProps,
 } from "./checkbox";
+export {
+  EmptyState,
+  type EmptyStateProps,
+  type EmptyStateSize,
+} from "./empty-state";
 export { Input, PasswordInput } from "./input";
+export {
+  QuantityStepper,
+  type QuantityStepperProps,
+  type QuantityStepperSize,
+} from "./quantity-stepper";
+export {
+  PromoSlider,
+  type PromoSliderItem,
+  type PromoSliderProps,
+} from "./promo-slider";
 export {
   Radio,
   RadioGroup,

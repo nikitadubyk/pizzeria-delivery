@@ -1,7 +1,9 @@
 import type { Preview } from "@storybook/nextjs-vite";
 import "@mantine/core/styles.css";
+import "@mantine/carousel/styles.css";
 import "@fontsource-variable/roboto";
 import "../app/globals.css";
+
 import { AppProvider } from "../components/app-provider";
 
 const preview: Preview = {

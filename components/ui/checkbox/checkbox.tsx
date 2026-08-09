@@ -9,7 +9,7 @@ import { cn, interactiveTransitionClassName } from "@/lib/class-names";
 import type { ReactNode } from "react";
 
 const checkboxRootClassName = cn(
-  "group/checkbox cursor-pointer hover:text-primary-active hover:[&_.mantine-Checkbox-description]:!text-primary-active hover:[&_.mantine-Checkbox-input]:!border-primary-hover hover:[&_.mantine-Checkbox-input]:!bg-primary-soft hover:[&_.mantine-Checkbox-label]:!text-primary-active has-[input:checked]:hover:[&_.mantine-Checkbox-input]:!border-primary has-[input:checked]:hover:[&_.mantine-Checkbox-input]:!bg-primary has-[input:disabled]:cursor-not-allowed has-[input:disabled]:hover:text-text has-[input:disabled]:hover:[&_.mantine-Checkbox-description]:!text-muted has-[input:disabled]:hover:[&_.mantine-Checkbox-input]:!border-border has-[input:disabled]:hover:[&_.mantine-Checkbox-input]:!bg-transparent has-[input:disabled]:hover:[&_.mantine-Checkbox-label]:!text-text",
+  "group/checkbox cursor-pointer hover:text-primary-active hover:[&_.mantine-Checkbox-description]:!text-primary-active hover:[&_.mantine-Checkbox-input]:!border-primary-hover hover:[&_.mantine-Checkbox-input]:!bg-primary-soft hover:[&_.mantine-Checkbox-label]:!text-primary-active [&:hover:has(input:checked:not(:disabled))_.mantine-Checkbox-input]:!border-primary [&:hover:has(input:checked:not(:disabled))_.mantine-Checkbox-input]:!bg-primary has-[input:disabled]:cursor-not-allowed has-[input:disabled]:hover:text-text has-[input:disabled]:hover:[&_.mantine-Checkbox-description]:!text-muted has-[input:disabled]:hover:[&_.mantine-Checkbox-input]:!border-[var(--mantine-color-disabled-border)] has-[input:disabled]:hover:[&_.mantine-Checkbox-input]:!bg-[var(--mantine-color-disabled)] has-[input:disabled]:hover:[&_.mantine-Checkbox-label]:!text-text",
   interactiveTransitionClassName,
 );
 const checkboxSlotClassNames = {
@@ -19,7 +19,7 @@ const checkboxSlotClassNames = {
     interactiveTransitionClassName,
   ),
   input: cn(
-    "!cursor-pointer hover:!border-primary-hover hover:!bg-primary-soft checked:hover:!border-primary checked:hover:!bg-primary disabled:!cursor-not-allowed",
+    "!cursor-pointer hover:!border-primary-hover hover:!bg-primary-soft checked:hover:!border-primary checked:hover:!bg-primary [&:checked:hover:not(:disabled)]:!border-primary [&:checked:hover:not(:disabled)]:!bg-primary disabled:!cursor-not-allowed disabled:hover:!border-[var(--mantine-color-disabled-border)] disabled:hover:!bg-[var(--mantine-color-disabled)] disabled:checked:hover:!border-[var(--mantine-color-disabled-border)] disabled:checked:hover:!bg-[var(--mantine-color-disabled)]",
     interactiveTransitionClassName,
   ),
   label: cn(
@@ -74,7 +74,8 @@ export type CheckboxGroupOption = {
   disabled?: boolean;
 };
 
-export type CheckboxGroupCardPadding = keyof typeof checkboxCardPaddingClassNames;
+export type CheckboxGroupCardPadding =
+  keyof typeof checkboxCardPaddingClassNames;
 
 export type CheckboxGroupProps = Omit<MantineCheckboxGroupProps, "children"> & {
   cardPadding?: CheckboxGroupCardPadding;
@@ -107,7 +108,7 @@ export function CheckboxGroup({
               <span className="flex w-full min-w-0 items-center gap-sm">
                 <MantineCheckbox.Indicator
                   className={cn(
-                    "shrink-0 group-hover/card:[&:not([data-checked])]:!border-primary-hover group-hover/card:[&:not([data-checked])]:!bg-primary-soft",
+                    "shrink-0 group-hover/card:[&:not([data-checked])]:border-primary-hover! group-hover/card:[&:not([data-checked])]:bg-primary-soft! group-data-disabled/card:[&:not([data-checked])]:border-(--mantine-color-disabled-border)! group-data-disabled/card:[&:not([data-checked])]:bg-(--mantine-color-disabled)! group-data-[disabled]/card:group-hover/card:[&:not([data-checked])]:!border-[var(--mantine-color-disabled-border)] group-data-[disabled]/card:group-hover/card:[&:not([data-checked])]:!bg-[var(--mantine-color-disabled)]",
                     interactiveTransitionClassName,
                   )}
                 />
