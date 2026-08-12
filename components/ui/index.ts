@@ -29,6 +29,7 @@ export {
   type EmptyStateProps,
   type EmptyStateSize,
 } from "./empty-state";
+export { Dialog, type AppDialogProps, type AppDialogTone } from "./dialog";
 export { Input, PasswordInput } from "./input";
 export {
   QuantityStepper,

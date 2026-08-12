@@ -443,6 +443,39 @@ export function createPizzeriaTheme(primaryColor?: PizzeriaBrandColor) {
             },
           },
         },
+        Modal: {
+          defaultProps: {
+            centered: true,
+            overlayProps: {
+              backgroundOpacity: 0.42,
+              blur: 4,
+            },
+            radius: "xl",
+            size: "md",
+          },
+          styles: {
+            body: {
+              color: "var(--app-color-text)",
+            },
+            close: {
+              color: "var(--app-color-text-muted)",
+            },
+            content: {
+              backgroundColor: "var(--app-color-background)",
+              borderColor: "var(--app-color-border)",
+              borderWidth: rem(1),
+              color: "var(--app-color-text)",
+            },
+            header: {
+              backgroundColor: "var(--app-color-background)",
+              color: "var(--app-color-text)",
+            },
+            title: {
+              color: "var(--app-color-text)",
+              fontWeight: 800,
+            },
+          },
+        },
         TextInput: {
           defaultProps: {
             radius: "xl",
