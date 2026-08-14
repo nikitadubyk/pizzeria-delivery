@@ -1,33 +1,12 @@
-import { IconChefHat, IconClockHour4 } from "@tabler/icons-react";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { AppHeader, type HeaderNavItem } from "./app-header";
-
-const iconSize = 24;
-
-const extendedNavItems: HeaderNavItem[] = [
-  {
-    href: "/menu",
-    icon: <IconChefHat size={iconSize} />,
-    label: "Меню",
-  },
-  {
-    href: "/lunch",
-    icon: <IconClockHour4 size={iconSize} />,
-    label: "Обеды",
-  },
-  {
-    href: "/events",
-    icon: <IconChefHat size={iconSize} />,
-    label: "Банкеты",
-  },
-];
+import { AppHeader } from "./";
 
 const meta = {
   title: "Components/AppHeader",
   component: AppHeader,
   args: {
     cartItemsCount: 0,
-    pizzeriaName: "Пицца Доставка",
+    pizzeriaName: "Pizza Delivery",
   },
   argTypes: {
     cartItemsCount: {
@@ -36,8 +15,8 @@ const meta = {
         type: "number",
       },
     },
-    navItems: {
-      control: false,
+    logoImageSrc: {
+      control: "text",
     },
     pizzeriaName: {
       control: "text",
@@ -59,10 +38,26 @@ export const WithCartItems: Story = {
   },
 };
 
-export const CustomNavigation: Story = {
+export const Mobile: Story = {
+  args: {
+    cartItemsCount: 3,
+  },
+  globals: {
+    viewport: { value: "mobile2", isRotated: false },
+  },
+};
+
+export const WithImageLogo: Story = {
+  args: {
+    logoImageAlt: "Логотип Nonna Pizza",
+    logoImageSrc: "https://placehold.co/96x96/ff6900/ffffff?text=NP",
+    pizzeriaName: "Nonna Pizza",
+  },
+};
+
+export const BrandedHeader: Story = {
   args: {
     cartItemsCount: 1,
-    navItems: extendedNavItems,
     pizzeriaName: "Nonna Pizza",
   },
 };

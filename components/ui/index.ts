@@ -32,6 +32,11 @@ export {
 export { Dialog, type AppDialogProps, type AppDialogTone } from "./dialog";
 export { Input, PasswordInput } from "./input";
 export {
+  PhoneInput,
+  type AppPhoneInputProps,
+  type PhoneInputValue,
+} from "./phone-input";
+export {
   QuantityStepper,
   type QuantityStepperProps,
   type QuantityStepperSize,
