@@ -23,6 +23,16 @@ export type CategoryTabsProps = Omit<
 };
 
 function getVisibleCategoryId(items: CategoryTabItem[], offset: number) {
+  const scrollingElement =
+    document.scrollingElement ?? document.documentElement;
+
+  if (
+    scrollingElement.scrollTop + window.innerHeight >=
+    scrollingElement.scrollHeight - 1
+  ) {
+    return items.at(-1)?.id;
+  }
+
   const viewportMarker = offset + 1;
   let activeId = items[0]?.id;
 
@@ -56,7 +66,9 @@ export function CategoryTabs({
 
   useEffect(() => {
     const tabsList = tabsListRef.current;
-    const activeTab = resolvedActiveId ? tabRefs.current[resolvedActiveId] : null;
+    const activeTab = resolvedActiveId
+      ? tabRefs.current[resolvedActiveId]
+      : null;
 
     if (!tabsList || !activeTab) {
       return;
@@ -104,7 +116,8 @@ export function CategoryTabs({
       return;
     }
 
-    const scrollingElement = document.scrollingElement ?? document.documentElement;
+    const scrollingElement =
+      document.scrollingElement ?? document.documentElement;
     const currentScrollTop = scrollingElement.scrollTop;
     const top =
       element.getBoundingClientRect().top +
@@ -121,7 +134,7 @@ export function CategoryTabs({
     <nav
       aria-label="Категории меню"
       className={cn(
-        "z-20 w-full min-w-0 bg-background/95 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/85",
+        "z-20 w-full min-w-0 bg-background/95 py-2 backdrop-blur supports-backdrop-filter:bg-background/85",
         sticky && "sticky",
         className,
       )}

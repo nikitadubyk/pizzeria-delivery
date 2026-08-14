@@ -17,10 +17,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full antialiased">
+    <html lang="ru" className="h-full antialiased">
       <body className="min-h-full flex flex-col">
         <AppProvider>
-          <AppHeader />
+          <AppHeader
+            cartItemsCount={2}
+            pizzeriaName="Вкусно Дома"
+            topLinks={[
+              { href: "/", label: "Главная" },
+              { href: "/#menu", label: "Меню" },
+              { href: "/#promotions", label: "Акции" },
+              { href: "/contacts", label: "Контакты" },
+            ]}
+          />
           {children}
         </AppProvider>
       </body>

@@ -8,7 +8,7 @@ const meta = {
   args: {
     description: "Нужен для подтверждения заказа и связи с курьером",
     label: "Телефон",
-    placeholder: "+7 999 123-45-67",
+    placeholder: "+7 (999) 123-45-67",
   },
 } satisfies Meta<typeof PhoneInput>;
 
@@ -19,7 +19,7 @@ function ControlledPhoneInputExample() {
   const [phone, setPhone] = useState<PhoneInputValue>("+79991234567");
 
   return (
-    <div className="grid max-w-md gap-3">
+    <div className="flex flex-col gap-4">
       <PhoneInput
         description="Значение хранится в международном формате"
         label="Телефон клиента"

@@ -1,7 +1,13 @@
 "use client";
 
 import { Input as MantineInput, type InputWrapperProps } from "@mantine/core";
-import ReactPhoneInput, { type Value } from "react-phone-number-input/input";
+import {
+  parseDigit,
+  templateFormatter,
+  templateParser,
+} from "input-format";
+import FormattedInput from "input-format/react";
+import type { Value } from "react-phone-number-input/input";
 import { cn, interactiveMotionTransitionClassName } from "@/lib/class-names";
 
 export type PhoneInputValue = Value | undefined;
@@ -30,11 +36,36 @@ const phoneInputRootClassName = cn(
 );
 
 const wrapperClassNames = {
-  description: "mb-2 text-sm leading-snug !text-muted",
+  description: "!mb-3 text-sm leading-snug !text-muted",
   error: "!text-danger",
   label: "mb-1 font-extrabold leading-snug !text-text",
   root: "w-full min-w-0",
 };
+
+const russianPhoneTemplate = "+7 (xxx) xxx-xx-xx";
+const formatRussianPhone = templateFormatter(russianPhoneTemplate);
+const parseRussianPhone = templateParser(
+  russianPhoneTemplate,
+  (character, value) => {
+    const digit = parseDigit(character);
+
+    if (value.length === 0 && (digit === "7" || digit === "8")) {
+      return undefined;
+    }
+
+    return digit;
+  },
+);
+
+function getRussianNationalNumber(value?: PhoneInputValue | string) {
+  const digits = value?.replace(/\D/g, "") ?? "";
+  const nationalDigits =
+    digits.startsWith("7") || digits.startsWith("8")
+      ? digits.slice(1)
+      : digits;
+
+  return nationalDigits.slice(0, 10);
+}
 
 export function PhoneInput({
   className,
@@ -48,7 +79,7 @@ export function PhoneInput({
   onBlur,
   onChange,
   onFocus,
-  placeholder = "+7 999 123-45-67",
+  placeholder = "+7 (999) 123-45-67",
   required,
   value,
   withAsterisk,
@@ -63,7 +94,7 @@ export function PhoneInput({
       required={required}
       withAsterisk={withAsterisk}
     >
-      <ReactPhoneInput
+      <FormattedInput
         className={cn(
           phoneInputRootClassName,
           Boolean(error)
@@ -72,19 +103,23 @@ export function PhoneInput({
           inputClassName,
           className,
         )}
-        country="RU"
         disabled={disabled}
+        format={formatRussianPhone}
         id={id}
-        international
-        limitMaxLength
+        inputMode="tel"
         name={name}
         aria-invalid={Boolean(error) || undefined}
         onBlur={onBlur}
-        onChange={(nextValue) => onChange?.(nextValue)}
+        onChange={(nationalNumber) =>
+          onChange?.(
+            nationalNumber ? (`+7${nationalNumber}` as Value) : undefined,
+          )
+        }
         onFocus={onFocus}
+        parse={parseRussianPhone}
         placeholder={placeholder}
-        value={value}
-        withCountryCallingCode
+        type="tel"
+        value={getRussianNationalNumber(value)}
       />
     </MantineInput.Wrapper>
   );
