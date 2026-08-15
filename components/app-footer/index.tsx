@@ -1,64 +1,20 @@
+import { Image } from "@mantine/core";
 import {
-  IconBrandTelegram,
   IconClock,
-  IconMapPin,
   IconPhone,
+  IconMapPin,
+  IconBrandTelegram,
 } from "@tabler/icons-react";
 import Link from "next/link";
-import type { ComponentPropsWithoutRef } from "react";
 
 import { cn, interactiveTransitionClassName } from "@/lib/class-names";
 
 import { PageContainer } from "../page-container";
+import { defaultFooterLinks, defaultFooterSalesPoints } from "./config";
+import type { AppFooterProps, FooterLink, FooterSalesPoint } from "./types";
 
-export type FooterLink = {
-  href: string;
-  label: string;
-};
-
-export type FooterSalesPoint = {
-  address: string;
-  hours: string;
-  name: string;
-  phone?: string;
-};
-
-export type AppFooterProps = ComponentPropsWithoutRef<"footer"> & {
-  brandName?: string;
-  description?: string;
-  developerHref?: string;
-  developerName?: string;
-  links?: FooterLink[];
-  salesPoints?: FooterSalesPoint[];
-};
-
-export const defaultFooterLinks: FooterLink[] = [
-  { href: "/#menu", label: "Меню" },
-  { href: "/#promotions", label: "Акции" },
-  { href: "/contacts", label: "Контакты и доставка" },
-  { href: "/privacy", label: "Политика конфиденциальности" },
-  { href: "/offer", label: "Публичная оферта" },
-  { href: "/user-agreement", label: "Пользовательское соглашение" },
-  {
-    href: "/cookie-policy",
-    label: "Политика использования файлов cookies",
-  },
-];
-
-export const defaultFooterSalesPoints: FooterSalesPoint[] = [
-  {
-    address: "ул. Комсомольская, 13",
-    hours: "Ежедневно с 10:00 до 21:00",
-    name: "Горловка",
-    phone: "+7 (949) 000-56-56",
-  },
-  {
-    address: "ул. Калинина, 1",
-    hours: "Ежедневно с 10:00 до 20:00",
-    name: "Енакиево",
-    phone: "+7 (949) 501-11-00",
-  },
-];
+export { defaultFooterLinks, defaultFooterSalesPoints } from "./config";
+export type { AppFooterProps, FooterLink, FooterSalesPoint } from "./types";
 
 function PizzaMark() {
   return (
@@ -87,22 +43,48 @@ function PizzaMark() {
   );
 }
 
-function Brand({ name }: { name: string }) {
+function Brand({
+  caption,
+  imageAlt,
+  imageSrc,
+  name,
+}: {
+  caption: string;
+  imageAlt: string;
+  imageSrc?: string;
+  name: string;
+}) {
   return (
     <Link
       aria-label={`${name} — на главную`}
       className="group inline-flex items-center gap-3 rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-4 focus-visible:ring-offset-secondary-active"
       href="/"
     >
-      <span className="flex h-14 w-14 shrink-0 rotate-[-3deg] items-center justify-center rounded-[1.25rem] bg-primary text-primary-contrast shadow-[0_10px_30px_rgba(255,101,15,0.22)] transition-transform duration-200 group-hover:rotate-0 group-hover:scale-105 motion-reduce:transition-none">
-        <PizzaMark />
+      <span
+        className={cn(
+          "flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-[1.25rem] transition-transform duration-200 group-hover:scale-105 motion-reduce:transition-none",
+          imageSrc
+            ? "bg-transparent"
+            : "bg-primary text-primary-contrast shadow-[0_10px_30px_rgba(255,101,15,0.22)]",
+        )}
+      >
+        {imageSrc ? (
+          <Image
+            alt={imageAlt}
+            className="h-full w-full object-contain"
+            fit="contain"
+            src={imageSrc}
+          />
+        ) : (
+          <PizzaMark />
+        )}
       </span>
       <span className="leading-none">
         <span className="block text-xl font-extrabold uppercase tracking-[-0.04em] text-white">
           {name}
         </span>
         <span className="mt-1.5 block text-[11px] font-bold uppercase tracking-[0.14em] text-white/50">
-          пиццерия & доставка
+          {caption}
         </span>
       </span>
     </Link>
@@ -134,7 +116,7 @@ function SalesPoint({ point }: { point: FooterSalesPoint }) {
     : undefined;
 
   return (
-    <li className="rounded-2xl border border-white/10 bg-white/[0.045] p-4">
+    <li className="rounded-2xl border border-white/10 bg-white/4.5 p-4">
       <p className="m-0 flex items-center gap-2 text-sm font-extrabold text-white">
         <IconMapPin aria-hidden="true" className="text-primary" size={18} />
         {point.name}
@@ -164,18 +146,22 @@ function SalesPoint({ point }: { point: FooterSalesPoint }) {
 }
 
 export function AppFooter({
-  brandName = "Вкусно Дома",
   className,
-  description = "Готовим пиццу после заказа и доставляем её горячей.",
+  brandCaption = "пиццерия & доставка",
+  brandImageAlt,
+  brandImageSrc,
+  brandName = "Вкусно Дома",
+  links = defaultFooterLinks,
   developerHref = "https://t.me/",
   developerName = "Команда разработки",
-  links = defaultFooterLinks,
   salesPoints = defaultFooterSalesPoints,
+  description = "Готовим пиццу после заказа и доставляем её горячей.",
   ...props
 }: AppFooterProps) {
   const primaryLinks = links.slice(0, 3);
   const legalLinks = links.slice(3);
   const salesPointCountLabel = `${salesPoints.length} ${salesPoints.length === 1 ? "адрес" : "адреса"}`;
+  const resolvedBrandImageAlt = brandImageAlt ?? `Логотип ${brandName}`;
 
   return (
     <footer
@@ -192,7 +178,12 @@ export function AppFooter({
       <PageContainer className="relative py-12 sm:py-14 lg:py-16">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-12 lg:gap-8">
           <section className="lg:col-span-3" aria-label="О пиццерии">
-            <Brand name={brandName} />
+            <Brand
+              caption={brandCaption}
+              imageAlt={resolvedBrandImageAlt}
+              imageSrc={brandImageSrc}
+              name={brandName}
+            />
             <p className="mb-0 mt-5 max-w-[18rem] text-sm font-medium leading-relaxed text-white/58">
               {description}
             </p>
@@ -261,9 +252,9 @@ export function AppFooter({
             target="_blank"
           >
             <IconBrandTelegram
+              size={17}
               aria-hidden="true"
               className="text-primary"
-              size={17}
             />
             Разработано: <span className="font-extrabold">{developerName}</span>
           </a>

@@ -11,6 +11,9 @@ const meta = {
     developerName: "Команда разработки",
   },
   argTypes: {
+    brandCaption: { control: "text" },
+    brandImageAlt: { control: "text" },
+    brandImageSrc: { control: "text" },
     brandName: { control: "text" },
     description: { control: "text" },
     developerHref: { control: "text" },
@@ -47,5 +50,14 @@ export const SingleSalesPoint: Story = {
 
 export const Mobile: Story = {
   globals: { viewport: { value: "mobile2", isRotated: false } },
+  render: renderFooter,
+};
+
+export const WithImageBrand: Story = {
+  args: {
+    brandImageAlt: "Логотип Nonna Pizza",
+    brandImageSrc: "https://placehold.co/112x112/ff6900/ffffff?text=NP",
+    brandName: "Nonna Pizza",
+  },
   render: renderFooter,
 };

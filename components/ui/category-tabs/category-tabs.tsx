@@ -142,7 +142,7 @@ export function CategoryTabs({
       style={{ ...props.style, top: sticky ? stickyTop : props.style?.top }}
     >
       <div
-        className="flex min-w-0 gap-2 overflow-x-auto overscroll-x-contain px-1 py-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex min-w-0 gap-2 overflow-x-auto overscroll-x-contain px-1 py-1 [-ms-overflow-style:none] scrollbar-none [&::-webkit-scrollbar]:hidden"
         ref={tabsListRef}
       >
         {items.map((item) => {
@@ -164,11 +164,11 @@ export function CategoryTabs({
               }}
               type="button"
             >
-              {item.icon ? (
+              {item.icon && (
                 <span aria-hidden="true" className="shrink-0">
                   {item.icon}
                 </span>
-              ) : null}
+              )}
               <span>{item.label}</span>
             </button>
           );

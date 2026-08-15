@@ -12,6 +12,7 @@ import {
   PromoSlider,
   type PromoSliderItem,
 } from "@/components/ui";
+import { useIsMobile, useIsTablet } from "@/hooks";
 
 import { menuCategories, promoOffers } from "./config";
 import { formatPrice, getCategoryIcon } from "./helpers";
@@ -76,6 +77,10 @@ function MenuSections() {
 }
 
 export function HomePage() {
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
+  const hasCompactHeader = isMobile || isTablet;
+
   return (
     <>
       <main className="flex-1 bg-background pb-20 pt-6 text-text sm:pt-8">
@@ -106,10 +111,10 @@ export function HomePage() {
             </div>
 
             <CategoryTabs
-              offset={128}
-              stickyTop={110}
               className="mb-8"
               items={categoryTabs}
+              offset={hasCompactHeader ? 64 : 128}
+              stickyTop={hasCompactHeader ? 64 : 110}
             />
 
             <MenuSections />

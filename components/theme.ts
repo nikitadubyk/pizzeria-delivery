@@ -133,6 +133,14 @@ export const pizzeriaSpacing = {
   xl: rem(24),
 } as const;
 
+export const pizzeriaBreakpoints = {
+  xs: "36em",
+  sm: "48em",
+  md: "64em",
+  lg: "75em",
+  xl: "88em",
+} as const;
+
 type RgbColor = {
   r: number;
   g: number;
@@ -371,6 +379,7 @@ export function createPizzeriaTheme(primaryColor?: PizzeriaBrandColor) {
       fontSizes: pizzeriaTypography.fontSizes,
       lineHeights: pizzeriaTypography.lineHeights,
       spacing: pizzeriaSpacing,
+      breakpoints: pizzeriaBreakpoints,
       headings: {
         fontFamily: pizzeriaTypography.fontFamily,
         fontWeight: "800",

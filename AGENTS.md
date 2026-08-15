@@ -25,6 +25,29 @@ Pizzeria Delivery is a Next.js application for a pizzeria and food delivery work
 - Use `npm run docker:compose:down` to stop local infrastructure.
 - Use `npm run dev` for the local Next.js development server.
 
+## Project Structure
+
+- `app/` contains Next.js App Router layouts, pages, route handlers, and application-level screens.
+- `components/` contains shared UI and domain components. Reusable Mantine-based primitives live under `components/ui/`.
+- `hooks/` contains reusable client-side React hooks.
+- `lib/` contains server infrastructure and shared non-React utilities. `lib/prisma.ts` owns Prisma client creation and tenant-scoped database access.
+- `prisma/schema.prisma` contains only the generator and datasource.
+- `prisma/models/` contains domain-oriented Prisma schema files. Use one file per bounded domain instead of growing a single schema file.
+- `prisma/prisma.md` documents database structure, tenant invariants, and approved Prisma access patterns.
+- `prisma/migrations/` contains generated database migrations when migrations are introduced.
+- `public/` contains static assets served by Next.js.
+
+## Multi-tenant Access Rules
+
+- `Restaurant` is the tenant root. Restaurant-owned models must have a required `restaurantId`, a `Restaurant` relation, and a tenant-leading index.
+- `User` represents administrative and staff accounts. Supported roles are `SUPER_ADMIN`, `OWNER`, and `EMPLOYEE`.
+- `SUPER_ADMIN` is global, must have `restaurantId = null`, and may omit `phone`. Owners and employees must belong to a restaurant and must have a phone.
+- Restaurant-facing code must use `getRestaurantDb(restaurantId)` and must never accept its tenant id from an untrusted request body.
+- Cross-tenant admin code must use `getSuperAdminDb(authenticatedUserId)`.
+- Direct `systemDb` access is limited to trusted provisioning, migrations, and controlled infrastructure jobs; never use it in ordinary request handlers.
+- Add customer accounts as a separate tenant-owned domain instead of expanding the back-office `UserRole` enum.
+- Read `prisma/prisma.md` before adding a Prisma model or database access path.
+
 ## Product Requirements
 
 - Keep the domain language focused on pizzeria, menu, cart, checkout, delivery, customers, couriers, and order management.

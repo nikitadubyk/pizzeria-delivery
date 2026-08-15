@@ -6,6 +6,7 @@
     "dev": "next dev",
     "postinstall": "prisma generate",
     "build": "prisma migrate deploy && next build",
+    "db:seed": "prisma db seed",
     "start": "next start",
     "lint": "eslint",
     "storybook": "storybook dev -p 6006",
@@ -21,6 +22,7 @@
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "@tabler/icons-react": "^3.46.0",
+    "bcryptjs": "^3.0.3",
     "input-format": "^0.3.14",
     "next": "16.2.10",
     "pg": "^8.22.0",
@@ -42,6 +44,7 @@
     "eslint-config-next": "16.2.10",
     "storybook": "^10.5.7",
     "tailwindcss": "^4",
+    "tsx": "^4.23.12",
     "typescript": "^5"
   }
 }

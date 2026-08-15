@@ -80,6 +80,25 @@ The connection string is configured in `.env`:
 DATABASE_URL="postgresql://admin:123@localhost:5432/pizzeria_delivery"
 ```
 
+Copy the super administrator settings from `.env.example` into `.env`, replace
+the example credentials, and use a password with at least 12 characters:
+
+```bash
+SUPER_ADMIN_EMAIL="admin@example.com"
+SUPER_ADMIN_PASSWORD="replace-with-a-strong-password"
+SUPER_ADMIN_NAME="Super Admin"
+```
+
+Apply migrations and seed the super administrator:
+
+```bash
+npx prisma migrate deploy
+npm run db:seed
+```
+
+The seed stores a bcrypt hash, never the plaintext password. It is safe to run
+again: the matching global administrator is updated and reactivated.
+
 Keep `.env`, `docker-compose.yml`, and Prisma configuration aligned when changing database settings.
 
 ## Scripts
@@ -89,6 +108,7 @@ npm run dev
 npm run build
 npm run start
 npm run lint
+npm run db:seed
 npm run docker:compose
 npm run docker:compose:down
 ```
