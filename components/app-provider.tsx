@@ -1,7 +1,10 @@
 "use client";
 
 import { MantineProvider } from "@mantine/core";
+import { StoreProvider } from "@/store/store-provider";
 import { useMemo, type ReactNode } from "react";
+import { AppLoader } from "./app-loader";
+import { NotificationProvider } from "./ui/notification";
 import {
   createPizzeriaTheme,
   pizzeriaCssVariablesResolver,
@@ -27,12 +30,16 @@ export function AppProvider({ children, primaryColor }: AppProviderProps) {
   }, [primaryColor]);
 
   return (
-    <MantineProvider
-      cssVariablesResolver={themedConfig.cssVariablesResolver}
-      defaultColorScheme="light"
-      theme={themedConfig.theme}
-    >
-      {children}
-    </MantineProvider>
+    <StoreProvider>
+      <MantineProvider
+        cssVariablesResolver={themedConfig.cssVariablesResolver}
+        defaultColorScheme="light"
+        theme={themedConfig.theme}
+      >
+        <NotificationProvider />
+        <AppLoader />
+        {children}
+      </MantineProvider>
+    </StoreProvider>
   );
 }
