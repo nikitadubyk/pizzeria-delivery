@@ -1,50 +1,24 @@
+import type {
+  SuperAdminLoginRequest,
+  SuperAdminLoginResponse,
+  SuperAdminRefreshRequest,
+  SuperAdminRefreshResponse,
+  SuperAdminUserDto,
+} from "@/api-contracts";
+import {
+  BCRYPT_ROUNDS,
+  TokenSecret,
+  TOKEN_SECRET_MIN_LENGTH,
+} from "@/app/api/users/config";
+import { toSuperAdminUserDto } from "@/app/api/users/user.mapper";
+import type { TokenService, UserRepository } from "@/app/api/users/types";
 import type { User } from "@/app/generated/prisma/client";
 import { ApiError, HttpStatus } from "@/app/api/common/api-response";
 import { systemDb } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { jwtVerify, SignJWT } from "jose";
 
-const BCRYPT_ROUNDS = 12;
-const MIN_PASSWORD_LENGTH = 8;
-
-enum TokenSecret {
-  ACCESS_TOKEN = "ACCESS_TOKEN_SECRET",
-  REFRESH_TOKEN = "REFRESH_TOKEN_SECRET",
-}
-
-type PublicUser = Omit<User, "password">;
-
-export type SuperAdminLoginInput = {
-  email: string;
-  password: string;
-};
-
-export type SuperAdminLoginResult = {
-  user: PublicUser;
-  accessToken: string;
-  refreshToken: string;
-};
-
-export type SuperAdminRefreshInput = {
-  refreshToken: string;
-};
-
-export type SuperAdminRefreshResult = {
-  accessToken: string;
-  refreshToken: string;
-};
-
-export interface UserRepository {
-  findSuperAdminByEmail(email: string): Promise<User | null>;
-  findSuperAdminById(id: string): Promise<User | null>;
-}
-
-export interface TokenService {
-  createAccessToken(user: User): Promise<string>;
-  createRefreshToken(user: User): Promise<string>;
-  verifyAccessToken(token: string): Promise<string>;
-  verifyRefreshToken(token: string): Promise<string>;
-}
+export type { TokenService, UserRepository } from "@/app/api/users/types";
 
 export class UserServiceError extends ApiError {
   constructor(message: string, status: HttpStatus) {
@@ -56,9 +30,9 @@ export class UserServiceError extends ApiError {
 const getTokenSecret = (name: TokenSecret) => {
   const secret = process.env[name];
 
-  if (!secret || secret.length < 32) {
+  if (!secret || secret.length < TOKEN_SECRET_MIN_LENGTH) {
     throw new UserServiceError(
-      `${name} должен содержать не менее 32 символов`,
+      `${name} должен содержать не менее ${TOKEN_SECRET_MIN_LENGTH} символов`,
       HttpStatus.INTERNAL_SERVER_ERROR,
     );
   }
@@ -132,18 +106,6 @@ class JwtTokenService implements TokenService {
   }
 }
 
-const toPublicUser = (user: User): PublicUser => ({
-  id: user.id,
-  restaurantId: user.restaurantId,
-  phone: user.phone,
-  email: user.email,
-  name: user.name,
-  role: user.role,
-  isActive: user.isActive,
-  createdAt: user.createdAt,
-  updatedAt: user.updatedAt,
-});
-
 export class UserService {
   constructor(
     private readonly repository: UserRepository,
@@ -151,13 +113,6 @@ export class UserService {
   ) {}
 
   async hashPassword(password: string): Promise<string> {
-    if (password.length < MIN_PASSWORD_LENGTH) {
-      throw new UserServiceError(
-        `Пароль должен содержать не менее ${MIN_PASSWORD_LENGTH} символов`,
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
     return bcrypt.hash(password, BCRYPT_ROUNDS);
   }
 
@@ -165,9 +120,8 @@ export class UserService {
     return bcrypt.compare(password, passwordHash);
   }
 
-  async login(input: SuperAdminLoginInput): Promise<SuperAdminLoginResult> {
-    const email = input.email.trim().toLowerCase();
-    const user = await this.repository.findSuperAdminByEmail(email);
+  async login(input: SuperAdminLoginRequest): Promise<SuperAdminLoginResponse> {
+    const user = await this.repository.findSuperAdminByEmail(input.email);
 
     if (!user || !(await this.verifyPassword(input.password, user.password))) {
       throw new UserServiceError(
@@ -182,15 +136,15 @@ export class UserService {
     ]);
 
     return {
-      user: toPublicUser(user),
+      user: toSuperAdminUserDto(user),
       accessToken,
       refreshToken,
     };
   }
 
   async refresh(
-    input: SuperAdminRefreshInput,
-  ): Promise<SuperAdminRefreshResult> {
+    input: SuperAdminRefreshRequest,
+  ): Promise<SuperAdminRefreshResponse> {
     const userId = await this.tokenService.verifyRefreshToken(
       input.refreshToken,
     );
@@ -211,7 +165,7 @@ export class UserService {
     return { accessToken, refreshToken };
   }
 
-  async getCurrentSuperAdmin(accessToken: string): Promise<PublicUser> {
+  async getCurrentSuperAdmin(accessToken: string): Promise<SuperAdminUserDto> {
     const userId = await this.tokenService.verifyAccessToken(accessToken);
     const user = await this.repository.findSuperAdminById(userId);
 
@@ -222,7 +176,7 @@ export class UserService {
       );
     }
 
-    return toPublicUser(user);
+    return toSuperAdminUserDto(user);
   }
 }
 

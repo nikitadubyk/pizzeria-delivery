@@ -8,7 +8,7 @@
     "build": "prisma migrate deploy && next build",
     "db:seed": "prisma db seed",
     "start": "next start",
-    "test": "tsx --test app/api/**/*.test.ts",
+    "test": "tsx --test app/api/**/*.test.ts store/**/*.test.ts",
     "lint": "eslint",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",

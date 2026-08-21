@@ -20,7 +20,7 @@ import { Button, Typography } from "@/components/ui";
 import { showSuccessNotification } from "@/components/ui/notification";
 import { ROUTES } from "@/config/routes";
 import { cn } from "@/lib/class-names";
-import { superAdminApi } from "@/store/api/super-admin.api";
+import { advanceAuthSessionRevision } from "@/store/api/axios";
 import { clearAuthSession } from "@/store/auth/auth-storage";
 import { useAppDispatch } from "@/store/hooks";
 import { clearAuthUser } from "@/store/slices/auth.slice";
@@ -74,10 +74,7 @@ const AdminBrand = () => (
   </div>
 );
 
-const AdminNavigation = ({
-  onNavigate,
-  pathname,
-}: AdminNavigationProps) => (
+const AdminNavigation = ({ onNavigate, pathname }: AdminNavigationProps) => (
   <nav aria-label="Навигация Super Admin">
     <ul className="m-0 grid list-none gap-xs p-0">
       {menuItems.map(({ href, icon: MenuIcon, label }) => {
@@ -113,9 +110,9 @@ export const AdminShell = ({ children }: AdminShellProps) => {
   const router = useRouter();
 
   const handleLogout = () => {
+    advanceAuthSessionRevision();
     clearAuthSession();
     dispatch(clearAuthUser());
-    dispatch(superAdminApi.util.resetApiState());
     showSuccessNotification({ message: "Вы вышли из панели управления" });
     router.replace(ROUTES.SUPER_ADMIN.LOGIN);
   };

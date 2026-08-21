@@ -1,22 +1,12 @@
-import { ApiResponse, HttpStatus } from "@/app/api/common/api-response";
-import { userService, UserServiceError } from "@/app/api/users/user.service";
+import type { SuperAdminUserDto } from "@/api-contracts";
+import { ApiResponse } from "@/app/api/common/api-response";
+import { getCurrentSuperAdmin } from "@/app/api/super-admin/auth";
 
 export const GET = async (request: Request) => {
   try {
-    const authorization = request.headers.get("authorization");
+    const user = await getCurrentSuperAdmin(request);
 
-    if (!authorization?.startsWith("Bearer ")) {
-      throw new UserServiceError(
-        "Требуется авторизация",
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
-
-    const user = await userService.getCurrentSuperAdmin(
-      authorization.slice("Bearer ".length),
-    );
-
-    return ApiResponse.success(user);
+    return ApiResponse.success<SuperAdminUserDto>(user);
   } catch (error) {
     return ApiResponse.fromError(error, "Не удалось проверить авторизацию");
   }

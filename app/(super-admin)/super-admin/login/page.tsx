@@ -7,7 +7,11 @@ import { useRouter } from "next/navigation";
 import { Button, Input, PasswordInput, Typography } from "@/components/ui";
 import { showSuccessNotification } from "@/components/ui/notification";
 import { ROUTES } from "@/config/routes";
-import { useLoginSuperAdminMutation } from "@/store/api/super-admin.api";
+import { advanceAuthSessionRevision } from "@/store/api/axios";
+import {
+  superAdminApi,
+  useLoginSuperAdminMutation,
+} from "@/store/api/super-admin.api";
 import { saveAuthSession } from "@/store/auth/auth-storage";
 import { useAppDispatch } from "@/store/hooks";
 import { setAuthUser } from "@/store/slices/auth.slice";
@@ -26,7 +30,9 @@ const SuperAdminLoginPage = () => {
   const handleSubmit = async (values: SuperAdminLoginFormValues) => {
     try {
       const result = await loginSuperAdmin(values).unwrap();
+      advanceAuthSessionRevision();
       saveAuthSession(result);
+      dispatch(superAdminApi.util.resetApiState());
       dispatch(setAuthUser(result.user));
       showSuccessNotification({
         message: "Добро пожаловать в панель управления",

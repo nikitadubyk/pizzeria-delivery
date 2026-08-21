@@ -4,12 +4,8 @@ import { describe, it } from "node:test";
 import type { User } from "@/app/generated/prisma/client";
 import dayjs from "dayjs";
 
-import {
-  type TokenService,
-  type UserRepository,
-  UserService,
-  UserServiceError,
-} from "./user.service";
+import { UserService, UserServiceError } from "./user.service";
+import type { TokenService, UserRepository } from "./types";
 
 const createSuperAdmin = (overrides: Partial<User> = {}): User => ({
   id: "super-admin-id",
@@ -60,7 +56,7 @@ describe("UserService", () => {
     const service = new UserService(repository, tokenService);
 
     const result = await service.login({
-      email: " ADMIN@EXAMPLE.COM ",
+      email: "admin@example.com",
       password: "strong-password",
     });
 

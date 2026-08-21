@@ -1,0 +1,8 @@
+export const BCRYPT_ROUNDS = 12;
+export const MIN_PASSWORD_LENGTH = 8;
+export const TOKEN_SECRET_MIN_LENGTH = 32;
+
+export enum TokenSecret {
+  ACCESS_TOKEN = "ACCESS_TOKEN_SECRET",
+  REFRESH_TOKEN = "REFRESH_TOKEN_SECRET",
+}

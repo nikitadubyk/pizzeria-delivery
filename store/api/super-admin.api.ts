@@ -1,25 +1,25 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 
-import type { SuperAdminUser } from "../auth/types";
+import type {
+  CreateRestaurantRequest,
+  RestaurantDto,
+  RestaurantPathParams,
+  SuperAdminLoginRequest,
+  SuperAdminLoginResponse,
+  SuperAdminUserDto,
+  UpdateRestaurantApiRequest,
+} from "@/api-contracts";
 import { axiosLoaderBaseQuery } from "./axios";
 import { URL } from "./config";
 
-export type SuperAdminLoginRequest = {
-  email: string;
-  password: string;
-};
-
-export type SuperAdminLoginResponse = {
-  user: SuperAdminUser;
-  accessToken: string;
-  refreshToken: string;
-};
+const RESTAURANT_TAG = "Restaurant" as const;
 
 export const superAdminApi = createApi({
   reducerPath: "superAdminApi",
   baseQuery: axiosLoaderBaseQuery(),
+  tagTypes: [RESTAURANT_TAG],
   endpoints: (builder) => ({
-    getSuperAdminMe: builder.query<SuperAdminUser, void>({
+    getSuperAdminMe: builder.query<SuperAdminUserDto, void>({
       query: () => ({
         url: URL.SUPER_ADMIN_ME,
         method: "GET",
@@ -35,8 +35,55 @@ export const superAdminApi = createApi({
         data: body,
       }),
     }),
+    getRestaurants: builder.query<RestaurantDto[], void>({
+      query: () => ({
+        url: URL.SUPER_ADMIN_RESTAURANTS,
+        method: "GET",
+      }),
+      providesTags: [RESTAURANT_TAG],
+    }),
+    getRestaurant: builder.query<RestaurantDto, RestaurantPathParams>({
+      query: ({ restaurantId }) => ({
+        url: `${URL.SUPER_ADMIN_RESTAURANTS}/${restaurantId}`,
+        method: "GET",
+      }),
+      providesTags: [RESTAURANT_TAG],
+    }),
+    createRestaurant: builder.mutation<RestaurantDto, CreateRestaurantRequest>({
+      query: (data) => ({
+        url: URL.SUPER_ADMIN_RESTAURANTS,
+        method: "POST",
+        data,
+      }),
+      invalidatesTags: [RESTAURANT_TAG],
+    }),
+    updateRestaurant: builder.mutation<
+      RestaurantDto,
+      UpdateRestaurantApiRequest
+    >({
+      query: ({ restaurantId, data }) => ({
+        url: `${URL.SUPER_ADMIN_RESTAURANTS}/${restaurantId}`,
+        method: "PATCH",
+        data,
+      }),
+      invalidatesTags: [RESTAURANT_TAG],
+    }),
+    deleteRestaurant: builder.mutation<RestaurantDto, RestaurantPathParams>({
+      query: ({ restaurantId }) => ({
+        url: `${URL.SUPER_ADMIN_RESTAURANTS}/${restaurantId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: [RESTAURANT_TAG],
+    }),
   }),
 });
 
-export const { useGetSuperAdminMeQuery, useLoginSuperAdminMutation } =
-  superAdminApi;
+export const {
+  useCreateRestaurantMutation,
+  useDeleteRestaurantMutation,
+  useGetRestaurantQuery,
+  useGetRestaurantsQuery,
+  useGetSuperAdminMeQuery,
+  useLoginSuperAdminMutation,
+  useUpdateRestaurantMutation,
+} = superAdminApi;

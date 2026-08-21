@@ -22,6 +22,7 @@ import { API_BASE_URL, URL } from "./config";
 
 type RetriableRequestConfig = InternalAxiosRequestConfig & {
   _retry?: boolean;
+  _authSessionRevision?: number;
 };
 
 type AxiosBaseQueryArgs = {
@@ -41,8 +42,18 @@ const refreshClient = axios.create({ baseURL: API_BASE_URL });
 export const apiClient = axios.create({ baseURL: API_BASE_URL });
 export const apiLoaderClient = axios.create({ baseURL: API_BASE_URL });
 
+let authSessionRevision = 0;
+
+export const advanceAuthSessionRevision = () => {
+  authSessionRevision += 1;
+  refreshPromise = null;
+};
+
 const attachAccessToken = (config: InternalAxiosRequestConfig) => {
   const accessToken = getAccessToken();
+  const request = config as RetriableRequestConfig;
+
+  request._authSessionRevision = authSessionRevision;
 
   if (accessToken && config.url !== URL.SUPER_ADMIN_LOGIN) {
     config.headers.set("Authorization", `Bearer ${accessToken}`);
@@ -58,21 +69,33 @@ let refreshPromise: Promise<AuthTokens> | null = null;
 
 const refreshTokens = () => {
   const refreshToken = getRefreshToken();
+  const refreshRevision = authSessionRevision;
 
   if (!refreshToken) {
     return Promise.reject(new Error("Refresh token отсутствует"));
   }
 
   if (!refreshPromise) {
-    refreshPromise = refreshClient
+    const pendingRefresh = refreshClient
       .post<AuthTokens>(URL.SUPER_ADMIN_REFRESH, { refreshToken })
       .then(({ data }) => {
+        if (refreshRevision !== authSessionRevision) {
+          throw new Error("Auth session changed during token refresh");
+        }
+
         saveTokens(data);
         return data;
-      })
-      .finally(() => {
-        refreshPromise = null;
       });
+
+    refreshPromise = pendingRefresh;
+    void pendingRefresh.then(
+      () => {
+        if (refreshPromise === pendingRefresh) refreshPromise = null;
+      },
+      () => {
+        if (refreshPromise === pendingRefresh) refreshPromise = null;
+      },
+    );
   }
 
   return refreshPromise;
@@ -103,9 +126,17 @@ const handleResponseError = async (
   error: AxiosError,
 ) => {
   const request = error.config as RetriableRequestConfig | undefined;
+  const belongsToCurrentSession =
+    request?._authSessionRevision === authSessionRevision;
+
+  if (axios.isCancel(error) || (request && !belongsToCurrentSession)) {
+    return Promise.reject(error);
+  }
+
   const shouldRefresh =
     error.response?.status === 401 &&
     request &&
+    belongsToCurrentSession &&
     !request._retry &&
     request.url !== URL.SUPER_ADMIN_LOGIN &&
     request.url !== URL.SUPER_ADMIN_REFRESH;
@@ -122,10 +153,13 @@ const handleResponseError = async (
     request.headers.set("Authorization", `Bearer ${tokens.accessToken}`);
     return instance.request(request);
   } catch (refreshError) {
-    clearAuthSession();
-    activeDispatch?.(clearAuthUser());
-    notifyError(refreshError instanceof AxiosError ? refreshError : error);
-    return Promise.reject(refreshError);
+    if (request._authSessionRevision === authSessionRevision) {
+      clearAuthSession();
+      activeDispatch?.(clearAuthUser());
+      notifyError(refreshError instanceof AxiosError ? refreshError : error);
+    }
+
+    return Promise.reject(error);
   }
 };
 
@@ -170,9 +204,9 @@ const createAxiosBaseQuery =
   (
     instance: AxiosInstance,
   ): BaseQueryFn<AxiosBaseQueryArgs, unknown, AxiosBaseQueryError> =>
-  async ({ url, method, data, params }) => {
+  async ({ url, method, data, params }, { signal }) => {
     try {
-      const response = await instance({ url, method, data, params });
+      const response = await instance({ url, method, data, params, signal });
       return { data: response.data };
     } catch (error) {
       const axiosError = error as AxiosError;

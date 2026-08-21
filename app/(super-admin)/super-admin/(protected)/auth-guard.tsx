@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 
 import { useGetSuperAdminMeQuery } from "@/store/api/super-admin.api";
 import { ROUTES } from "@/config/routes";
@@ -11,8 +11,12 @@ import {
   getRefreshToken,
   saveUser,
 } from "@/store/auth/auth-storage";
-import { useAppDispatch } from "@/store/hooks";
-import { clearAuthUser, setAuthUser } from "@/store/slices/auth.slice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import {
+  clearAuthUser,
+  selectAuthUser,
+  setAuthUser,
+} from "@/store/slices/auth.slice";
 
 type SuperAdminAuthGuardProps = {
   children: ReactNode;
@@ -21,17 +25,20 @@ type SuperAdminAuthGuardProps = {
 export const SuperAdminAuthGuard = ({ children }: SuperAdminAuthGuardProps) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const [hasSessionToken] = useState(() =>
-    Boolean(getAccessToken() || getRefreshToken()),
-  );
+  useAppSelector(selectAuthUser);
+  const hasSessionToken = Boolean(getAccessToken() || getRefreshToken());
   const {
     data: user,
+    error,
     isError,
+    isFetching,
     isSuccess,
   } = useGetSuperAdminMeQuery(undefined, {
     refetchOnMountOrArgChange: true,
     skip: !hasSessionToken,
   });
+  const isUnauthorized =
+    isError && error !== undefined && "status" in error && error.status === 401;
 
   useEffect(() => {
     if (!hasSessionToken) {
@@ -42,12 +49,12 @@ export const SuperAdminAuthGuard = ({ children }: SuperAdminAuthGuardProps) => {
   }, [dispatch, hasSessionToken, router]);
 
   useEffect(() => {
-    if (isError) {
+    if (isUnauthorized && !isFetching) {
       clearAuthSession();
       dispatch(clearAuthUser());
       router.replace(ROUTES.SUPER_ADMIN.LOGIN);
     }
-  }, [dispatch, isError, router]);
+  }, [dispatch, isFetching, isUnauthorized, router]);
 
   useEffect(() => {
     if (user) {
