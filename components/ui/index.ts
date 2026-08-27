@@ -62,6 +62,14 @@ export {
 } from "./radio";
 export { Select, type AppSelectProps } from "./select";
 export { Tabs, type AppTabsProps, type TabItem } from "./tabs";
+export {
+  Table,
+  type AppTableProps,
+  type TableColumn,
+  type TableColumnAlign,
+  type TableDisplayMode,
+  type TableMobileLayout,
+} from "./table";
 export { Textarea } from "./textarea";
 export { Toggle } from "./toggle";
 export {
