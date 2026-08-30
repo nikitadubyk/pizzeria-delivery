@@ -1,12 +1,12 @@
-[19:17:33.709] [INFO] storybook v10.5.7
-[19:17:36.407] [DEBUG] Getting package.json info for D:/pet-projects/pizzeria-delivery/package.json...
-[19:17:37.145] [DEBUG] Could not determine @babel/preset-env version in use. In case of runtime errors with @babel/preset-env, you may need to set the babelRemoveBugfixes feature flag in your `main.ts` file.
-[19:17:37.544] [DEBUG] Serving static files from public at /
-[19:17:37.545] [INFO] Starting...
-[19:17:37.684] [DEBUG] Starting preview..
-[19:17:37.748] [DEBUG] Using tsconfig paths for react-docgen
-[19:17:38.184] [ERROR] Failed to build the preview
-[19:17:38.188] [ERROR] [38;2;241;97;97mError: EPERM: operation not permitted, open '.\node_modules\.cache\sb-vite-plugin-externals\@storybook\global.js'[39m
+[15:54:03.789] [INFO] storybook v10.5.7
+[15:54:05.956] [DEBUG] Getting package.json info for D:/pet-projects/pizzeria-delivery/package.json...
+[15:54:06.630] [DEBUG] Could not determine @babel/preset-env version in use. In case of runtime errors with @babel/preset-env, you may need to set the babelRemoveBugfixes feature flag in your `main.ts` file.
+[15:54:06.940] [DEBUG] Serving static files from public at /
+[15:54:06.940] [INFO] Starting...
+[15:54:07.043] [DEBUG] Starting preview..
+[15:54:07.089] [DEBUG] Using tsconfig paths for react-docgen
+[15:54:07.453] [ERROR] Failed to build the preview
+[15:54:07.457] [ERROR] [38;2;241;97;97mError: EPERM: operation not permitted, open '.\node_modules\.cache\sb-vite-plugin-externals\@storybook\global.js'[39m
     at async open (node:internal/fs/promises:697:25)
     at async writeFile (node:internal/fs/promises:1317:14)
     at async file:///D:/pet-projects/pizzeria-delivery/node_modules/@storybook/builder-vite/dist/index.js:1380:11
@@ -17,6 +17,5 @@
     at async _createServer (file:///D:/pet-projects/pizzeria-delivery/node_modules/vite/dist/node/chunks/node.js:26319:65)
     at async Module.start (file:///D:/pet-projects/pizzeria-delivery/node_modules/@storybook/builder-vite/dist/index.js:1621:17)
     at async storybookDevServer (file:///D:/pet-projects/pizzeria-delivery/node_modules/storybook/dist/core-server/index.js:11225:59)
-[19:17:38.191] [WARN] Broken build, fix the error above.
+[15:54:07.459] [WARN] Broken build, fix the error above.
 You may need to refresh the browser.
-[19:17:46.138] [PROMPT] Would you like to send anonymous crash reports to improve Storybook and fix bugs faster? {"choice":false}

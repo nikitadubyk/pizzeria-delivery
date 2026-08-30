@@ -3,6 +3,7 @@
 import { Table as MantineTable, type TableProps } from "@mantine/core";
 import { cn } from "@/lib/class-names";
 import type { CSSProperties, Key, ReactNode } from "react";
+import { Pagination, type AppPaginationProps } from "../pagination";
 
 export type TableColumnAlign = "left" | "center" | "right";
 export type TableMobileLayout = "field" | "primary" | "full" | "hidden";
@@ -37,10 +38,14 @@ export type AppTableProps<T> = {
   emptyState?: ReactNode;
   /** Minimum table width before horizontal scrolling is enabled. */
   minWidth?: CSSProperties["minWidth"];
+  /** Minimum component height before the table is allowed to scroll internally. */
+  minHeight?: CSSProperties["minHeight"];
   /** Maximum table height before vertical scrolling is enabled. */
   maxHeight?: CSSProperties["maxHeight"];
   /** Keeps the table heading visible while its rows are scrolled. */
   stickyHeader?: boolean;
+  /** Optional pagination displayed below the table or mobile cards. */
+  pagination?: AppPaginationProps;
   tableProps?: Omit<TableProps, "aria-label" | "children">;
 };
 
@@ -57,27 +62,41 @@ export function Table<T>({
   displayMode = "responsive",
   emptyState = "Нет данных",
   getRowKey,
-  maxHeight = 560,
+  maxHeight,
+  minHeight = 320,
   minWidth = 720,
+  pagination,
   rows,
   stickyHeader = true,
   tableProps,
 }: AppTableProps<T>) {
   return (
-    <div className={cn("w-full min-w-0 max-w-full overflow-hidden", className)}>
+    <div
+      className={cn(
+        "flex min-h-0 w-full min-w-0 max-w-full flex-1 flex-col overflow-hidden rounded-lg border border-border bg-background",
+        className,
+      )}
+      style={{ minHeight }}
+    >
       <div
         className={cn(
-          "w-full min-w-0 max-w-full overflow-hidden rounded-lg border border-border bg-background",
-          displayMode === "responsive" && "hidden md:block",
-          displayMode === "table" && "block",
+          "min-h-0 w-full min-w-0 max-w-full flex-1 flex-col overflow-hidden",
+          displayMode === "responsive" && "hidden md:flex",
+          displayMode === "table" && "flex",
           displayMode === "cards" && "hidden",
         )}
       >
         <MantineTable.ScrollContainer
-          className="w-full min-w-0 max-w-full"
+          className="h-full min-h-0 w-full min-w-0 max-w-full flex-1"
           maxHeight={maxHeight}
           minWidth={minWidth}
           scrollAreaProps={{
+            styles: {
+              viewport: {
+                inset: 0,
+                position: "absolute",
+              },
+            },
             scrollbarSize: 10,
             scrollbars: "xy",
             type: "auto",
@@ -146,7 +165,7 @@ export function Table<T>({
       <div
         aria-label={ariaLabel}
         className={cn(
-          "gap-3",
+          "min-h-0 flex-1 gap-3 overflow-y-auto overscroll-contain p-3",
           displayMode === "responsive" && "grid md:hidden",
           displayMode === "cards" && "grid",
           displayMode === "table" && "hidden",
@@ -172,7 +191,7 @@ export function Table<T>({
 
             return (
               <article
-                className="grid min-w-0 gap-4 rounded-lg border border-border bg-background p-4 shadow-sm"
+                className="relative grid min-w-0 gap-4 rounded-lg border border-border bg-background p-4 shadow-sm"
                 key={getRowKey(row, rowIndex)}
                 role="listitem"
               >
@@ -222,6 +241,12 @@ export function Table<T>({
           </div>
         )}
       </div>
+
+      {pagination ? (
+        <div className="relative z-10 flex shrink-0 justify-center border-t border-border bg-background px-3 py-2 md:justify-end">
+          <Pagination {...pagination} />
+        </div>
+      ) : null}
     </div>
   );
 }

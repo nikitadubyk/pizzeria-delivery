@@ -43,6 +43,7 @@ export {
   type AppPhoneInputProps,
   type PhoneInputValue,
 } from "./phone-input";
+export { Pagination, type AppPaginationProps } from "./pagination";
 export {
   QuantityStepper,
   type QuantityStepperProps,

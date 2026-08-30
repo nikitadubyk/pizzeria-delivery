@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { useState } from "react";
 import { Badge } from "../badge";
 import { Button } from "../button";
 import { Table, type AppTableProps, type TableColumn } from ".";
@@ -195,6 +196,31 @@ const manyColumns: TableColumn<Order>[] = [
   columns[columns.length - 1],
 ];
 
+function PaginatedOrdersTable() {
+  const pageSize = 8;
+  const totalPages = Math.ceil(manyOrders.length / pageSize);
+  const [page, setPage] = useState(1);
+  const pageRows = manyOrders.slice((page - 1) * pageSize, page * pageSize);
+
+  return (
+    <div className="flex h-[600px] min-h-0 flex-col">
+      <Table
+        ariaLabel="Заказы пиццерии с пагинацией"
+        columns={manyColumns}
+        getRowKey={(order) => order.id}
+        minWidth={1900}
+        pagination={{
+          onChange: setPage,
+          total: totalPages,
+          value: page,
+          withEdges: true,
+        }}
+        rows={pageRows}
+      />
+    </div>
+  );
+}
+
 function OrderTable(props: AppTableProps<Order>) {
   return <Table {...props} />;
 }
@@ -202,6 +228,13 @@ function OrderTable(props: AppTableProps<Order>) {
 const meta = {
   title: "UI/Table",
   component: OrderTable,
+  decorators: [
+    (Story) => (
+      <div className="flex h-[calc(100vh-3rem)] min-h-0 shrink-0 flex-col">
+        <Story />
+      </div>
+    ),
+  ],
   args: {
     ariaLabel: "Заказы пиццерии",
     columns,
@@ -210,6 +243,7 @@ const meta = {
     rows: orders,
   },
   parameters: {
+    layout: "fullscreen",
     docs: {
       description: {
         component:
@@ -230,7 +264,7 @@ export const MobileCards: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="max-w-sm">
+      <div className="flex min-h-0 w-full max-w-[24rem] flex-1 flex-col">
         <Story />
       </div>
     ),
@@ -243,7 +277,7 @@ export const TabletWithHorizontalScroll: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="max-w-3xl">
+      <div className="flex min-h-0 w-full max-w-[48rem] flex-1 flex-col">
         <Story />
       </div>
     ),
@@ -266,6 +300,17 @@ export const ManyRowsAndColumns: Story = {
     minWidth: 1900,
     rows: manyOrders,
   },
+  decorators: [
+    (Story) => (
+      <div className="flex h-[600px] min-h-0 flex-col">
+        <Story />
+      </div>
+    ),
+  ],
+};
+
+export const WithPagination: Story = {
+  render: () => <PaginatedOrdersTable />,
 };
 
 export const Empty: Story = {
