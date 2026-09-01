@@ -24,7 +24,7 @@ const createRestaurant = (overrides: Partial<Restaurant> = {}): Restaurant => ({
 const createRepository = (
   overrides: Partial<RestaurantRepository> = {},
 ): RestaurantRepository => ({
-  findMany: async () => [],
+  findPage: async () => ({ items: [], total: 0 }),
   findById: async () => null,
   create: async (_superAdminId, data) => createRestaurant(data),
   update: async (_superAdminId, _restaurantId, data) => createRestaurant(data),
@@ -33,18 +33,22 @@ const createRepository = (
 });
 
 describe("RestaurantService", () => {
-  it("returns all restaurants through the super-admin repository", async () => {
+  it("returns a restaurant page through the super-admin repository", async () => {
     const restaurants = [createRestaurant()];
     const service = new RestaurantService(
       createRepository({
-        findMany: async (superAdminId) => {
+        findPage: async (superAdminId, pagination) => {
           assert.equal(superAdminId, "super-admin-id");
-          return restaurants;
+          assert.deepEqual(pagination, { page: 2, limit: 10 });
+          return { items: restaurants, total: 11 };
         },
       }),
     );
 
-    assert.deepEqual(await service.getAll("super-admin-id"), restaurants);
+    assert.deepEqual(
+      await service.getPage("super-admin-id", { page: 2, limit: 10 }),
+      { items: restaurants, total: 11 },
+    );
   });
 
   it("creates a restaurant with validated input", async () => {

@@ -1,10 +1,14 @@
 import type {
   CreateRestaurantRequest,
+  RestaurantListQuery,
   UpdateRestaurantRequest,
 } from "@/api-contracts";
 import { ApiError, HttpStatus } from "@/app/api/common/api-response";
 import { Prisma, type Restaurant } from "@/app/generated/prisma/client";
-import type { RestaurantRepository } from "@/app/api/restaurants/types";
+import type {
+  RestaurantPage,
+  RestaurantRepository,
+} from "@/app/api/restaurants/types";
 import { getSuperAdminDb } from "@/lib/prisma";
 
 export type { RestaurantRepository } from "@/app/api/restaurants/types";
@@ -41,8 +45,11 @@ const mapRepositoryError = (error: unknown): never => {
 export class RestaurantService {
   constructor(private readonly repository: RestaurantRepository) {}
 
-  getAll(superAdminId: string): Promise<Restaurant[]> {
-    return this.repository.findMany(superAdminId);
+  getPage(
+    superAdminId: string,
+    pagination: Required<RestaurantListQuery>,
+  ): Promise<RestaurantPage> {
+    return this.repository.findPage(superAdminId, pagination);
   }
 
   async getById(
@@ -100,9 +107,18 @@ export class RestaurantService {
 }
 
 const restaurantRepository: RestaurantRepository = {
-  findMany: async (superAdminId) => {
+  findPage: async (superAdminId, { page, limit }) => {
     const db = await getSuperAdminDb(superAdminId);
-    return db.restaurant.findMany({ orderBy: { createdAt: "desc" } });
+    const [items, total] = await db.$transaction([
+      db.restaurant.findMany({
+        orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      db.restaurant.count(),
+    ]);
+
+    return { items, total };
   },
   findById: async (superAdminId, restaurantId) => {
     const db = await getSuperAdminDb(superAdminId);

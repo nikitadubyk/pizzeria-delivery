@@ -23,7 +23,6 @@ const controlLabels = {
 export function Pagination({
   ariaLabel = "Навигация по страницам",
   className,
-  formatLabel = ({ page, totalPages }) => `Страница ${page} из ${totalPages}`,
   getControlProps,
   radius = "xl",
   size = "md",
@@ -45,12 +44,11 @@ export function Pagination({
           label: "font-bold text-text",
         }}
         color="brand"
-        formatLabel={formatLabel}
         getControlProps={(control) => ({
           "aria-label": controlLabels[control],
           ...getControlProps?.(control),
         })}
-        layout="responsive"
+        layout="default"
         radius={radius}
         size={size}
         {...props}

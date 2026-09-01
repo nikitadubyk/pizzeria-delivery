@@ -7,6 +7,8 @@ import {
   interactiveTransitionClassName,
 } from "@/lib/class-names";
 
+export type AppToggleProps = SwitchProps;
+
 const toggleRootClassName = cn(
   "group/toggle cursor-pointer hover:text-primary-hover hover:[&_.mantine-Switch-description]:!text-primary-hover hover:[&_.mantine-Switch-label]:!text-primary-hover hover:[&_.mantine-Switch-track]:!bg-surface-muted has-[input:checked]:hover:[&_.mantine-Switch-track]:!bg-primary-hover has-[input:disabled]:cursor-not-allowed has-[input:disabled]:hover:text-text has-[input:disabled]:hover:[&_.mantine-Switch-description]:!text-muted has-[input:disabled]:hover:[&_.mantine-Switch-label]:!text-text has-[input:disabled]:hover:[&_.mantine-Switch-track]:!bg-[var(--switch-bg)]",
   interactiveTransitionClassName,
@@ -35,7 +37,7 @@ const toggleSlotClassNames = {
   trackLabel: "",
 };
 
-export function Toggle({ className, classNames, ...props }: SwitchProps) {
+export function Toggle({ className, classNames, ...props }: AppToggleProps) {
   const mergedClassNames =
     typeof classNames === "function"
       ? classNames

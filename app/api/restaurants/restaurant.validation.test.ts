@@ -3,11 +3,33 @@ import { describe, it } from "node:test";
 
 import {
   createRestaurantRequestSchema,
+  restaurantListQuerySchema,
   restaurantPathParamsSchema,
   updateRestaurantRequestSchema,
 } from "./restaurant.validation";
 
 describe("restaurant request validation", () => {
+  it("applies default restaurant list pagination", async () => {
+    const result = await restaurantListQuerySchema.validate({});
+
+    assert.deepEqual(result, { page: 1, limit: 10 });
+  });
+
+  it("casts valid restaurant list query strings to numbers", async () => {
+    const result = await restaurantListQuerySchema.validate({
+      page: "2",
+      limit: "25",
+    });
+
+    assert.deepEqual(result, { page: 2, limit: 25 });
+  });
+
+  it("rejects invalid restaurant list pagination", async () => {
+    await assert.rejects(
+      restaurantListQuerySchema.validate({ page: "0", limit: "101" }),
+    );
+  });
+
   it("normalizes a valid create request", async () => {
     const result = await createRestaurantRequestSchema.validate({
       name: "  Pizza Place  ",

@@ -1,19 +1,43 @@
-import type { CreateRestaurantRequest, RestaurantDto } from "@/api-contracts";
+import type {
+  CreateRestaurantRequest,
+  RestaurantDto,
+  RestaurantListQuery,
+  RestaurantListResponse,
+} from "@/api-contracts";
 import { ApiResponse, HttpStatus } from "@/app/api/common/api-response";
-import { validateRequestBody } from "@/app/api/common/validate-request";
+import {
+  validateRequestBody,
+  validateRequestData,
+} from "@/app/api/common/validate-request";
 import { toRestaurantDto } from "@/app/api/restaurants/restaurant.mapper";
 import { restaurantService } from "@/app/api/restaurants/restaurant.service";
-import { createRestaurantRequestSchema } from "@/app/api/restaurants/restaurant.validation";
+import {
+  createRestaurantRequestSchema,
+  restaurantListQuerySchema,
+} from "@/app/api/restaurants/restaurant.validation";
 import { getSuperAdminId } from "@/app/api/super-admin/auth";
 
 export const GET = async (request: Request) => {
   try {
     const superAdminId = await getSuperAdminId(request);
-    const restaurants = await restaurantService.getAll(superAdminId);
+    const searchParams = Object.fromEntries(new URL(request.url).searchParams);
+    const { page, limit } = await validateRequestData<
+      Required<RestaurantListQuery>
+    >(searchParams, restaurantListQuerySchema);
+    const { items, total } = await restaurantService.getPage(superAdminId, {
+      page,
+      limit,
+    });
 
-    return ApiResponse.success<RestaurantDto[]>(
-      restaurants.map(toRestaurantDto),
-    );
+    return ApiResponse.success<RestaurantListResponse>({
+      items: items.map(toRestaurantDto),
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
   } catch (error) {
     return ApiResponse.fromError(error, "Не удалось получить рестораны");
   }

@@ -1,11 +1,20 @@
 import type {
   CreateRestaurantRequest,
+  RestaurantListQuery,
   UpdateRestaurantRequest,
 } from "@/api-contracts";
 import type { Restaurant } from "@/app/generated/prisma/client";
 
+export type RestaurantPage = {
+  items: Restaurant[];
+  total: number;
+};
+
 export interface RestaurantRepository {
-  findMany(superAdminId: string): Promise<Restaurant[]>;
+  findPage(
+    superAdminId: string,
+    pagination: Required<RestaurantListQuery>,
+  ): Promise<RestaurantPage>;
   findById(
     superAdminId: string,
     restaurantId: string,

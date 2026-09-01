@@ -1,4 +1,6 @@
 import {
+  RESTAURANT_LIST_DEFAULT_LIMIT,
+  RESTAURANT_LIST_MAX_LIMIT,
   RESTAURANT_NAME_MAX_LENGTH,
   RESTAURANT_SLUG_MAX_LENGTH,
   RESTAURANT_SLUG_PATTERN,
@@ -32,6 +34,23 @@ const slugSchema = yup
 const statusSchema = yup
   .mixed<(typeof RESTAURANT_STATUSES)[number]>()
   .oneOf(RESTAURANT_STATUSES, "Некорректный статус ресторана");
+
+export const restaurantListQuerySchema = yup.object({
+  page: yup
+    .number()
+    .integer("Номер страницы должен быть целым числом")
+    .min(1, "Номер страницы должен быть не меньше 1")
+    .default(1),
+  limit: yup
+    .number()
+    .integer("Размер страницы должен быть целым числом")
+    .min(1, "Размер страницы должен быть не меньше 1")
+    .max(
+      RESTAURANT_LIST_MAX_LIMIT,
+      `Размер страницы не должен превышать ${RESTAURANT_LIST_MAX_LIMIT}`,
+    )
+    .default(RESTAURANT_LIST_DEFAULT_LIMIT),
+});
 
 export const restaurantPathParamsSchema = yup.object({
   restaurantId: yup

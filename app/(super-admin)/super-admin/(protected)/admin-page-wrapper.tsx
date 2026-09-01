@@ -11,8 +11,13 @@ export const AdminPageWrapper = ({
   children,
   className,
 }: AdminPageWrapperProps) => (
-  <main className="w-full p-lg sm:p-xl">
-    <div className={cn("mx-auto grid w-full max-w-7xl gap-lg", className)}>
+  <main className="h-full min-h-0 w-full p-md md:p-xl">
+    <div
+      className={cn(
+        "mx-auto grid h-full min-h-0 w-full max-w-7xl gap-lg",
+        className,
+      )}
+    >
       {children}
     </div>
   </main>

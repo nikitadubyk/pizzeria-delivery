@@ -8,6 +8,8 @@ import {
 import { cn, interactiveTransitionClassName } from "@/lib/class-names";
 import type { ReactNode } from "react";
 
+export type AppCheckboxProps = CheckboxProps;
+
 const checkboxRootClassName = cn(
   "group/checkbox cursor-pointer hover:text-primary-active hover:[&_.mantine-Checkbox-description]:!text-primary-active hover:[&_.mantine-Checkbox-input]:!border-primary-hover hover:[&_.mantine-Checkbox-input]:!bg-primary-soft hover:[&_.mantine-Checkbox-label]:!text-primary-active [&:hover:has(input:checked:not(:disabled))_.mantine-Checkbox-input]:!border-primary [&:hover:has(input:checked:not(:disabled))_.mantine-Checkbox-input]:!bg-primary has-[input:disabled]:cursor-not-allowed has-[input:disabled]:hover:text-text has-[input:disabled]:hover:[&_.mantine-Checkbox-description]:!text-muted has-[input:disabled]:hover:[&_.mantine-Checkbox-input]:!border-[var(--mantine-color-disabled-border)] has-[input:disabled]:hover:[&_.mantine-Checkbox-input]:!bg-[var(--mantine-color-disabled)] has-[input:disabled]:hover:[&_.mantine-Checkbox-label]:!text-text",
   interactiveTransitionClassName,
@@ -39,7 +41,7 @@ const checkboxCardPaddingClassNames = {
   dense: "!min-h-[40px] !p-2",
 };
 
-export function Checkbox({ className, classNames, ...props }: CheckboxProps) {
+export function Checkbox({ className, classNames, ...props }: AppCheckboxProps) {
   const mergedClassNames =
     typeof classNames === "function"
       ? classNames

@@ -67,7 +67,7 @@ const toneClassNames: Record<
 };
 
 const dialogSlotClassNames = {
-  body: "!px-5 !pb-5 !pt-0 sm:!px-6 sm:!pb-6",
+  body: "!px-4 !pb-4 !pt-0 sm:!px-6 sm:!pb-6",
   close: cn(
     "!cursor-pointer !rounded-full !text-muted hover:!bg-primary-soft hover:!text-primary-active active:!scale-95 focus-visible:!outline focus-visible:!outline-2 focus-visible:!outline-offset-2 focus-visible:!outline-primary-active",
     interactiveMotionTransitionClassName,
@@ -75,7 +75,7 @@ const dialogSlotClassNames = {
   content:
     "!overflow-hidden !border !border-border !bg-background !text-text shadow-[0_24px_60px_rgb(36_25_17_/_18%)]",
   header:
-    "!items-start !gap-sm !border-b !border-border !bg-background !px-5 !py-4 sm:!px-6",
+    "!items-start !gap-sm !border-b !border-border !bg-background !px-4 !py-3 sm:!px-6 sm:!py-4",
   title: "!min-w-0 !text-lg !font-extrabold !leading-snug !text-text",
 };
 
@@ -111,7 +111,7 @@ export function Dialog({
         <span
           aria-hidden="true"
           className={cn(
-            "grid size-10 shrink-0 place-items-center rounded-full border",
+            "grid size-9 shrink-0 place-items-center rounded-full border sm:size-10",
             toneClassNames[tone].icon,
           )}
         >
@@ -144,7 +144,10 @@ export function Dialog({
       {withAccent ? (
         <div
           aria-hidden="true"
-          className={cn("-mx-5 mb-5 h-1 sm:-mx-6", toneClassNames[tone].accent)}
+          className={cn(
+            "-mx-4 mb-4 h-1 sm:-mx-6 sm:mb-5",
+            toneClassNames[tone].accent,
+          )}
         />
       ) : null}
 
@@ -156,7 +159,7 @@ export function Dialog({
         {children ? <div className="min-w-0 text-text">{children}</div> : null}
 
         {actions ? (
-          <div className="flex flex-col-reverse gap-2 border-t border-border pt-md [&>*]:max-w-full sm:flex-row sm:flex-wrap sm:justify-end">
+          <div className="flex flex-col-reverse gap-2 border-t border-border pt-md [&>*]:w-full md:flex-row md:flex-wrap md:justify-end md:[&>*]:w-auto">
             {actions}
           </div>
         ) : null}

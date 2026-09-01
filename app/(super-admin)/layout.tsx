@@ -10,7 +10,7 @@ type SuperAdminLayoutProps = {
 };
 
 const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => (
-  <div className="flex min-h-screen flex-1 bg-surface text-text">
+  <div className="flex h-dvh min-h-screen flex-1 overflow-hidden bg-surface text-text">
     {children}
   </div>
 );

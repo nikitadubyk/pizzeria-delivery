@@ -1,1 +1,6 @@
-export { Input, PasswordInput } from "./input";
+export {
+  Input,
+  PasswordInput,
+  type AppInputProps,
+  type AppPasswordInputProps,
+} from "./input";

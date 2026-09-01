@@ -8,6 +8,9 @@ import {
 } from "@mantine/core";
 import { cn, interactiveMotionTransitionClassName } from "@/lib/class-names";
 
+export type AppInputProps = TextInputProps;
+export type AppPasswordInputProps = PasswordInputProps;
+
 const inputClassName =
   cn(
     "min-h-11 w-full min-w-0 !cursor-text !border-border !bg-background !text-text hover:!border-primary-hover hover:!bg-primary-soft focus:!border-primary-active focus:!shadow-[0_0_0_2px_var(--app-color-primary-soft)] disabled:!cursor-not-allowed disabled:hover:!border-border disabled:hover:!bg-background",
@@ -22,7 +25,7 @@ const inputSlotClassNames = {
   wrapper: "w-full min-w-0",
 };
 
-export function Input({ className, classNames, ...props }: TextInputProps) {
+export function Input({ className, classNames, ...props }: AppInputProps) {
   const mergedClassNames =
     typeof classNames === "function"
       ? classNames
@@ -49,7 +52,7 @@ export function PasswordInput({
   className,
   classNames,
   ...props
-}: PasswordInputProps) {
+}: AppPasswordInputProps) {
   const mergedClassNames =
     typeof classNames === "function"
       ? classNames

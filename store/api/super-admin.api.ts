@@ -3,6 +3,8 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import type {
   CreateRestaurantRequest,
   RestaurantDto,
+  RestaurantListQuery,
+  RestaurantListResponse,
   RestaurantPathParams,
   SuperAdminLoginRequest,
   SuperAdminLoginResponse,
@@ -35,10 +37,14 @@ export const superAdminApi = createApi({
         data: body,
       }),
     }),
-    getRestaurants: builder.query<RestaurantDto[], void>({
-      query: () => ({
+    getRestaurants: builder.query<
+      RestaurantListResponse,
+      Required<RestaurantListQuery>
+    >({
+      query: (params) => ({
         url: URL.SUPER_ADMIN_RESTAURANTS,
         method: "GET",
+        params,
       }),
       providesTags: [RESTAURANT_TAG],
     }),

@@ -118,7 +118,7 @@ export const AdminShell = ({ children }: AdminShellProps) => {
   };
 
   return (
-    <div className="grid min-h-screen w-full md:grid-cols-[260px_minmax(0,1fr)]">
+    <div className="grid h-full min-h-screen w-full overflow-hidden md:grid-cols-[260px_minmax(0,1fr)]">
       <Drawer
         onClose={menuHandlers.close}
         opened={menuOpened}
@@ -160,15 +160,15 @@ export const AdminShell = ({ children }: AdminShellProps) => {
         </div>
       </Drawer>
 
-      <aside className="hidden border-r border-border bg-secondary-active p-lg text-white md:block">
+      <aside className="hidden min-h-0 overflow-y-auto border-r border-border bg-secondary-active p-lg text-white md:block">
         <div className="mb-xl">
           <AdminBrand />
         </div>
         <AdminNavigation pathname={pathname} />
       </aside>
 
-      <div className="flex min-w-0 flex-col">
-        <header className="sticky top-0 z-20 flex min-h-16 items-center gap-xs border-b border-border bg-background px-md shadow-sm sm:px-lg">
+      <div className="flex min-h-0 min-w-0 flex-col">
+        <header className="sticky top-0 z-20 flex min-h-16 shrink-0 items-center gap-xs border-b border-border bg-background px-md shadow-sm sm:px-lg">
           <button
             aria-label="Открыть меню"
             className="mr-xs grid size-10 shrink-0 place-items-center rounded-xl bg-primary-soft text-primary transition-colors hover:bg-primary hover:text-primary-contrast focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:hidden"
@@ -187,7 +187,7 @@ export const AdminShell = ({ children }: AdminShellProps) => {
           </Button>
         </header>
 
-        <div className="min-w-0 flex-1">{children}</div>
+        <div className="min-h-0 min-w-0 flex-1 overflow-y-auto">{children}</div>
       </div>
     </div>
   );
