@@ -31,8 +31,8 @@ one restaurant rather than across the entire platform.
 `User` is the only current exception to the required `restaurantId` rule because
 it can represent a global super administrator. Its invariants are:
 
-- `SUPER_ADMIN`: `restaurantId` must be `null`; `phone` may be `null`; can work
-  across tenants;
+- `SUPER_ADMIN`: exactly one global account may exist; `restaurantId` must be
+  `null`; `phone` may be `null`; it can work across tenants;
 - `OWNER`: `restaurantId` must reference the owned restaurant and `phone` is
   required;
 - `EMPLOYEE`: `restaurantId` must reference the employing restaurant and
@@ -46,7 +46,8 @@ User passwords are stored as bcrypt hashes in `User.password`; plaintext
 passwords must never be persisted. The database seed provisions the global
 administrator from `SUPER_ADMIN_EMAIL`, `SUPER_ADMIN_PASSWORD`, and the optional
 `SUPER_ADMIN_NAME` environment variable. Re-running the seed updates that
-administrator's credentials and reactivates the account.
+single administrator's email, credentials, and active state. A partial unique
+database index prevents creating a second `SUPER_ADMIN` account.
 
 Prisma Schema Language cannot express these conditional rules for
 `restaurantId` and `phone`. Application services must enforce them, and the

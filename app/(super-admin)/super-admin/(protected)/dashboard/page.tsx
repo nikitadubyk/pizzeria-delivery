@@ -1,24 +1,8 @@
-import { Typography } from "@/components/ui";
+import { redirect } from "next/navigation";
 
-import { AdminPageWrapper } from "../admin-page-wrapper";
+import { ROUTES } from "@/config/routes";
 
-const SuperAdminDashboardPage = () => (
-  <AdminPageWrapper>
-    <div>
-      <Typography muted variant="eyebrow">
-        Доставка еды
-      </Typography>
-      <Typography variant="h1">Панель Super Admin</Typography>
-    </div>
-
-    <section className="rounded-2xl border border-border bg-background p-lg shadow-sm sm:p-xl">
-      <Typography variant="h3">Добро пожаловать</Typography>
-      <Typography className="mt-xs" muted>
-        Здесь будет находиться управление пиццериями и администраторами
-        платформы.
-      </Typography>
-    </section>
-  </AdminPageWrapper>
-);
+const SuperAdminDashboardPage = () =>
+  redirect(ROUTES.SUPER_ADMIN.RESTAURANTS);
 
 export default SuperAdminDashboardPage;

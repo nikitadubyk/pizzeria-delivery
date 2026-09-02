@@ -2,7 +2,13 @@
 
 import { Table as MantineTable, type TableProps } from "@mantine/core";
 import { cn } from "@/lib/class-names";
-import type { CSSProperties, Key, ReactNode } from "react";
+import type {
+  CSSProperties,
+  KeyboardEvent,
+  Key,
+  MouseEvent,
+  ReactNode,
+} from "react";
 import { Pagination, type AppPaginationProps } from "../pagination";
 
 export type TableColumnAlign = "left" | "center" | "right";
@@ -32,6 +38,10 @@ export type AppTableProps<T> = {
   columns: readonly TableColumn<T>[];
   rows: readonly T[];
   getRowKey: (row: T, rowIndex: number) => Key;
+  /** Accessible label for an interactive row. */
+  getRowAriaLabel?: (row: T, rowIndex: number) => string;
+  /** Makes both the desktop row and mobile card keyboard-accessible. */
+  onRowClick?: (row: T, rowIndex: number) => void;
   className?: string;
   /** Override the responsive view, useful for embedded layouts and visual tests. */
   displayMode?: TableDisplayMode;
@@ -62,14 +72,45 @@ export function Table<T>({
   displayMode = "responsive",
   emptyState = "Нет данных",
   getRowKey,
+  getRowAriaLabel,
   maxHeight,
   minHeight = 320,
   minWidth = 720,
+  onRowClick,
   pagination,
   rows,
   stickyHeader = true,
   tableProps,
 }: AppTableProps<T>) {
+  const isInteractiveTarget = (target: EventTarget | null) =>
+    target instanceof Element &&
+    Boolean(
+      target.closest("button, a, input, select, textarea, [role='button']"),
+    );
+
+  const getInteractiveRowProps = (row: T, rowIndex: number) => {
+    if (!onRowClick) return {};
+
+    return {
+      "aria-label": getRowAriaLabel?.(row, rowIndex),
+      onClick: (event: MouseEvent<HTMLElement>) => {
+        if (!isInteractiveTarget(event.target)) onRowClick(row, rowIndex);
+      },
+      onKeyDown: (event: KeyboardEvent<HTMLElement>) => {
+        if (
+          event.target !== event.currentTarget ||
+          (event.key !== "Enter" && event.key !== " ")
+        ) {
+          return;
+        }
+
+        event.preventDefault();
+        onRowClick(row, rowIndex);
+      },
+      tabIndex: 0,
+    };
+  };
+
   return (
     <div
       className={cn(
@@ -133,7 +174,14 @@ export function Table<T>({
             <MantineTable.Tbody>
               {rows.length > 0 ? (
                 rows.map((row, rowIndex) => (
-                  <MantineTable.Tr key={getRowKey(row, rowIndex)}>
+                  <MantineTable.Tr
+                    className={cn(
+                      onRowClick &&
+                        "cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary-active",
+                    )}
+                    key={getRowKey(row, rowIndex)}
+                    {...getInteractiveRowProps(row, rowIndex)}
+                  >
                     {columns.map((column) => (
                       <MantineTable.Td
                         className={cn(
@@ -191,9 +239,14 @@ export function Table<T>({
 
             return (
               <article
-                className="relative grid min-w-0 gap-3 rounded-lg border border-border bg-background p-3 shadow-sm md:gap-4 md:p-4"
+                className={cn(
+                  "relative grid min-w-0 gap-3 rounded-lg border border-border bg-background p-3 shadow-sm md:gap-4 md:p-4",
+                  onRowClick &&
+                    "cursor-pointer transition-colors hover:bg-surface focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary-active",
+                )}
                 key={getRowKey(row, rowIndex)}
                 role="listitem"
+                {...getInteractiveRowProps(row, rowIndex)}
               >
                 {primaryColumns.length > 0 ? (
                   <header className="grid gap-1 border-b border-border pb-2 text-lg font-extrabold leading-snug text-text md:pb-3">

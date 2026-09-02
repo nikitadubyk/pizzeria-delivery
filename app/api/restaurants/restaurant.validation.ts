@@ -5,7 +5,7 @@ import {
   RESTAURANT_SLUG_MAX_LENGTH,
   RESTAURANT_SLUG_PATTERN,
   RESTAURANT_STATUSES,
-} from "@/app/api/restaurants/config";
+} from "@/api-contracts";
 import * as yup from "yup";
 
 const nameSchema = yup

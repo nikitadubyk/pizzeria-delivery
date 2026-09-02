@@ -29,10 +29,10 @@ async function main() {
   const passwordHash = await bcrypt.hash(password, BCRYPT_ROUNDS);
   const existingSuperAdmin = await prisma.user.findFirst({
     where: {
-      email: { equals: email, mode: "insensitive" },
       role: "SUPER_ADMIN",
       restaurantId: null,
     },
+    orderBy: [{ createdAt: "asc" }, { id: "asc" }],
     select: { id: true },
   });
 
@@ -40,6 +40,7 @@ async function main() {
     ? await prisma.user.update({
         where: { id: existingSuperAdmin.id },
         data: {
+          email,
           name,
           password: passwordHash,
           phone: null,

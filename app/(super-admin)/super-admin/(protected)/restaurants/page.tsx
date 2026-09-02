@@ -40,7 +40,7 @@ const statusPresentation: Record<
   ARCHIVED: { label: "В архиве", tone: "neutral" },
 };
 
-const createdAtFormatter = new Intl.DateTimeFormat("ru-RU", {
+const dateTimeFormatter = new Intl.DateTimeFormat("ru-RU", {
   dateStyle: "medium",
   timeStyle: "short",
 });
@@ -81,9 +81,10 @@ const restaurantColumns: readonly TableColumn<RestaurantDto>[] = [
   {
     key: "createdAt",
     header: "Создан",
+    mobileFullWidth: true,
     render: (restaurant) => (
       <time className="whitespace-nowrap" dateTime={restaurant.createdAt}>
-        {createdAtFormatter.format(new Date(restaurant.createdAt))}
+        {dateTimeFormatter.format(new Date(restaurant.createdAt))}
       </time>
     ),
     width: 190,
@@ -97,6 +98,10 @@ const SuperAdminRestaurantsPage = () => {
     useState<RestaurantDto | null>(null);
   const [restaurantToDelete, setRestaurantToDelete] =
     useState<RestaurantDto | null>(null);
+  const [deleteDialogOpened, setDeleteDialogOpened] = useState(false);
+  const [restaurantDetails, setRestaurantDetails] =
+    useState<RestaurantDto | null>(null);
+  const [detailsOpened, setDetailsOpened] = useState(false);
   const [deleteRestaurant, { isLoading: isDeleting }] =
     useDeleteRestaurantMutation();
   const { data, isError, refetch } = useGetRestaurantsQuery({
@@ -106,6 +111,11 @@ const SuperAdminRestaurantsPage = () => {
   const restaurants = data?.items ?? [];
   const total = data?.pagination.total ?? 0;
   const totalPages = Math.max(1, data?.pagination.totalPages ?? 1);
+  const openDetailsDialog = (restaurant: RestaurantDto) => {
+    setRestaurantDetails(restaurant);
+    setDetailsOpened(true);
+  };
+  const closeDetailsDialog = () => setDetailsOpened(false);
   const openCreateDialog = () => {
     setEditingRestaurant(null);
     setFormOpened(true);
@@ -115,8 +125,12 @@ const SuperAdminRestaurantsPage = () => {
     setFormOpened(true);
   };
   const closeFormDialog = () => setFormOpened(false);
+  const openDeleteDialog = (restaurant: RestaurantDto) => {
+    setRestaurantToDelete(restaurant);
+    setDeleteDialogOpened(true);
+  };
   const closeDeleteDialog = () => {
-    if (!isDeleting) setRestaurantToDelete(null);
+    if (!isDeleting) setDeleteDialogOpened(false);
   };
   const handleDelete = async () => {
     if (!restaurantToDelete) return;
@@ -126,7 +140,7 @@ const SuperAdminRestaurantsPage = () => {
         restaurantId: restaurantToDelete.id,
       }).unwrap();
       showSuccessNotification({ message: "Ресторан удалён" });
-      setRestaurantToDelete(null);
+      setDeleteDialogOpened(false);
 
       if (restaurants.length === 1 && page > 1) {
         setPage((currentPage) => currentPage - 1);
@@ -143,7 +157,10 @@ const SuperAdminRestaurantsPage = () => {
       align: "right",
       mobileLayout: "full",
       render: (restaurant) => (
-        <div className="grid w-full grid-cols-1 gap-xs md:flex md:w-auto md:flex-nowrap md:justify-end">
+        <div
+          className="grid w-full grid-cols-1 gap-xs md:flex md:w-auto md:flex-nowrap md:justify-end"
+          onClick={(event) => event.stopPropagation()}
+        >
           <Button
             className="w-full whitespace-nowrap md:w-auto"
             leftSection={<IconEdit aria-hidden="true" size={16} />}
@@ -156,7 +173,7 @@ const SuperAdminRestaurantsPage = () => {
           <Button
             className="w-full whitespace-nowrap !text-danger hover:!bg-danger-soft md:w-auto"
             leftSection={<IconTrash aria-hidden="true" size={16} />}
-            onClick={() => setRestaurantToDelete(restaurant)}
+            onClick={() => openDeleteDialog(restaurant)}
             size="xs"
             variant="ghost"
           >
@@ -176,7 +193,9 @@ const SuperAdminRestaurantsPage = () => {
             <Typography muted variant="eyebrow">
               Управление платформой
             </Typography>
-            <Typography variant="h1">Рестораны</Typography>
+            <Typography className="!text-2xl sm:!text-4xl" variant="h1">
+              Рестораны
+            </Typography>
           </div>
           <Button
             className="w-full md:w-auto"
@@ -202,7 +221,7 @@ const SuperAdminRestaurantsPage = () => {
             title="Не удалось загрузить рестораны"
           />
         ) : (
-          <div className="flex h-full min-h-0 min-w-0 flex-col gap-xs">
+          <div className="flex min-h-0 min-w-0 flex-col gap-xs overflow-hidden">
             <div className="flex justify-end">
               <Typography muted variant="caption">
                 Всего: {total}
@@ -211,9 +230,12 @@ const SuperAdminRestaurantsPage = () => {
 
             <Table
               ariaLabel="Список ресторанов"
-              className="h-full !min-h-0"
+              className="[&_[role=list]]:!h-0 [&_[role=list]]:touch-pan-y"
               columns={columns}
               emptyState="Рестораны пока не добавлены"
+              getRowAriaLabel={(restaurant) =>
+                `Открыть информацию о ресторане ${restaurant.name}`
+              }
               getRowKey={(restaurant) => restaurant.id}
               minWidth={930}
               pagination={{
@@ -223,6 +245,7 @@ const SuperAdminRestaurantsPage = () => {
                 value: page,
                 withEdges: true,
               }}
+              onRowClick={openDetailsDialog}
               rows={restaurants}
             />
           </div>
@@ -234,6 +257,80 @@ const SuperAdminRestaurantsPage = () => {
         opened={formOpened}
         restaurant={editingRestaurant}
       />
+
+      <Dialog
+        actions={
+          <Button onClick={closeDetailsDialog} variant="secondary">
+            Закрыть
+          </Button>
+        }
+        description="Полная информация о ресторане."
+        icon={<IconBuildingStore size={22} />}
+        onClose={closeDetailsDialog}
+        onExitTransitionEnd={() => setRestaurantDetails(null)}
+        opened={detailsOpened}
+        size="lg"
+        title={restaurantDetails?.name ?? "Информация о ресторане"}
+      >
+        {restaurantDetails ? (
+          <div className="max-h-[calc(100dvh-16rem)] overflow-y-auto overscroll-contain pr-xs">
+            <dl className="m-0 grid grid-cols-1 gap-x-lg gap-y-md sm:grid-cols-2">
+              <div className="grid min-w-0 gap-1 sm:col-span-2">
+                <dt className="text-xs font-bold text-muted">Название</dt>
+                <dd className="m-0 break-words font-extrabold">
+                  {restaurantDetails.name}
+                </dd>
+              </div>
+              <div className="grid min-w-0 gap-1">
+                <dt className="text-xs font-bold text-muted">Slug</dt>
+                <dd className="m-0">
+                  <code className="break-all rounded bg-surface-muted px-2 py-1 text-xs text-secondary">
+                    {restaurantDetails.slug}
+                  </code>
+                </dd>
+              </div>
+              <div className="grid min-w-0 gap-1">
+                <dt className="text-xs font-bold text-muted">Статус</dt>
+                <dd className="m-0">
+                  <Badge
+                    tone={statusPresentation[restaurantDetails.status].tone}
+                  >
+                    {statusPresentation[restaurantDetails.status].label}
+                  </Badge>
+                </dd>
+              </div>
+              <div className="grid min-w-0 gap-1 sm:col-span-2">
+                <dt className="text-xs font-bold text-muted">ID ресторана</dt>
+                <dd className="m-0">
+                  <code className="break-all text-xs text-secondary">
+                    {restaurantDetails.id}
+                  </code>
+                </dd>
+              </div>
+              <div className="grid min-w-0 gap-1">
+                <dt className="text-xs font-bold text-muted">Создан</dt>
+                <dd className="m-0 font-semibold">
+                  <time dateTime={restaurantDetails.createdAt}>
+                    {dateTimeFormatter.format(
+                      new Date(restaurantDetails.createdAt),
+                    )}
+                  </time>
+                </dd>
+              </div>
+              <div className="grid min-w-0 gap-1">
+                <dt className="text-xs font-bold text-muted">Обновлён</dt>
+                <dd className="m-0 font-semibold">
+                  <time dateTime={restaurantDetails.updatedAt}>
+                    {dateTimeFormatter.format(
+                      new Date(restaurantDetails.updatedAt),
+                    )}
+                  </time>
+                </dd>
+              </div>
+            </dl>
+          </div>
+        ) : null}
+      </Dialog>
 
       <Dialog
         actions={
@@ -261,7 +358,8 @@ const SuperAdminRestaurantsPage = () => {
         description="Это действие нельзя отменить. Связанные пользователи ресторана также будут удалены."
         icon={<IconTrash size={22} />}
         onClose={closeDeleteDialog}
-        opened={restaurantToDelete !== null}
+        onExitTransitionEnd={() => setRestaurantToDelete(null)}
+        opened={deleteDialogOpened}
         title="Удалить ресторан?"
         tone="danger"
       >

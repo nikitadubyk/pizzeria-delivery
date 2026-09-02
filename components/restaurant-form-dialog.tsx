@@ -4,19 +4,15 @@ import { IconBuildingStore, IconEdit } from "@tabler/icons-react";
 import { Form, Formik, type FormikHelpers } from "formik";
 import * as yup from "yup";
 
-import type { RestaurantDto, RestaurantStatus } from "@/api-contracts";
 import {
   RESTAURANT_NAME_MAX_LENGTH,
   RESTAURANT_SLUG_MAX_LENGTH,
   RESTAURANT_SLUG_PATTERN,
   RESTAURANT_STATUSES,
-} from "@/app/api/restaurants/config";
-import {
-  Button,
-  Dialog,
-  InputField,
-  SelectField,
-} from "@/components/ui";
+  type RestaurantDto,
+  type RestaurantStatus,
+} from "@/api-contracts";
+import { Button, Dialog, InputField, SelectField } from "@/components/ui";
 import { showSuccessNotification } from "@/components/ui/notification";
 import {
   useCreateRestaurantMutation,
@@ -61,9 +57,7 @@ const restaurantFormValidationSchema: yup.ObjectSchema<RestaurantFormValues> =
       .lowercase()
       .max(
         RESTAURANT_SLUG_MAX_LENGTH,
-        "Slug не должен превышать " +
-          RESTAURANT_SLUG_MAX_LENGTH +
-          " символов",
+        "Slug не должен превышать " + RESTAURANT_SLUG_MAX_LENGTH + " символов",
       )
       .matches(
         RESTAURANT_SLUG_PATTERN,
@@ -175,11 +169,7 @@ export const RestaurantFormDialog = ({
             opened={opened}
             title={isEditing ? "Редактировать ресторан" : "Новый ресторан"}
           >
-            <Form
-              className="grid gap-md"
-              id={RESTAURANT_FORM_ID}
-              noValidate
-            >
+            <Form className="grid gap-md" id={RESTAURANT_FORM_ID} noValidate>
               <InputField
                 autoComplete="organization"
                 label="Название"

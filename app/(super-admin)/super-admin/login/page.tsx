@@ -37,7 +37,7 @@ const SuperAdminLoginPage = () => {
       showSuccessNotification({
         message: "Добро пожаловать в панель управления",
       });
-      router.replace(ROUTES.SUPER_ADMIN.DASHBOARD);
+      router.replace(ROUTES.SUPER_ADMIN.RESTAURANTS);
     } catch {
       // Axios interceptor displays the API error notification.
     }

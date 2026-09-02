@@ -2,7 +2,6 @@
 
 import {
   IconBuildingStore,
-  IconLayoutDashboard,
   IconLogout,
   IconMenu2,
   IconPizza,
@@ -41,11 +40,6 @@ type AdminNavigationProps = {
 };
 
 const menuItems: MenuItem[] = [
-  {
-    href: ROUTES.SUPER_ADMIN.DASHBOARD,
-    icon: IconLayoutDashboard,
-    label: "Главная",
-  },
   {
     href: ROUTES.SUPER_ADMIN.RESTAURANTS,
     icon: IconBuildingStore,
@@ -118,7 +112,7 @@ export const AdminShell = ({ children }: AdminShellProps) => {
   };
 
   return (
-    <div className="grid h-full min-h-screen w-full overflow-hidden md:grid-cols-[260px_minmax(0,1fr)]">
+    <div className="grid h-dvh min-h-0 w-full overflow-hidden md:grid-cols-[260px_minmax(0,1fr)]">
       <Drawer
         onClose={menuHandlers.close}
         opened={menuOpened}
@@ -167,7 +161,7 @@ export const AdminShell = ({ children }: AdminShellProps) => {
         <AdminNavigation pathname={pathname} />
       </aside>
 
-      <div className="flex min-h-0 min-w-0 flex-col">
+      <div className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden">
         <header className="sticky top-0 z-20 flex min-h-16 shrink-0 items-center gap-xs border-b border-border bg-background px-md shadow-sm sm:px-lg">
           <button
             aria-label="Открыть меню"
@@ -187,7 +181,9 @@ export const AdminShell = ({ children }: AdminShellProps) => {
           </Button>
         </header>
 
-        <div className="min-h-0 min-w-0 flex-1 overflow-y-auto">{children}</div>
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+          {children}
+        </div>
       </div>
     </div>
   );
