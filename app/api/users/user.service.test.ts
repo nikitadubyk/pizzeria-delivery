@@ -18,6 +18,7 @@ const createSuperAdmin = (overrides: Partial<User> = {}): User => ({
   password: "",
   role: "SUPER_ADMIN",
   isActive: true,
+  authVersion: 0,
   createdAt: dayjs("2026-01-01T00:00:00Z").toDate(),
   updatedAt: dayjs("2026-01-01T00:00:00Z").toDate(),
   ...overrides,

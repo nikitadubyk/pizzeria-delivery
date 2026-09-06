@@ -8,11 +8,7 @@ import type {
   SuperAdminUserDto,
   UpdateRestaurantUserRequest,
 } from "@/api-contracts";
-import {
-  BCRYPT_ROUNDS,
-  TokenSecret,
-  TOKEN_SECRET_MIN_LENGTH,
-} from "@/app/api/users/config";
+import { TokenSecret } from "@/app/api/users/config";
 import { toSuperAdminUserDto } from "@/app/api/users/user.mapper";
 import type {
   RestaurantUser,
@@ -22,8 +18,8 @@ import type {
 import { Prisma, type User } from "@/app/generated/prisma/client";
 import { ApiError, HttpStatus } from "@/app/api/common/api-response";
 import { getSuperAdminDb, systemDb } from "@/lib/prisma";
-import bcrypt from "bcryptjs";
-import { jwtVerify, SignJWT } from "jose";
+import { hashPassword, verifyPassword } from "@/lib/auth/crypto";
+import { JwtService } from "@/lib/auth/jwt.service";
 
 export type { TokenService, UserRepository } from "@/app/api/users/types";
 
@@ -40,7 +36,7 @@ const mapRepositoryError = (error: unknown): never => {
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
     if (error.code === "P2002") {
       throw new UserServiceError(
-        "Пользователь с таким email уже существует",
+        "Пользователь с таким email или телефоном уже существует",
         HttpStatus.CONFLICT,
       );
     }
@@ -60,45 +56,21 @@ const mapRepositoryError = (error: unknown): never => {
   throw error;
 };
 
-const getTokenSecret = (name: TokenSecret) => {
-  const secret = process.env[name];
-
-  if (!secret || secret.length < TOKEN_SECRET_MIN_LENGTH) {
-    throw new UserServiceError(
-      `${name} должен содержать не менее ${TOKEN_SECRET_MIN_LENGTH} символов`,
-      HttpStatus.INTERNAL_SERVER_ERROR,
-    );
-  }
-
-  return new TextEncoder().encode(secret);
-};
-
 class JwtTokenService implements TokenService {
+  private readonly access = new JwtService({ secret: TokenSecret.ACCESS_TOKEN });
+  private readonly refresh = new JwtService({ secret: TokenSecret.REFRESH_TOKEN });
+
   createAccessToken(user: User) {
-    return new SignJWT({ role: user.role, type: "access" })
-      .setProtectedHeader({ alg: "HS256" })
-      .setSubject(user.id)
-      .setIssuedAt()
-      .setExpirationTime("1h")
-      .sign(getTokenSecret(TokenSecret.ACCESS_TOKEN));
+    return this.access.sign(user.id, { role: user.role, type: "access" }, "1h");
   }
 
   createRefreshToken(user: User) {
-    return new SignJWT({ type: "refresh" })
-      .setProtectedHeader({ alg: "HS256" })
-      .setSubject(user.id)
-      .setIssuedAt()
-      .setExpirationTime("30d")
-      .sign(getTokenSecret(TokenSecret.REFRESH_TOKEN));
+    return this.refresh.sign(user.id, { type: "refresh" }, "30d");
   }
 
   async verifyAccessToken(token: string) {
     try {
-      const { payload } = await jwtVerify(
-        token,
-        getTokenSecret(TokenSecret.ACCESS_TOKEN),
-        { algorithms: ["HS256"] },
-      );
+      const payload = await this.access.verify(token);
 
       if (
         payload.type !== "access" ||
@@ -119,11 +91,7 @@ class JwtTokenService implements TokenService {
 
   async verifyRefreshToken(token: string) {
     try {
-      const { payload } = await jwtVerify(
-        token,
-        getTokenSecret(TokenSecret.REFRESH_TOKEN),
-        { algorithms: ["HS256"] },
-      );
+      const payload = await this.refresh.verify(token);
 
       if (payload.type !== "refresh" || !payload.sub) {
         throw new Error("Некорректный refresh token");
@@ -146,11 +114,11 @@ export class UserService {
   ) {}
 
   async hashPassword(password: string): Promise<string> {
-    return bcrypt.hash(password, BCRYPT_ROUNDS);
+    return hashPassword(password);
   }
 
   verifyPassword(password: string, passwordHash: string): Promise<boolean> {
-    return bcrypt.compare(password, passwordHash);
+    return verifyPassword(password, passwordHash);
   }
 
   async login(input: SuperAdminLoginRequest): Promise<SuperAdminLoginResponse> {

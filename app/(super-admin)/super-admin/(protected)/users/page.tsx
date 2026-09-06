@@ -3,19 +3,17 @@
 import {
   IconEdit,
   IconPlus,
-  IconRefresh,
   IconTrash,
   IconUser,
-  IconUsers,
 } from "@tabler/icons-react";
 import { useState } from "react";
+import { Details } from "@/components/details";
 
 import type { RestaurantUserDto, RestaurantUserRole } from "@/api-contracts";
 import {
   Badge,
   Button,
   Dialog,
-  EmptyState,
   Table,
   Typography,
   type AppBadgeTone,
@@ -125,11 +123,17 @@ const SuperAdminUsersPage = () => {
   const [detailsOpened, setDetailsOpened] = useState(false);
   const [deleteUser, { isLoading: isDeleting }] =
     useDeleteRestaurantUserMutation();
-  const { data, isError, refetch } = useGetRestaurantUsersQuery({
+  const { data, isError, isLoading, isFetching, refetch } = useGetRestaurantUsersQuery({
     page,
     limit: USERS_PER_PAGE,
   });
-  const { data: restaurantsData } = useGetRestaurantsQuery({
+  const {
+    data: restaurantsData,
+    isLoading: isRestaurantsLoading,
+    isFetching: isRestaurantsFetching,
+    isError: isRestaurantsError,
+    refetch: refetchRestaurants,
+  } = useGetRestaurantsQuery({
     page: 1,
     limit: RESTAURANTS_FOR_SELECT_LIMIT,
   });
@@ -224,7 +228,7 @@ const SuperAdminUsersPage = () => {
           </div>
           <Button
             className="w-full md:w-auto"
-            disabled={restaurants.length === 0}
+            disabled={restaurants.length === 0 || isRestaurantsFetching || isRestaurantsError}
             leftSection={<IconPlus aria-hidden="true" size={18} />}
             onClick={openCreateDialog}
             title={
@@ -235,22 +239,18 @@ const SuperAdminUsersPage = () => {
           </Button>
         </div>
 
-        {isError ? (
-          <EmptyState
-            action={
-              <Button
-                leftSection={<IconRefresh aria-hidden="true" size={18} />}
-                onClick={refetch}
-              >
-                Повторить
-              </Button>
-            }
-            description="Проверьте соединение и попробуйте загрузить список ещё раз."
-            icon={<IconUsers size={32} />}
-            title="Не удалось загрузить пользователей"
-          />
-        ) : (
-          <div className="flex min-h-0 min-w-0 flex-col gap-xs overflow-hidden">
+        <Details
+          className="flex min-h-0 flex-col"
+          isLoading={isLoading || isRestaurantsLoading}
+          isFetching={isFetching || isRestaurantsFetching}
+          isError={isError || isRestaurantsError}
+          errorMessage={isRestaurantsError ? "Не удалось загрузить рестораны" : "Не удалось загрузить пользователей"}
+          onRetry={() => {
+            if (isError) void refetch();
+            if (isRestaurantsError) void refetchRestaurants();
+          }}
+        >
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-xs overflow-hidden">
             <div className="flex justify-end">
               <Typography muted variant="caption">
                 Всего: {total}
@@ -278,7 +278,7 @@ const SuperAdminUsersPage = () => {
               rows={users}
             />
           </div>
-        )}
+        </Details>
       </AdminPageWrapper>
 
       <UserFormDialog

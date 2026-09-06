@@ -73,3 +73,38 @@ Prisma query extensions do not intercept nested writes. Keep nested writes
 inside a tenant-owned parent relation, or use explicit root operations through
 the scoped client. PostgreSQL row-level security can later provide an additional
 database-level boundary.
+
+## Restaurant admin authentication
+
+The current scope is login and the first protected page at `/admin`.
+`/admin/login` accepts only an email or phone and password. The trusted
+`findRestaurantUsersForLogin` infrastructure helper looks up staff accounts
+across restaurants for authentication only; it grants no business-data access.
+Staff phone numbers and case-insensitive emails are globally unique across
+restaurants. PostgreSQL partial unique indexes enforce this for OWNER/EMPLOYEE
+accounts, including concurrent writes. A conflict returns HTTP 409. The login
+service also rejects ambiguous identities defensively.
+
+`app/api/admin/auth.service.ts` verifies credentials and creates an identity.
+`auth.repository.ts` owns database queries, `auth.validation.ts` owns input
+validation. The login form calls POST /api/admin/login and stores the returned token in localStorage. The RTK Query API loads GET /api/admin/me; RestaurantAuthGuard protects every page in the protected layout and exposes the verified identity through context. Formik and the API share lib/validation/restaurant-login.ts.
+Password helpers and `lib/auth/jwt.service.ts` are shared with super admin.
+
+The restaurant id in the signed session comes from the authenticated User row,
+never from the login form. Subsequent user queries use `getRestaurantDb` with
+the verified token's restaurant id. Active OWNER/EMPLOYEE accounts in ACTIVE
+restaurants can access the first page; other accounts are rejected. The session
+is checked against the database on each protected request.
+
+Restaurant tokens use the separate localStorage key `restaurantAccessToken`, expire after 12 hours and have their own JWT issuer, audience and
+type. The signed session version is the user's `authVersion`. The PostgreSQL
+User_auth_version trigger increments it when password, role, restaurantId or
+isActive changes, including direct SQL updates. Name and contact edits preserve
+sessions. Explicit session revocation can increment authVersion. This trigger
+and the partial unique indexes live in the restaurant_login_identity migration;
+Prisma schema generation alone does not create them. Existing tokens from the
+previous timestamp format require a new login. Logout removes the token from localStorage; no server session registry is added.
+`/api/admin/me` returns only the safe identity DTO. Menu, orders, staff management,
+settings and recovery remain future work.
+
+Requests authenticate with Authorization: Bearer; cookies are not used. Server-rendered admin HTML contains no restaurant data. Each protected API verifies the token and current database state. The token key is separate from super admin, and storage events synchronize logout across tabs.

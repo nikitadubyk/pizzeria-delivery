@@ -17,7 +17,7 @@ import type {
   UpdateRestaurantUserApiRequest,
   UpdateRestaurantApiRequest,
 } from "@/api-contracts";
-import { axiosLoaderBaseQuery } from "./axios";
+import { axiosBaseQuery } from "./axios";
 import { URL } from "./config";
 
 const RESTAURANT_TAG = "Restaurant" as const;
@@ -25,7 +25,7 @@ const RESTAURANT_USER_TAG = "RestaurantUser" as const;
 
 export const superAdminApi = createApi({
   reducerPath: "superAdminApi",
-  baseQuery: axiosLoaderBaseQuery(),
+  baseQuery: axiosBaseQuery(),
   tagTypes: [RESTAURANT_TAG, RESTAURANT_USER_TAG],
   endpoints: (builder) => ({
     getSuperAdminMe: builder.query<SuperAdminUserDto, void>({

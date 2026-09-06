@@ -269,6 +269,18 @@ export function getRestaurantDb(restaurantId: string) {
 
 export type RestaurantDb = ReturnType<typeof getRestaurantDb>;
 
+export async function findRestaurantUsersForLogin(login: string) {
+  return systemDb.user.findMany({
+    where: {
+      role: { in: ["OWNER", "EMPLOYEE"] },
+      restaurantId: { not: null },
+      OR: [{ email: { equals: login, mode: "insensitive" } }, { phone: login }],
+    },
+    include: { restaurant: true },
+    take: 2,
+  });
+}
+
 /**
  * Verifies a global administrator before allowing cross-tenant access.
  * Authentication must already have established the trusted user id.

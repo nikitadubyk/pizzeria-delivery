@@ -4,17 +4,16 @@ import {
   IconBuildingStore,
   IconEdit,
   IconPlus,
-  IconRefresh,
   IconTrash,
 } from "@tabler/icons-react";
 import { useState } from "react";
+import { Details } from "@/components/details";
 
 import type { RestaurantDto, RestaurantStatus } from "@/api-contracts";
 import {
   Badge,
   Button,
   Dialog,
-  EmptyState,
   Table,
   Typography,
   type AppBadgeTone,
@@ -104,7 +103,7 @@ const SuperAdminRestaurantsPage = () => {
   const [detailsOpened, setDetailsOpened] = useState(false);
   const [deleteRestaurant, { isLoading: isDeleting }] =
     useDeleteRestaurantMutation();
-  const { data, isError, refetch } = useGetRestaurantsQuery({
+  const { data, isError, isLoading, isFetching, refetch } = useGetRestaurantsQuery({
     page,
     limit: RESTAURANTS_PER_PAGE,
   });
@@ -206,22 +205,15 @@ const SuperAdminRestaurantsPage = () => {
           </Button>
         </div>
 
-        {isError ? (
-          <EmptyState
-            action={
-              <Button
-                leftSection={<IconRefresh aria-hidden="true" size={18} />}
-                onClick={refetch}
-              >
-                Повторить
-              </Button>
-            }
-            description="Проверьте соединение и попробуйте загрузить список ещё раз."
-            icon={<IconBuildingStore size={32} />}
-            title="Не удалось загрузить рестораны"
-          />
-        ) : (
-          <div className="flex min-h-0 min-w-0 flex-col gap-xs overflow-hidden">
+        <Details
+          className="flex min-h-0 flex-col"
+          isLoading={isLoading}
+          isFetching={isFetching}
+          isError={isError}
+          errorMessage="Не удалось загрузить рестораны"
+          onRetry={refetch}
+        >
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-xs overflow-hidden">
             <div className="flex justify-end">
               <Typography muted variant="caption">
                 Всего: {total}
@@ -249,7 +241,7 @@ const SuperAdminRestaurantsPage = () => {
               rows={restaurants}
             />
           </div>
-        )}
+        </Details>
       </AdminPageWrapper>
 
       <RestaurantFormDialog

@@ -25,7 +25,7 @@ import {
   Button,
   Dialog,
   InputField,
-  PasswordInput,
+  PasswordField,
   PhoneInput,
   SelectField,
   ToggleField,
@@ -269,24 +269,19 @@ export const UserFormDialog = ({
                 placeholder="user@example.com"
                 type="email"
               />
-              <Field name="password">
-                {({ field, meta }: FieldProps<string>) => (
-                  <PasswordInput
-                    {...field}
-                    autoComplete="new-password"
-                    description={
-                      isEditing
-                        ? "Оставьте пустым, чтобы сохранить текущий пароль"
-                        : `Не менее ${MIN_PASSWORD_LENGTH} символов`
-                    }
-                    error={meta.touched ? meta.error : undefined}
-                    label={isEditing ? "Новый пароль" : "Пароль"}
-                    placeholder={
-                      isEditing ? "Не изменять пароль" : "Введите пароль"
-                    }
-                  />
-                )}
-              </Field>
+              <PasswordField
+                name="password"
+                autoComplete="new-password"
+                description={
+                  isEditing
+                    ? "Оставьте пустым, чтобы сохранить текущий пароль"
+                    : `Не менее ${MIN_PASSWORD_LENGTH} символов`
+                }
+                label={isEditing ? "Новый пароль" : "Пароль"}
+                placeholder={
+                  isEditing ? "Не изменять пароль" : "Введите пароль"
+                }
+              />
               <SelectField
                 allowDeselect={false}
                 data={roleOptions}

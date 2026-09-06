@@ -30,6 +30,7 @@ type AxiosBaseQueryArgs = {
   method: AxiosRequestConfig["method"];
   data?: unknown;
   params?: unknown;
+  headers?: AxiosRequestConfig["headers"];
 };
 
 type AxiosBaseQueryError = {
@@ -200,13 +201,13 @@ export const setupAxiosInterceptors = (dispatch: AppDispatch) => {
   };
 };
 
-const createAxiosBaseQuery =
+export const createAxiosBaseQuery =
   (
     instance: AxiosInstance,
   ): BaseQueryFn<AxiosBaseQueryArgs, unknown, AxiosBaseQueryError> =>
-  async ({ url, method, data, params }, { signal }) => {
+  async ({ url, method, data, params, headers }, { signal }) => {
     try {
-      const response = await instance({ url, method, data, params, signal });
+      const response = await instance({ url, method, data, params, headers, signal });
       return { data: response.data };
     } catch (error) {
       const axiosError = error as AxiosError;

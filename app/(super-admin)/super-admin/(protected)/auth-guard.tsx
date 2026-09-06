@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
+import { Details } from "@/components/details";
 
 import { useGetSuperAdminMeQuery } from "@/store/api/super-admin.api";
 import { ROUTES } from "@/config/routes";
@@ -33,6 +34,7 @@ export const SuperAdminAuthGuard = ({ children }: SuperAdminAuthGuardProps) => {
     isError,
     isFetching,
     isSuccess,
+    refetch,
   } = useGetSuperAdminMeQuery(undefined, {
     refetchOnMountOrArgChange: true,
     skip: !hasSessionToken,
@@ -63,9 +65,17 @@ export const SuperAdminAuthGuard = ({ children }: SuperAdminAuthGuardProps) => {
     }
   }, [dispatch, user]);
 
-  if (!hasSessionToken || !isSuccess) {
-    return null;
-  }
-
-  return children;
+  return (
+    <Details
+      className="flex h-dvh min-h-0 w-full flex-col"
+      isLoading={!hasSessionToken || isUnauthorized || (!isSuccess && !isError)}
+      isFetching={isFetching}
+      isError={isError && !isUnauthorized}
+      errorMessage="Не удалось проверить вход"
+      loadingLabel="Проверка входа…"
+      onRetry={refetch}
+    >
+      {children}
+    </Details>
+  );
 };

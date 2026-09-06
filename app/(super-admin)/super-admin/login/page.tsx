@@ -1,10 +1,10 @@
 "use client";
 
 import { IconPizza } from "@tabler/icons-react";
-import { Field, Form, Formik, type FieldProps } from "formik";
+import { Form, Formik } from "formik";
 import { useRouter } from "next/navigation";
 
-import { Button, Input, PasswordInput, Typography } from "@/components/ui";
+import { Button, InputField, PasswordField, Typography } from "@/components/ui";
 import { showSuccessNotification } from "@/components/ui/notification";
 import { ROUTES } from "@/config/routes";
 import { advanceAuthSessionRevision } from "@/store/api/axios";
@@ -63,30 +63,20 @@ const SuperAdminLoginPage = () => {
         >
           {({ isSubmitting }) => (
             <Form className="grid gap-lg" noValidate>
-              <Field name="email">
-                {({ field, meta }: FieldProps<string>) => (
-                  <Input
-                    {...field}
-                    autoComplete="email"
-                    error={meta.touched ? meta.error : undefined}
-                    label="Email"
-                    placeholder="admin@example.com"
-                    type="email"
-                  />
-                )}
-              </Field>
+              <InputField
+                name="email"
+                autoComplete="email"
+                label="Email"
+                placeholder="admin@example.com"
+                type="email"
+              />
 
-              <Field name="password">
-                {({ field, meta }: FieldProps<string>) => (
-                  <PasswordInput
-                    {...field}
-                    autoComplete="current-password"
-                    error={meta.touched ? meta.error : undefined}
-                    label="Пароль"
-                    placeholder="Введите пароль"
-                  />
-                )}
-              </Field>
+              <PasswordField
+                name="password"
+                autoComplete="current-password"
+                label="Пароль"
+                placeholder="Введите пароль"
+              />
 
               <Button
                 fullWidth
