@@ -76,7 +76,7 @@ database-level boundary.
 
 ## Restaurant admin authentication
 
-The current scope is login and the first protected page at `/admin`.
+The current scope includes login, the admin shell, placeholder sections and a shared permission foundation.
 `/admin/login` accepts only an email or phone and password. The trusted
 `findRestaurantUsersForLogin` infrastructure helper looks up staff accounts
 across restaurants for authentication only; it grants no business-data access.
@@ -106,5 +106,40 @@ Prisma schema generation alone does not create them. Existing tokens from the
 previous timestamp format require a new login. Logout removes the token from localStorage; no server session registry is added.
 `/api/admin/me` returns only the safe identity DTO. Menu, orders, staff management,
 settings and recovery remain future work.
+
+## Restaurant permissions
+
+`lib/auth/restaurant-permissions.ts` owns explicit action allowlists for OWNER
+and EMPLOYEE. Unknown roles and permissions are denied; SUPER_ADMIN has no
+implicit restaurant permissions. Its existing API remains separate.
+
+OWNER can read/manage menu and orders, manage the stop-list and settings, and
+read, disable and initiate recovery for employees. EMPLOYEE can read menu and
+orders, manage the stop-list and process orders, but cannot edit menu/prices,
+change settings or manage staff. These permissions describe access; most business
+operations are not implemented yet. Add future permissions explicitly to this
+module when implementing their domain.
+
+Every restaurant business API must call
+`requireRestaurantPermission(request, RESTAURANT_PERMISSION.<ACTION>)` from
+`app/api/admin/require-permission.ts` before loading data or mutating it. This
+verifies the Bearer token, current database state and authVersion, then checks
+the current database role. Invalid sessions return 401; missing permissions
+return 403. `/api/admin/me` already uses ADMIN_ACCESS.
+
+Use `getRestaurantDb(identity.restaurant.id)` with the returned identity.
+Never use a restaurant id, role or permissions supplied in a request body.
+Permission checks do not replace tenant scoping or resource-level rules:
+employee-management operations must additionally restrict their target to
+EMPLOYEE accounts belonging to that restaurant, excluding owners and self.
+
+For UI actions use `useRestaurantPermission` or `RestaurantPermissionGate`;
+wrap section content with `RestaurantPermissionPage`. Navigation uses the same
+allowlist. Employees do not see settings or staff navigation, and direct links
+show an access-denied screen. UI checks are presentation only: they do not
+protect server rendering, database reads or mutations. Do not put sensitive
+server work inside a client gate; all such work must authorize in its API.
+Current pages contain only placeholders, and role comes from `/api/admin/me`.
+No permissions are accepted from browser storage or added to JWT claims.
 
 Requests authenticate with Authorization: Bearer; cookies are not used. Server-rendered admin HTML contains no restaurant data. Each protected API verifies the token and current database state. The token key is separate from super admin, and storage events synchronize logout across tabs.

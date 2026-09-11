@@ -6,6 +6,7 @@ import { verifyPassword } from "@/lib/auth/crypto";
 import { validateRequestData } from "@/app/api/common/validate-request";
 import { JwtService } from "@/lib/auth/jwt.service";
 import { RESTAURANT_SESSION } from "./auth.config";
+import { hasRestaurantPermission, type RestaurantPermission } from "@/lib/auth/restaurant-permissions";
 import { restaurantAuthRepository } from "./auth.repository";
 import { restaurantSessionSchema } from "./auth.validation";
 import type {
@@ -88,6 +89,14 @@ export class RestaurantAuthService {
     assertRestaurantAccess(user, session.restaurantId);
     if (session.version !== user.authVersion) throw sessionError();
     return toRestaurantIdentity(user);
+  }
+
+  async authorize(token: string, permission: RestaurantPermission): Promise<RestaurantIdentity> {
+    const user = await this.authenticate(token);
+    if (!hasRestaurantPermission(user.role, permission)) {
+      throw new ApiError("Недостаточно прав для этого действия", HttpStatus.FORBIDDEN);
+    }
+    return user;
   }
 }
 

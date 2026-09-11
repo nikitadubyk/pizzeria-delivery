@@ -5,6 +5,7 @@ import { SignJWT, decodeJwt } from "jose";
 import { RestaurantAuthService } from "./auth.service";
 import type { RestaurantAuthRepository, RestaurantAuthUser } from "./auth.types";
 import { restaurantLoginSchema, restaurantSessionSchema } from "./auth.validation";
+import { RESTAURANT_PERMISSION as P, hasRestaurantPermission, type RestaurantPermission } from "@/lib/auth/restaurant-permissions";
 
 process.env.ACCESS_TOKEN_SECRET = "restaurant-auth-test-secret-at-least-32-characters";
 let password: string;
@@ -28,6 +29,50 @@ function fixture() {
 }
 
 describe("Restaurant login service", () => {
+  it("authorizes employee operations and denies owner-only operations", async () => {
+    const { service, login } = fixture();
+    const owner = await login(0);
+    const employee = await login(1);
+    for (const permission of Object.values(P)) {
+      assert.equal((await service.authorize(owner, permission)).restaurant.id, "pizza-a");
+    }
+    for (const permission of [P.ADMIN_ACCESS, P.MENU_READ, P.STOP_LIST_MANAGE, P.ORDERS_READ, P.ORDERS_MANAGE]) {
+      assert.equal((await service.authorize(employee, permission)).restaurant.id, "pizza-b");
+    }
+    for (const permission of [P.MENU_MANAGE, P.SETTINGS_MANAGE, P.EMPLOYEES_READ, P.EMPLOYEES_DISABLE, P.EMPLOYEES_RECOVER]) {
+      await assert.rejects(service.authorize(employee, permission), { status: 403 });
+    }
+  });
+
+  it("fails closed for unknown roles and permissions, including super admin", () => {
+    for (const role of ["SUPER_ADMIN", "UNKNOWN", "toString", ""]) {
+      assert.equal(hasRestaurantPermission(role, P.ADMIN_ACCESS), false);
+    }
+    assert.equal(hasRestaurantPermission("OWNER", "unknown" as RestaurantPermission), false);
+  });
+
+  it("rechecks database roles and account state before authorizing", async () => {
+    const { users, service, login } = fixture();
+    const token = await login();
+    users[0].role = "EMPLOYEE";
+    // Even without the database trigger, authorization uses the current role.
+    await assert.rejects(service.authorize(token, P.MENU_MANAGE), { status: 403 });
+    users[0].authVersion += 1;
+    await assert.rejects(service.authorize(token, P.MENU_READ), { status: 401 });
+    const fresh = await login();
+    users[0].isActive = false;
+    await assert.rejects(service.authorize(fresh, P.MENU_READ), { status: 401 });
+  });
+
+  it("does not accept client-supplied role or permission claims", async () => {
+    const { service, login } = fixture();
+    const claims = decodeJwt(await login(1));
+    const token = await new SignJWT({ ...claims, role: "OWNER", permissions: Object.values(P) })
+      .setProtectedHeader({ alg: "HS256" })
+      .sign(new TextEncoder().encode(process.env.ACCESS_TOKEN_SECRET));
+    await assert.rejects(service.authorize(token, P.EMPLOYEES_DISABLE), { status: 403 });
+    await assert.rejects(service.authorize("invalid", P.ADMIN_ACCESS), { status: 401 });
+  });
   it("keeps the session after profile changes and rejects a new auth version", async () => {
     const { users, service, login } = fixture();
     const token = await login();
