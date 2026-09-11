@@ -12,5 +12,6 @@ model Restaurant {
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
 
-  users User[]
+  users      User[]
+  categories Category[]
 }

@@ -1,4 +1,5 @@
 export enum URL {
+  RESTAURANT_CATEGORIES = "/admin/categories",
   RESTAURANT_LOGIN = "/admin/login",
   RESTAURANT_ME = "/admin/me",
   SUPER_ADMIN_LOGIN = "/super-admin/login",

@@ -1,0 +1,13 @@
+model Category {
+  id           String   @id @default(cuid())
+  restaurantId String
+  name         String
+  sortOrder    Int      @default(0)
+  isPublished  Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+
+  @@index([restaurantId, sortOrder, id])
+}

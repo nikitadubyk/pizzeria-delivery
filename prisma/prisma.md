@@ -7,6 +7,8 @@
 - `models/restaurant.prisma` contains the tenant root (`Restaurant`) and its
   status.
 - `models/user.prisma` contains administrative accounts and their roles.
+- `models/catalog.prisma` contains restaurant-owned menu categories. Each
+  category stores its display name, sort order, and publication state.
 - Add future bounded domains as separate files in `models/`, for example
   `menu.prisma`, `order.prisma`, and `delivery.prisma`.
 - `migrations/` contains generated database migrations and stays next to
@@ -141,5 +143,11 @@ protect server rendering, database reads or mutations. Do not put sensitive
 server work inside a client gate; all such work must authorize in its API.
 Current pages contain only placeholders, and role comes from `/api/admin/me`.
 No permissions are accepted from browser storage or added to JWT claims.
+
+Category APIs live under `/api/admin/categories`. OWNER accounts can create,
+update, and delete categories through `MENU_MANAGE`; OWNER and EMPLOYEE accounts
+can read them through `MENU_READ`. The restaurant id always comes from the
+verified restaurant session. Category lists are ordered by `sortOrder` and use
+page/limit pagination.
 
 Requests authenticate with Authorization: Bearer; cookies are not used. Server-rendered admin HTML contains no restaurant data. Each protected API verifies the token and current database state. The token key is separate from super admin, and storage events synchronize logout across tabs.
