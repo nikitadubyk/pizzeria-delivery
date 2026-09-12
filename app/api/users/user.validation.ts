@@ -8,6 +8,7 @@ import {
   USER_NAME_MAX_LENGTH,
   USER_PHONE_PATTERN,
 } from "@/api-contracts";
+import { createSearchPaginationSchema } from "@/app/api/common/list-query";
 import * as yup from "yup";
 
 const nameSchema = yup
@@ -59,21 +60,9 @@ export const authorizationHeaderSchema = yup.object({
     .required("Требуется авторизация"),
 });
 
-export const restaurantUserListQuerySchema = yup.object({
-  page: yup
-    .number()
-    .integer("Номер страницы должен быть целым числом")
-    .min(1, "Номер страницы должен быть не меньше 1")
-    .default(1),
-  limit: yup
-    .number()
-    .integer("Размер страницы должен быть целым числом")
-    .min(1, "Размер страницы должен быть не меньше 1")
-    .max(
-      USER_LIST_MAX_LIMIT,
-      `Размер страницы не должен превышать ${USER_LIST_MAX_LIMIT}`,
-    )
-    .default(USER_LIST_DEFAULT_LIMIT),
+export const restaurantUserListQuerySchema = createSearchPaginationSchema({
+  defaultLimit: USER_LIST_DEFAULT_LIMIT,
+  maxLimit: USER_LIST_MAX_LIMIT,
 });
 
 export const restaurantUserPathParamsSchema = yup.object({

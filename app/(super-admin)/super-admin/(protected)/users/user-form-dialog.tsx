@@ -102,7 +102,7 @@ const createUserValidationSchema = (isEditing: boolean) =>
       .mixed<RestaurantUserRole>()
       .oneOf(RESTAURANT_USER_ROLES, "Выберите корректную роль")
       .required("Выберите роль"),
-    isActive: yup.boolean().required(),
+    isActive: yup.boolean().required("Укажите статус пользователя"),
   });
 
 const getInitialValues = (
@@ -210,7 +210,6 @@ export const UserFormDialog = ({
               </>
             }
             closeButtonProps={{ disabled: pending }}
-            classNames={{ content: "!overflow-hidden" }}
             closeOnClickOutside={!pending}
             closeOnEscape={!pending}
             description={
@@ -223,16 +222,12 @@ export const UserFormDialog = ({
             }
             onClose={handleClose}
             opened={opened}
+            preventInitialFocus
             title={
               isEditing ? "Редактировать пользователя" : "Новый пользователь"
             }
           >
-            <Form
-              className="grid max-h-[calc(100dvh-24rem)] min-h-0 gap-md overflow-y-auto overscroll-contain pr-xs md:max-h-[calc(100dvh-21rem)]"
-              id={USER_FORM_ID}
-              noValidate
-              style={{ scrollbarGutter: "stable" }}
-            >
+            <Form className="grid gap-md" id={USER_FORM_ID} noValidate>
               <SelectField
                 allowDeselect={false}
                 data={restaurantOptions}

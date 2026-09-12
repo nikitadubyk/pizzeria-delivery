@@ -8,6 +8,29 @@ model Category {
   updatedAt    DateTime @updatedAt
 
   restaurant Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  products   Product[]
 
+  @@unique([restaurantId, id])
   @@index([restaurantId, sortOrder, id])
+}
+
+model Product {
+  id              String   @id @default(cuid())
+  restaurantId    String
+  categoryId      String
+  name            String
+  description     String?  @db.Text
+  baseComposition String?  @db.Text
+  imageUrl        String?
+  imageKey        String?
+  sortOrder       Int      @default(0)
+  isPublished     Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  category   Category   @relation(fields: [restaurantId, categoryId], references: [restaurantId, id], onDelete: Restrict)
+
+  @@index([restaurantId, categoryId, sortOrder, id])
+  @@index([restaurantId, isPublished, sortOrder, id])
 }

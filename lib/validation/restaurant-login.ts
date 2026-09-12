@@ -6,20 +6,31 @@ import {
   type RestaurantLoginInput,
 } from "@/api-contracts";
 
-const emailSchema = yup.string().email();
+const emailSchema = yup.string().email("Введите корректный email");
 
 export const restaurantLoginSchema: yup.ObjectSchema<RestaurantLoginInput> =
   yup.object({
     login: yup
       .string()
       .trim()
-      .max(USER_EMAIL_MAX_LENGTH)
+      .max(
+        USER_EMAIL_MAX_LENGTH,
+        `Логин не должен превышать ${USER_EMAIL_MAX_LENGTH} символов`,
+      )
       .required("Введите email или телефон")
-      .test("login-format", "Введите корректный email или телефон", value =>
-        !value || emailSchema.isValidSync(value) || USER_PHONE_PATTERN.test(value),
+      .test(
+        "login-format",
+        "Введите корректный email или телефон",
+        (value) =>
+          !value ||
+          emailSchema.isValidSync(value) ||
+          USER_PHONE_PATTERN.test(value),
       ),
     password: yup
       .string()
-      .max(MAX_PASSWORD_LENGTH)
+      .max(
+        MAX_PASSWORD_LENGTH,
+        `Пароль не должен превышать ${MAX_PASSWORD_LENGTH} символов`,
+      )
       .required("Введите пароль"),
   });

@@ -59,7 +59,7 @@ const categoryFormValidationSchema: yup.ObjectSchema<CategoryFormValues> =
         `Порядок не должен превышать ${CATEGORY_SORT_ORDER_MAX}`,
       )
       .required("Введите порядок категории"),
-    isPublished: yup.boolean().required(),
+    isPublished: yup.boolean().required("Укажите статус публикации"),
   });
 
 export function CategoryFormDialog({
@@ -144,16 +144,20 @@ export function CategoryFormDialog({
                 : "Укажите название, положение в меню и видимость категории на витрине."
             }
             icon={
-              isEditing ? <IconEdit size={22} /> : <IconCategoryPlus size={22} />
+              isEditing ? (
+                <IconEdit size={22} />
+              ) : (
+                <IconCategoryPlus size={22} />
+              )
             }
             onClose={handleClose}
             opened={opened}
+            preventInitialFocus
             title={isEditing ? "Редактировать категорию" : "Новая категория"}
           >
             <Form className="grid gap-md" id={CATEGORY_FORM_ID} noValidate>
               <InputField
                 autoComplete="off"
-                autoFocus
                 label="Название"
                 name="name"
                 placeholder="Например, Пицца"

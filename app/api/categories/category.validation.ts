@@ -4,6 +4,7 @@ import {
   CATEGORY_NAME_MAX_LENGTH,
   CATEGORY_SORT_ORDER_MAX,
 } from "@/api-contracts";
+import { createSearchPaginationSchema } from "@/app/api/common/list-query";
 import * as yup from "yup";
 
 const nameSchema = yup
@@ -26,21 +27,9 @@ const sortOrderSchema = yup
 
 const isPublishedSchema = yup.boolean();
 
-export const categoryListQuerySchema = yup.object({
-  page: yup
-    .number()
-    .integer("Номер страницы должен быть целым числом")
-    .min(1, "Номер страницы должен быть не меньше 1")
-    .default(1),
-  limit: yup
-    .number()
-    .integer("Размер страницы должен быть целым числом")
-    .min(1, "Размер страницы должен быть не меньше 1")
-    .max(
-      CATEGORY_LIST_MAX_LIMIT,
-      `Размер страницы не должен превышать ${CATEGORY_LIST_MAX_LIMIT}`,
-    )
-    .default(CATEGORY_LIST_DEFAULT_LIMIT),
+export const categoryListQuerySchema = createSearchPaginationSchema({
+  defaultLimit: CATEGORY_LIST_DEFAULT_LIMIT,
+  maxLimit: CATEGORY_LIST_MAX_LIMIT,
 });
 
 export const categoryPathParamsSchema = yup.object({

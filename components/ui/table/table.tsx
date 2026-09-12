@@ -74,7 +74,7 @@ export function Table<T>({
   getRowKey,
   getRowAriaLabel,
   maxHeight,
-  minHeight = 320,
+  minHeight,
   minWidth = 720,
   onRowClick,
   pagination,
@@ -114,10 +114,10 @@ export function Table<T>({
   return (
     <div
       className={cn(
-        "flex min-h-0 w-full min-w-0 max-w-full flex-1 flex-col overflow-hidden rounded-lg border border-border bg-background",
+        "flex h-[clamp(28rem,65dvh,44rem)] min-h-[28rem] w-full min-w-0 max-w-full flex-none flex-col overflow-hidden bg-transparent md:h-auto md:min-h-0 md:flex-1 md:rounded-lg md:border md:border-border md:bg-background",
         className,
       )}
-      style={{ minHeight }}
+      style={minHeight === undefined ? undefined : { minHeight }}
     >
       <div
         className={cn(
@@ -213,7 +213,7 @@ export function Table<T>({
       <div
         aria-label={ariaLabel}
         className={cn(
-          "min-h-0 flex-1 content-start auto-rows-max gap-2 overflow-y-auto overscroll-contain p-2 md:gap-3 md:p-3",
+          "h-0 min-h-0 flex-1 touch-pan-y content-start auto-rows-max gap-2 overflow-y-auto overscroll-auto md:gap-3 md:overscroll-contain md:p-3",
           displayMode === "responsive" && "grid md:hidden",
           displayMode === "cards" && "grid",
           displayMode === "table" && "hidden",
@@ -296,7 +296,7 @@ export function Table<T>({
       </div>
 
       {pagination ? (
-        <div className="relative z-10 flex shrink-0 justify-center border-t border-border bg-background px-2 py-1.5 md:justify-end">
+        <div className="relative z-10 mt-2 flex shrink-0 justify-center rounded-lg border border-border bg-background px-2 py-1.5 md:mt-0 md:justify-end md:rounded-none md:border-x-0 md:border-b-0">
           <Pagination {...pagination} />
         </div>
       ) : null}

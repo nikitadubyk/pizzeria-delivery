@@ -1,12 +1,7 @@
 "use client";
 
-import {
-  IconEdit,
-  IconPlus,
-  IconTrash,
-  IconUser,
-} from "@tabler/icons-react";
-import { useState } from "react";
+import { IconEdit, IconPlus, IconTrash, IconUser } from "@tabler/icons-react";
+import { Suspense, useState } from "react";
 import { Details } from "@/components/details";
 
 import type { RestaurantUserDto, RestaurantUserRole } from "@/api-contracts";
@@ -14,12 +9,16 @@ import {
   Badge,
   Button,
   Dialog,
+  SearchInput,
   Table,
   Typography,
   type AppBadgeTone,
   type TableColumn,
 } from "@/components/ui";
 import { showSuccessNotification } from "@/components/ui/notification";
+import { useSearchPagination } from "@/hooks/use-search-pagination";
+import { useSearchQueryValue } from "@/hooks/use-search-query-value";
+import { formatDateTime } from "@/lib/date";
 import {
   useDeleteRestaurantUserMutation,
   useGetRestaurantsQuery,
@@ -38,11 +37,6 @@ const rolePresentation: Record<
   OWNER: { label: "Владелец", tone: "primary" },
   EMPLOYEE: { label: "Сотрудник", tone: "info" },
 };
-
-const dateTimeFormatter = new Intl.DateTimeFormat("ru-RU", {
-  dateStyle: "medium",
-  timeStyle: "short",
-});
 
 const userColumns: readonly TableColumn<RestaurantUserDto>[] = [
   {
@@ -100,15 +94,16 @@ const userColumns: readonly TableColumn<RestaurantUserDto>[] = [
     header: "Создан",
     render: (user) => (
       <time className="whitespace-nowrap" dateTime={user.createdAt}>
-        {dateTimeFormatter.format(new Date(user.createdAt))}
+        {formatDateTime(user.createdAt)}
       </time>
     ),
     width: 190,
   },
 ];
 
-const SuperAdminUsersPage = () => {
-  const [page, setPage] = useState(1);
+const SuperAdminUsersPageContent = () => {
+  const search = useSearchQueryValue();
+  const [page, setPage] = useSearchPagination(search);
   const [formOpened, setFormOpened] = useState(false);
   const [editingUser, setEditingUser] = useState<RestaurantUserDto | null>(
     null,
@@ -123,10 +118,12 @@ const SuperAdminUsersPage = () => {
   const [detailsOpened, setDetailsOpened] = useState(false);
   const [deleteUser, { isLoading: isDeleting }] =
     useDeleteRestaurantUserMutation();
-  const { data, isError, isLoading, isFetching, refetch } = useGetRestaurantUsersQuery({
-    page,
-    limit: USERS_PER_PAGE,
-  });
+  const { data, isError, isLoading, isFetching, refetch } =
+    useGetRestaurantUsersQuery({
+      page,
+      limit: USERS_PER_PAGE,
+      search: search || undefined,
+    });
   const {
     data: restaurantsData,
     isLoading: isRestaurantsLoading,
@@ -141,6 +138,7 @@ const SuperAdminUsersPage = () => {
   const restaurants = restaurantsData?.items ?? [];
   const total = data?.pagination.total ?? 0;
   const totalPages = Math.max(1, data?.pagination.totalPages ?? 1);
+
   const openDetailsDialog = (user: RestaurantUserDto) => {
     setUserDetails(user);
     setDetailsOpened(true);
@@ -216,7 +214,7 @@ const SuperAdminUsersPage = () => {
 
   return (
     <>
-      <AdminPageWrapper className="grid-rows-[auto_minmax(0,1fr)]">
+      <AdminPageWrapper className="grid-rows-[auto_auto] md:grid-rows-[auto_minmax(0,1fr)]">
         <div className="flex flex-wrap items-end justify-between gap-md">
           <div>
             <Typography muted variant="eyebrow">
@@ -228,7 +226,11 @@ const SuperAdminUsersPage = () => {
           </div>
           <Button
             className="w-full md:w-auto"
-            disabled={restaurants.length === 0 || isRestaurantsFetching || isRestaurantsError}
+            disabled={
+              restaurants.length === 0 ||
+              isRestaurantsFetching ||
+              isRestaurantsError
+            }
             leftSection={<IconPlus aria-hidden="true" size={18} />}
             onClick={openCreateDialog}
             title={
@@ -239,46 +241,62 @@ const SuperAdminUsersPage = () => {
           </Button>
         </div>
 
-        <Details
-          className="flex min-h-0 flex-col"
-          isLoading={isLoading || isRestaurantsLoading}
-          isFetching={isFetching || isRestaurantsFetching}
-          isError={isError || isRestaurantsError}
-          errorMessage={isRestaurantsError ? "Не удалось загрузить рестораны" : "Не удалось загрузить пользователей"}
-          onRetry={() => {
-            if (isError) void refetch();
-            if (isRestaurantsError) void refetchRestaurants();
-          }}
-        >
-          <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-xs overflow-hidden">
+        <div className="flex min-h-0 min-w-0 flex-col gap-xs">
+          <div className="flex flex-col gap-xs sm:flex-row sm:items-center sm:justify-between">
+            <SearchInput
+              className="sm:max-w-sm"
+              placeholder="Найти пользователя..."
+            />
             <div className="flex justify-end">
               <Typography muted variant="caption">
-                Всего: {total}
+                {search ? "Найдено" : "Всего"}: {total}
               </Typography>
             </div>
-
-            <Table
-              ariaLabel="Список пользователей ресторанов"
-              className="[&_[role=list]]:!h-0 [&_[role=list]]:touch-pan-y"
-              columns={columns}
-              emptyState="Пользователи пока не добавлены"
-              getRowAriaLabel={(user) =>
-                `Открыть информацию о пользователе ${user.name ?? "Без имени"}`
-              }
-              getRowKey={(user) => user.id}
-              minWidth={1260}
-              pagination={{
-                ariaLabel: "Страницы списка пользователей",
-                onChange: setPage,
-                total: totalPages,
-                value: page,
-                withEdges: true,
-              }}
-              onRowClick={openDetailsDialog}
-              rows={users}
-            />
           </div>
-        </Details>
+
+          <Details
+            className="flex min-h-0 flex-1 flex-col"
+            isLoading={isLoading || isRestaurantsLoading}
+            isFetching={isFetching || isRestaurantsFetching}
+            isError={isError || isRestaurantsError}
+            errorMessage={
+              isRestaurantsError
+                ? "Не удалось загрузить рестораны"
+                : "Не удалось загрузить пользователей"
+            }
+            onRetry={() => {
+              if (isError) void refetch();
+              if (isRestaurantsError) void refetchRestaurants();
+            }}
+          >
+            <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+              <Table
+                ariaLabel="Список пользователей ресторанов"
+
+                columns={columns}
+                emptyState={
+                  search
+                    ? "По вашему запросу пользователи не найдены"
+                    : "Пользователи пока не добавлены"
+                }
+                getRowAriaLabel={(user) =>
+                  `Открыть информацию о пользователе ${user.name ?? "Без имени"}`
+                }
+                getRowKey={(user) => user.id}
+                minWidth={1260}
+                pagination={{
+                  ariaLabel: "Страницы списка пользователей",
+                  onChange: setPage,
+                  total: totalPages,
+                  value: page,
+                  withEdges: true,
+                }}
+                onRowClick={openDetailsDialog}
+                rows={users}
+              />
+            </div>
+          </Details>
+        </div>
       </AdminPageWrapper>
 
       <UserFormDialog
@@ -303,7 +321,7 @@ const SuperAdminUsersPage = () => {
         title={userDetails?.name ?? "Информация о пользователе"}
       >
         {userDetails ? (
-          <div className="max-h-[calc(100dvh-16rem)] overflow-y-auto overscroll-contain pr-xs">
+          <div>
             <dl className="m-0 grid grid-cols-1 gap-x-lg gap-y-md sm:grid-cols-2">
               <div className="grid min-w-0 gap-1 sm:col-span-2">
                 <dt className="text-xs font-bold text-muted">Имя</dt>
@@ -365,7 +383,7 @@ const SuperAdminUsersPage = () => {
                 <dt className="text-xs font-bold text-muted">Создан</dt>
                 <dd className="m-0 font-semibold">
                   <time dateTime={userDetails.createdAt}>
-                    {dateTimeFormatter.format(new Date(userDetails.createdAt))}
+                    {formatDateTime(userDetails.createdAt)}
                   </time>
                 </dd>
               </div>
@@ -373,7 +391,7 @@ const SuperAdminUsersPage = () => {
                 <dt className="text-xs font-bold text-muted">Обновлён</dt>
                 <dd className="m-0 font-semibold">
                   <time dateTime={userDetails.updatedAt}>
-                    {dateTimeFormatter.format(new Date(userDetails.updatedAt))}
+                    {formatDateTime(userDetails.updatedAt)}
                   </time>
                 </dd>
               </div>
@@ -425,5 +443,19 @@ const SuperAdminUsersPage = () => {
     </>
   );
 };
+
+const SuperAdminUsersPage = () => (
+  <Suspense
+    fallback={
+      <div
+        aria-label="Загрузка списка пользователей"
+        className="min-h-[calc(100dvh-8rem)]"
+        role="status"
+      />
+    }
+  >
+    <SuperAdminUsersPageContent />
+  </Suspense>
+);
 
 export default SuperAdminUsersPage;

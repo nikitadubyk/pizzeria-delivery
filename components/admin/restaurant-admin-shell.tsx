@@ -88,8 +88,8 @@ export function RestaurantAdminShell({ children }: { children: ReactNode }) {
       )}
       onLogout={handleLogout}
     >
-      <main className="min-h-0 flex-1 overflow-y-auto p-md md:p-xl">
-        <div className="mx-auto grid w-full max-w-7xl gap-lg">
+      <main className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-md md:p-xl">
+        <div className="mx-auto flex min-h-full w-full max-w-7xl flex-col gap-lg md:h-full md:min-h-0">
           {logoutError && (
             <Alert color="red" role="alert">
               {logoutError}

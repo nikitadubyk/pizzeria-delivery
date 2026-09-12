@@ -3,14 +3,13 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import type {
   CreateRestaurantUserRequest,
   CreateRestaurantRequest,
+  ResolvedSearchPaginationQuery,
   RestaurantDto,
-  RestaurantListQuery,
   RestaurantListResponse,
   RestaurantPathParams,
   SuperAdminLoginRequest,
   SuperAdminLoginResponse,
   RestaurantUserDto,
-  RestaurantUserListQuery,
   RestaurantUserListResponse,
   RestaurantUserPathParams,
   SuperAdminUserDto,
@@ -18,7 +17,7 @@ import type {
   UpdateRestaurantApiRequest,
 } from "@/api-contracts";
 import { axiosBaseQuery } from "./axios";
-import { URL } from "./config";
+import { API_ROUTES, URL } from "./config";
 
 const RESTAURANT_TAG = "Restaurant" as const;
 const RESTAURANT_USER_TAG = "RestaurantUser" as const;
@@ -46,7 +45,7 @@ export const superAdminApi = createApi({
     }),
     getRestaurants: builder.query<
       RestaurantListResponse,
-      Required<RestaurantListQuery>
+      ResolvedSearchPaginationQuery
     >({
       query: (params) => ({
         url: URL.SUPER_ADMIN_RESTAURANTS,
@@ -57,7 +56,7 @@ export const superAdminApi = createApi({
     }),
     getRestaurant: builder.query<RestaurantDto, RestaurantPathParams>({
       query: ({ restaurantId }) => ({
-        url: `${URL.SUPER_ADMIN_RESTAURANTS}/${restaurantId}`,
+        url: API_ROUTES.superAdminRestaurant(restaurantId),
         method: "GET",
       }),
       providesTags: [RESTAURANT_TAG],
@@ -75,7 +74,7 @@ export const superAdminApi = createApi({
       UpdateRestaurantApiRequest
     >({
       query: ({ restaurantId, data }) => ({
-        url: `${URL.SUPER_ADMIN_RESTAURANTS}/${restaurantId}`,
+        url: API_ROUTES.superAdminRestaurant(restaurantId),
         method: "PATCH",
         data,
       }),
@@ -83,14 +82,14 @@ export const superAdminApi = createApi({
     }),
     deleteRestaurant: builder.mutation<RestaurantDto, RestaurantPathParams>({
       query: ({ restaurantId }) => ({
-        url: `${URL.SUPER_ADMIN_RESTAURANTS}/${restaurantId}`,
+        url: API_ROUTES.superAdminRestaurant(restaurantId),
         method: "DELETE",
       }),
       invalidatesTags: [RESTAURANT_TAG, RESTAURANT_USER_TAG],
     }),
     getRestaurantUsers: builder.query<
       RestaurantUserListResponse,
-      Required<RestaurantUserListQuery>
+      ResolvedSearchPaginationQuery
     >({
       query: (params) => ({
         url: URL.SUPER_ADMIN_USERS,
@@ -104,7 +103,7 @@ export const superAdminApi = createApi({
       RestaurantUserPathParams
     >({
       query: ({ userId }) => ({
-        url: `${URL.SUPER_ADMIN_USERS}/${userId}`,
+        url: API_ROUTES.superAdminUser(userId),
         method: "GET",
       }),
       providesTags: [RESTAURANT_USER_TAG],
@@ -125,7 +124,7 @@ export const superAdminApi = createApi({
       UpdateRestaurantUserApiRequest
     >({
       query: ({ userId, data }) => ({
-        url: `${URL.SUPER_ADMIN_USERS}/${userId}`,
+        url: API_ROUTES.superAdminUser(userId),
         method: "PATCH",
         data,
       }),
@@ -136,7 +135,7 @@ export const superAdminApi = createApi({
       RestaurantUserPathParams
     >({
       query: ({ userId }) => ({
-        url: `${URL.SUPER_ADMIN_USERS}/${userId}`,
+        url: API_ROUTES.superAdminUser(userId),
         method: "DELETE",
       }),
       invalidatesTags: [RESTAURANT_USER_TAG],

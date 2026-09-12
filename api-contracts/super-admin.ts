@@ -1,4 +1,4 @@
-import type { PaginatedResponse, PaginationQuery } from "./pagination";
+import type { PaginatedResponse, SearchPaginationQuery } from "./pagination";
 
 export type SuperAdminUserDto = {
   id: string;
@@ -46,7 +46,7 @@ export type RestaurantUserPathParams = {
   userId: string;
 };
 
-export type RestaurantUserListQuery = PaginationQuery;
+export type RestaurantUserListQuery = SearchPaginationQuery;
 
 export type RestaurantUserListResponse = PaginatedResponse<RestaurantUserDto>;
 

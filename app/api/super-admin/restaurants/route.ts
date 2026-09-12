@@ -1,9 +1,10 @@
 import type {
   CreateRestaurantRequest,
+  ResolvedSearchPaginationQuery,
   RestaurantDto,
-  RestaurantListQuery,
   RestaurantListResponse,
 } from "@/api-contracts";
+import { createPaginationMeta } from "@/app/api/common/list-query";
 import { ApiResponse, HttpStatus } from "@/app/api/common/api-response";
 import {
   validateRequestBody,
@@ -21,22 +22,17 @@ export const GET = async (request: Request) => {
   try {
     const superAdminId = await getSuperAdminId(request);
     const searchParams = Object.fromEntries(new URL(request.url).searchParams);
-    const { page, limit } = await validateRequestData<
-      Required<RestaurantListQuery>
+    const query = await validateRequestData<
+      ResolvedSearchPaginationQuery
     >(searchParams, restaurantListQuerySchema);
+    const { page, limit } = query;
     const { items, total } = await restaurantService.getPage(superAdminId, {
-      page,
-      limit,
+      ...query,
     });
 
     return ApiResponse.success<RestaurantListResponse>({
       items: items.map(toRestaurantDto),
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
+      pagination: createPaginationMeta({ page, limit, total }),
     });
   } catch (error) {
     return ApiResponse.fromError(error, "Не удалось получить рестораны");

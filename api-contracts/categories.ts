@@ -1,4 +1,4 @@
-import type { PaginatedResponse, PaginationQuery } from "./pagination";
+import type { PaginatedResponse, SearchPaginationQuery } from "./pagination";
 
 export const CATEGORY_NAME_MAX_LENGTH = 120;
 export const CATEGORY_LIST_DEFAULT_LIMIT = 10;
@@ -19,7 +19,9 @@ export type CategoryPathParams = {
   categoryId: string;
 };
 
-export type CategoryListQuery = PaginationQuery;
+export type CategoryOptionDto = Pick<CategoryDto, "id" | "name">;
+
+export type CategoryListQuery = SearchPaginationQuery;
 
 export type CategoryListResponse = PaginatedResponse<CategoryDto>;
 

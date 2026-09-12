@@ -1,4 +1,4 @@
-import type { PaginatedResponse, PaginationQuery } from "./pagination";
+import type { PaginatedResponse, SearchPaginationQuery } from "./pagination";
 
 export type RestaurantStatus = "ACTIVE" | "SUSPENDED" | "ARCHIVED";
 
@@ -26,7 +26,7 @@ export type RestaurantPathParams = {
   restaurantId: string;
 };
 
-export type RestaurantListQuery = PaginationQuery;
+export type RestaurantListQuery = SearchPaginationQuery;
 
 export type RestaurantListResponse = PaginatedResponse<RestaurantDto>;
 

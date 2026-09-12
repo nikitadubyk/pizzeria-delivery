@@ -1,15 +1,19 @@
 import type {
   CreateRestaurantRequest,
-  RestaurantListQuery,
+  ResolvedSearchPaginationQuery,
   UpdateRestaurantRequest,
 } from "@/api-contracts";
 import { ApiError, HttpStatus } from "@/app/api/common/api-response";
 import { Prisma, type Restaurant } from "@/app/generated/prisma/client";
 import type {
+  RestaurantDeletion,
   RestaurantPage,
   RestaurantRepository,
 } from "@/app/api/restaurants/types";
 import { getSuperAdminDb } from "@/lib/prisma";
+
+import { productImageStorage } from "../products/product-image.storage";
+import type { ProductImageStorage } from "../products/types";
 
 export type { RestaurantRepository } from "@/app/api/restaurants/types";
 
@@ -43,11 +47,17 @@ const mapRepositoryError = (error: unknown): never => {
 };
 
 export class RestaurantService {
-  constructor(private readonly repository: RestaurantRepository) {}
+  constructor(
+    private readonly repository: RestaurantRepository,
+    private readonly imageStorage: Pick<
+      ProductImageStorage,
+      "deleteMany"
+    > = productImageStorage,
+  ) {}
 
   getPage(
     superAdminId: string,
-    pagination: Required<RestaurantListQuery>,
+    pagination: ResolvedSearchPaginationQuery,
   ): Promise<RestaurantPage> {
     return this.repository.findPage(superAdminId, pagination);
   }
@@ -99,7 +109,12 @@ export class RestaurantService {
     restaurantId: string,
   ): Promise<Restaurant> {
     try {
-      return await this.repository.delete(superAdminId, restaurantId);
+      const { restaurant, productImageKeys } = await this.repository.delete(
+        superAdminId,
+        restaurantId,
+      );
+      await this.imageStorage.deleteMany(productImageKeys);
+      return restaurant;
     } catch (error) {
       return mapRepositoryError(error);
     }
@@ -107,15 +122,24 @@ export class RestaurantService {
 }
 
 const restaurantRepository: RestaurantRepository = {
-  findPage: async (superAdminId, { page, limit }) => {
+  findPage: async (superAdminId, { page, limit, search }) => {
     const db = await getSuperAdminDb(superAdminId);
+    const where: Prisma.RestaurantWhereInput = search
+      ? {
+          OR: [
+            { name: { contains: search, mode: "insensitive" } },
+            { slug: { contains: search, mode: "insensitive" } },
+          ],
+        }
+      : {};
     const [items, total] = await db.$transaction([
       db.restaurant.findMany({
+        where,
         orderBy: [{ createdAt: "desc" }, { id: "desc" }],
         skip: (page - 1) * limit,
         take: limit,
       }),
-      db.restaurant.count(),
+      db.restaurant.count({ where }),
     ]);
 
     return { items, total };
@@ -134,7 +158,24 @@ const restaurantRepository: RestaurantRepository = {
   },
   delete: async (superAdminId, restaurantId) => {
     const db = await getSuperAdminDb(superAdminId);
-    return db.restaurant.delete({ where: { id: restaurantId } });
+    return db.$transaction(async (transaction): Promise<RestaurantDeletion> => {
+      const products = await transaction.product.findMany({
+        where: { restaurantId },
+        select: { imageKey: true },
+      });
+
+      await transaction.product.deleteMany({ where: { restaurantId } });
+      const restaurant = await transaction.restaurant.delete({
+        where: { id: restaurantId },
+      });
+
+      return {
+        restaurant,
+        productImageKeys: products.flatMap(({ imageKey }) =>
+          imageKey ? [imageKey] : [],
+        ),
+      };
+    });
   },
 };
 

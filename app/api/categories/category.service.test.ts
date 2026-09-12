@@ -26,6 +26,7 @@ const createRepository = (
   overrides: Partial<CategoryRepository> = {},
 ): CategoryRepository => ({
   findPage: async () => ({ items: [], total: 0 }),
+  findOptions: async () => [],
   findById: async () => null,
   create: async (_restaurantId, data) => createCategory(data),
   update: async (_restaurantId, _categoryId, data) => createCategory(data),
@@ -40,6 +41,20 @@ const prismaError = (code: string) =>
   });
 
 describe("CategoryService", () => {
+  it("returns every category option without pagination", async () => {
+    const categories = [createCategory(), createCategory({ id: "drinks" })];
+    const service = new CategoryService(
+      createRepository({
+        findOptions: async (restaurantId) => {
+          assert.equal(restaurantId, "restaurant-id");
+          return categories;
+        },
+      }),
+    );
+
+    assert.deepEqual(await service.getOptions("restaurant-id"), categories);
+  });
+
   it("returns a category page for the authenticated restaurant", async () => {
     const categories = [createCategory()];
     const service = new CategoryService(
@@ -145,5 +160,22 @@ describe("CategoryService", () => {
           error.status === HttpStatus.NOT_FOUND,
       );
     }
+  });
+
+  it("rejects deleting a category that still has products", async () => {
+    const service = new CategoryService(
+      createRepository({
+        delete: async () => {
+          throw prismaError("P2003");
+        },
+      }),
+    );
+
+    await assert.rejects(
+      service.delete("restaurant-id", "category-id"),
+      (error: unknown) =>
+        error instanceof CategoryServiceError &&
+        error.status === HttpStatus.CONFLICT,
+    );
   });
 });

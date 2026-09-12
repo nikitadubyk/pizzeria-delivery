@@ -7,8 +7,9 @@
 - `models/restaurant.prisma` contains the tenant root (`Restaurant`) and its
   status.
 - `models/user.prisma` contains administrative accounts and their roles.
-- `models/catalog.prisma` contains restaurant-owned menu categories. Each
-  category stores its display name, sort order, and publication state.
+- `models/catalog.prisma` contains restaurant-owned menu categories and
+  products. Products reference a category from the same restaurant and store
+  copy, image metadata, sort order, and publication state.
 - Add future bounded domains as separate files in `models/`, for example
   `menu.prisma`, `order.prisma`, and `delivery.prisma`.
 - `migrations/` contains generated database migrations and stays next to
@@ -149,5 +150,29 @@ update, and delete categories through `MENU_MANAGE`; OWNER and EMPLOYEE accounts
 can read them through `MENU_READ`. The restaurant id always comes from the
 verified restaurant session. Category lists are ordered by `sortOrder` and use
 page/limit pagination.
+
+Product APIs live under `/api/admin/products` and use the same menu permissions
+as categories. Product `POST` and `PATCH` requests are JSON and never accept a
+client-supplied image URL or storage key. The client first creates a product and
+then uploads its image through the shared `/api/admin/uploads` UploadThing
+FileRouter using the `productImage` endpoint and `{ productId }` input.
+
+The upload middleware verifies `MENU_MANAGE`, restricts files to JPEG, PNG, or
+WebP, and loads the product through the authenticated restaurant scope before
+UploadThing issues an upload. Images are limited to one 4 MB file. The browser
+compresses and resizes the source image before upload without proxying its bytes
+through the application server. `onUploadComplete` persists the trusted
+UploadThing URL and key; it removes the previous managed image only after the
+database update succeeds and removes the new file if persistence fails. Only
+`UPLOADTHING_TOKEN` is required.
+
+Restaurant deletion first removes product rows in the same database transaction
+so the category relation cannot block the restaurant cascade. After commit, all
+collected UploadThing product image keys are deleted from managed storage.
+
+Every paginated list accepts the shared `page`, `limit`, and optional `search`
+query parameters. Category search covers the name; product search covers name,
+description, and base composition; restaurant search covers name and slug;
+restaurant-user search covers name, email, phone, and restaurant name.
 
 Requests authenticate with Authorization: Bearer; cookies are not used. Server-rendered admin HTML contains no restaurant data. Each protected API verifies the token and current database state. The token key is separate from super admin, and storage events synchronize logout across tabs.

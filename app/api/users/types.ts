@@ -1,6 +1,6 @@
 import type {
   CreateRestaurantUserRequest,
-  RestaurantUserListQuery,
+  ResolvedSearchPaginationQuery,
   UpdateRestaurantUserRequest,
 } from "@/api-contracts";
 import type { Restaurant, User } from "@/app/generated/prisma/client";
@@ -19,7 +19,7 @@ export interface UserRepository {
   findSuperAdminById(id: string): Promise<User | null>;
   findRestaurantUserPage(
     superAdminId: string,
-    pagination: Required<RestaurantUserListQuery>,
+    pagination: ResolvedSearchPaginationQuery,
   ): Promise<RestaurantUserPage>;
   findRestaurantUserById(
     superAdminId: string,

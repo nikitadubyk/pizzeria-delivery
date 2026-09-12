@@ -1,9 +1,10 @@
 import type {
   CreateRestaurantUserRequest,
+  ResolvedSearchPaginationQuery,
   RestaurantUserDto,
-  RestaurantUserListQuery,
   RestaurantUserListResponse,
 } from "@/api-contracts";
+import { createPaginationMeta } from "@/app/api/common/list-query";
 import { ApiResponse, HttpStatus } from "@/app/api/common/api-response";
 import {
   validateRequestBody,
@@ -21,22 +22,18 @@ export const GET = async (request: Request) => {
   try {
     const superAdminId = await getSuperAdminId(request);
     const searchParams = Object.fromEntries(new URL(request.url).searchParams);
-    const { page, limit } = await validateRequestData<
-      Required<RestaurantUserListQuery>
+    const query = await validateRequestData<
+      ResolvedSearchPaginationQuery
     >(searchParams, restaurantUserListQuerySchema);
+    const { page, limit } = query;
     const { items, total } = await userService.getRestaurantUserPage(
       superAdminId,
-      { page, limit },
+      query,
     );
 
     return ApiResponse.success<RestaurantUserListResponse>({
       items: items.map(toRestaurantUserDto),
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
+      pagination: createPaginationMeta({ page, limit, total }),
     });
   } catch (error) {
     return ApiResponse.fromError(error, "Не удалось получить пользователей");

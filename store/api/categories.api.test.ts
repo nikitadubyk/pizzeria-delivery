@@ -33,6 +33,28 @@ const category = {
 };
 
 describe("category RTK Query API", () => {
+  it("loads unpaginated category options", async () => {
+    const store = makeStore();
+    const calls: InternalAxiosRequestConfig[] = [];
+    store.dispatch(setRestaurantToken("restaurant-token"));
+    restaurantClient.defaults.adapter = async (config) => {
+      calls.push(config);
+      return response(config, [{ id: category.id, name: category.name }]);
+    };
+
+    try {
+      const result = await store
+        .dispatch(categoriesApi.endpoints.getCategoryOptions.initiate())
+        .unwrap();
+
+      assert.deepEqual(result, [{ id: "category-id", name: "Пицца" }]);
+      assert.equal(calls[0].url, "/admin/categories/options");
+      assert.equal(calls[0].method, "get");
+    } finally {
+      store.dispatch(restaurantAuthApi.util.resetApiState());
+    }
+  });
+
   it("loads a paginated category list with the restaurant token", async () => {
     const store = makeStore();
     const calls: InternalAxiosRequestConfig[] = [];

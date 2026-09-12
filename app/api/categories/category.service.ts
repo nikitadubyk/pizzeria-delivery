@@ -1,6 +1,6 @@
 import type {
-  CategoryListQuery,
   CreateCategoryRequest,
+  ResolvedSearchPaginationQuery,
   UpdateCategoryRequest,
 } from "@/api-contracts";
 import { ApiError, HttpStatus } from "@/app/api/common/api-response";
@@ -33,6 +33,16 @@ const mapRepositoryError = (error: unknown): never => {
     );
   }
 
+  if (
+    error instanceof Prisma.PrismaClientKnownRequestError &&
+    error.code === "P2003"
+  ) {
+    throw new CategoryServiceError(
+      "Нельзя удалить категорию, пока в ней есть продукты",
+      HttpStatus.CONFLICT,
+    );
+  }
+
   throw error;
 };
 
@@ -41,9 +51,13 @@ export class CategoryService {
 
   getPage(
     restaurantId: string,
-    pagination: Required<CategoryListQuery>,
+    pagination: ResolvedSearchPaginationQuery,
   ): Promise<CategoryPage> {
     return this.repository.findPage(restaurantId, pagination);
+  }
+
+  getOptions(restaurantId: string): Promise<Category[]> {
+    return this.repository.findOptions(restaurantId);
   }
 
   async getById(restaurantId: string, categoryId: string): Promise<Category> {
@@ -92,18 +106,28 @@ export class CategoryService {
 }
 
 const categoryRepository: CategoryRepository = {
-  findPage: async (restaurantId, { page, limit }) => {
+  findPage: async (restaurantId, { page, limit, search }) => {
     const db = getRestaurantDb(restaurantId);
+    const where = search
+      ? { name: { contains: search, mode: "insensitive" as const } }
+      : {};
     const [items, total] = await db.$transaction([
       db.category.findMany({
+        where,
         orderBy: [{ sortOrder: "asc" }, { id: "asc" }],
         skip: (page - 1) * limit,
         take: limit,
       }),
-      db.category.count(),
+      db.category.count({ where }),
     ]);
 
     return { items, total };
+  },
+  findOptions: async (restaurantId) => {
+    const db = getRestaurantDb(restaurantId);
+    return db.category.findMany({
+      orderBy: [{ sortOrder: "asc" }, { id: "asc" }],
+    });
   },
   findById: async (restaurantId, categoryId) => {
     const db = getRestaurantDb(restaurantId);

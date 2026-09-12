@@ -1,9 +1,10 @@
 import type {
   CategoryDto,
-  CategoryListQuery,
   CategoryListResponse,
   CreateCategoryRequest,
+  ResolvedSearchPaginationQuery,
 } from "@/api-contracts";
+import { createPaginationMeta } from "@/app/api/common/list-query";
 import { toCategoryDto } from "@/app/api/categories/category.mapper";
 import { categoryService } from "@/app/api/categories/category.service";
 import {
@@ -22,7 +23,7 @@ export const GET = async (request: Request) => {
   try {
     const [identity, pagination] = await Promise.all([
       requireRestaurantPermission(request, RESTAURANT_PERMISSION.MENU_READ),
-      validateRequestData<Required<CategoryListQuery>>(
+      validateRequestData<ResolvedSearchPaginationQuery>(
         Object.fromEntries(new URL(request.url).searchParams),
         categoryListQuerySchema,
       ),
@@ -35,12 +36,7 @@ export const GET = async (request: Request) => {
 
     return ApiResponse.success<CategoryListResponse>({
       items: items.map(toCategoryDto),
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
+      pagination: createPaginationMeta({ page, limit, total }),
     });
   } catch (error) {
     return ApiResponse.fromError(error, "Не удалось получить категории");

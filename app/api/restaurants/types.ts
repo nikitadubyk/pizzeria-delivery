@@ -1,6 +1,6 @@
 import type {
   CreateRestaurantRequest,
-  RestaurantListQuery,
+  ResolvedSearchPaginationQuery,
   UpdateRestaurantRequest,
 } from "@/api-contracts";
 import type { Restaurant } from "@/app/generated/prisma/client";
@@ -10,10 +10,15 @@ export type RestaurantPage = {
   total: number;
 };
 
+export type RestaurantDeletion = {
+  restaurant: Restaurant;
+  productImageKeys: string[];
+};
+
 export interface RestaurantRepository {
   findPage(
     superAdminId: string,
-    pagination: Required<RestaurantListQuery>,
+    pagination: ResolvedSearchPaginationQuery,
   ): Promise<RestaurantPage>;
   findById(
     superAdminId: string,
@@ -28,5 +33,8 @@ export interface RestaurantRepository {
     restaurantId: string,
     data: UpdateRestaurantRequest,
   ): Promise<Restaurant>;
-  delete(superAdminId: string, restaurantId: string): Promise<Restaurant>;
+  delete(
+    superAdminId: string,
+    restaurantId: string,
+  ): Promise<RestaurantDeletion>;
 }

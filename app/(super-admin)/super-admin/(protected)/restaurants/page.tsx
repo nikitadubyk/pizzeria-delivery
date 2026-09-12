@@ -6,7 +6,7 @@ import {
   IconPlus,
   IconTrash,
 } from "@tabler/icons-react";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { Details } from "@/components/details";
 
 import type { RestaurantDto, RestaurantStatus } from "@/api-contracts";
@@ -14,6 +14,7 @@ import {
   Badge,
   Button,
   Dialog,
+  SearchInput,
   Table,
   Typography,
   type AppBadgeTone,
@@ -21,6 +22,9 @@ import {
 } from "@/components/ui";
 import { showSuccessNotification } from "@/components/ui/notification";
 import { RestaurantFormDialog } from "@/components/restaurant-form-dialog";
+import { useSearchPagination } from "@/hooks/use-search-pagination";
+import { useSearchQueryValue } from "@/hooks/use-search-query-value";
+import { formatDateTime } from "@/lib/date";
 import {
   useDeleteRestaurantMutation,
   useGetRestaurantsQuery,
@@ -38,11 +42,6 @@ const statusPresentation: Record<
   SUSPENDED: { label: "Приостановлен", tone: "warning" },
   ARCHIVED: { label: "В архиве", tone: "neutral" },
 };
-
-const dateTimeFormatter = new Intl.DateTimeFormat("ru-RU", {
-  dateStyle: "medium",
-  timeStyle: "short",
-});
 
 const restaurantColumns: readonly TableColumn<RestaurantDto>[] = [
   {
@@ -83,15 +82,16 @@ const restaurantColumns: readonly TableColumn<RestaurantDto>[] = [
     mobileFullWidth: true,
     render: (restaurant) => (
       <time className="whitespace-nowrap" dateTime={restaurant.createdAt}>
-        {dateTimeFormatter.format(new Date(restaurant.createdAt))}
+        {formatDateTime(restaurant.createdAt)}
       </time>
     ),
     width: 190,
   },
 ];
 
-const SuperAdminRestaurantsPage = () => {
-  const [page, setPage] = useState(1);
+const SuperAdminRestaurantsPageContent = () => {
+  const search = useSearchQueryValue();
+  const [page, setPage] = useSearchPagination(search);
   const [formOpened, setFormOpened] = useState(false);
   const [editingRestaurant, setEditingRestaurant] =
     useState<RestaurantDto | null>(null);
@@ -103,13 +103,16 @@ const SuperAdminRestaurantsPage = () => {
   const [detailsOpened, setDetailsOpened] = useState(false);
   const [deleteRestaurant, { isLoading: isDeleting }] =
     useDeleteRestaurantMutation();
-  const { data, isError, isLoading, isFetching, refetch } = useGetRestaurantsQuery({
-    page,
-    limit: RESTAURANTS_PER_PAGE,
-  });
+  const { data, isError, isLoading, isFetching, refetch } =
+    useGetRestaurantsQuery({
+      page,
+      limit: RESTAURANTS_PER_PAGE,
+      search: search || undefined,
+    });
   const restaurants = data?.items ?? [];
   const total = data?.pagination.total ?? 0;
   const totalPages = Math.max(1, data?.pagination.totalPages ?? 1);
+
   const openDetailsDialog = (restaurant: RestaurantDto) => {
     setRestaurantDetails(restaurant);
     setDetailsOpened(true);
@@ -186,7 +189,7 @@ const SuperAdminRestaurantsPage = () => {
 
   return (
     <>
-      <AdminPageWrapper className="grid-rows-[auto_minmax(0,1fr)]">
+      <AdminPageWrapper className="grid-rows-[auto_auto] md:grid-rows-[auto_minmax(0,1fr)]">
         <div className="flex flex-wrap items-end justify-between gap-md">
           <div>
             <Typography muted variant="eyebrow">
@@ -205,43 +208,55 @@ const SuperAdminRestaurantsPage = () => {
           </Button>
         </div>
 
-        <Details
-          className="flex min-h-0 flex-col"
-          isLoading={isLoading}
-          isFetching={isFetching}
-          isError={isError}
-          errorMessage="Не удалось загрузить рестораны"
-          onRetry={refetch}
-        >
-          <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-xs overflow-hidden">
+        <div className="flex min-h-0 min-w-0 flex-col gap-xs">
+          <div className="flex flex-col gap-xs sm:flex-row sm:items-center sm:justify-between">
+            <SearchInput
+              className="sm:max-w-sm"
+              placeholder="Найти ресторан..."
+            />
             <div className="flex justify-end">
               <Typography muted variant="caption">
-                Всего: {total}
+                {search ? "Найдено" : "Всего"}: {total}
               </Typography>
             </div>
-
-            <Table
-              ariaLabel="Список ресторанов"
-              className="[&_[role=list]]:!h-0 [&_[role=list]]:touch-pan-y"
-              columns={columns}
-              emptyState="Рестораны пока не добавлены"
-              getRowAriaLabel={(restaurant) =>
-                `Открыть информацию о ресторане ${restaurant.name}`
-              }
-              getRowKey={(restaurant) => restaurant.id}
-              minWidth={930}
-              pagination={{
-                ariaLabel: "Страницы списка ресторанов",
-                onChange: setPage,
-                total: totalPages,
-                value: page,
-                withEdges: true,
-              }}
-              onRowClick={openDetailsDialog}
-              rows={restaurants}
-            />
           </div>
-        </Details>
+
+          <Details
+            className="flex min-h-0 flex-1 flex-col"
+            isLoading={isLoading}
+            isFetching={isFetching}
+            isError={isError}
+            errorMessage="Не удалось загрузить рестораны"
+            onRetry={refetch}
+          >
+            <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+              <Table
+                ariaLabel="Список ресторанов"
+
+                columns={columns}
+                emptyState={
+                  search
+                    ? "По вашему запросу рестораны не найдены"
+                    : "Рестораны пока не добавлены"
+                }
+                getRowAriaLabel={(restaurant) =>
+                  `Открыть информацию о ресторане ${restaurant.name}`
+                }
+                getRowKey={(restaurant) => restaurant.id}
+                minWidth={930}
+                pagination={{
+                  ariaLabel: "Страницы списка ресторанов",
+                  onChange: setPage,
+                  total: totalPages,
+                  value: page,
+                  withEdges: true,
+                }}
+                onRowClick={openDetailsDialog}
+                rows={restaurants}
+              />
+            </div>
+          </Details>
+        </div>
       </AdminPageWrapper>
 
       <RestaurantFormDialog
@@ -265,7 +280,7 @@ const SuperAdminRestaurantsPage = () => {
         title={restaurantDetails?.name ?? "Информация о ресторане"}
       >
         {restaurantDetails ? (
-          <div className="max-h-[calc(100dvh-16rem)] overflow-y-auto overscroll-contain pr-xs">
+          <div>
             <dl className="m-0 grid grid-cols-1 gap-x-lg gap-y-md sm:grid-cols-2">
               <div className="grid min-w-0 gap-1 sm:col-span-2">
                 <dt className="text-xs font-bold text-muted">Название</dt>
@@ -303,9 +318,7 @@ const SuperAdminRestaurantsPage = () => {
                 <dt className="text-xs font-bold text-muted">Создан</dt>
                 <dd className="m-0 font-semibold">
                   <time dateTime={restaurantDetails.createdAt}>
-                    {dateTimeFormatter.format(
-                      new Date(restaurantDetails.createdAt),
-                    )}
+                    {formatDateTime(restaurantDetails.createdAt)}
                   </time>
                 </dd>
               </div>
@@ -313,9 +326,7 @@ const SuperAdminRestaurantsPage = () => {
                 <dt className="text-xs font-bold text-muted">Обновлён</dt>
                 <dd className="m-0 font-semibold">
                   <time dateTime={restaurantDetails.updatedAt}>
-                    {dateTimeFormatter.format(
-                      new Date(restaurantDetails.updatedAt),
-                    )}
+                    {formatDateTime(restaurantDetails.updatedAt)}
                   </time>
                 </dd>
               </div>
@@ -367,5 +378,19 @@ const SuperAdminRestaurantsPage = () => {
     </>
   );
 };
+
+const SuperAdminRestaurantsPage = () => (
+  <Suspense
+    fallback={
+      <div
+        aria-label="Загрузка списка ресторанов"
+        className="min-h-[calc(100dvh-8rem)]"
+        role="status"
+      />
+    }
+  >
+    <SuperAdminRestaurantsPageContent />
+  </Suspense>
+);
 
 export default SuperAdminRestaurantsPage;

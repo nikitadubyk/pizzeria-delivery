@@ -4,6 +4,8 @@ export const ROUTES = {
     LOGIN: "/admin/login",
     CATEGORIES: "/admin/categories",
     MENU: "/admin/menu",
+    MENU_CREATE_PRODUCT: "/admin/menu/new",
+    menuEditProduct: (productId: string) => `/admin/menu/${productId}/edit`,
     ORDERS: "/admin/orders",
     SETTINGS: "/admin/settings",
     EMPLOYEES: "/admin/employees",

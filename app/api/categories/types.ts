@@ -1,6 +1,6 @@
 import type {
-  CategoryListQuery,
   CreateCategoryRequest,
+  ResolvedSearchPaginationQuery,
   UpdateCategoryRequest,
 } from "@/api-contracts";
 import type { Category } from "@/app/generated/prisma/client";
@@ -13,8 +13,9 @@ export type CategoryPage = {
 export interface CategoryRepository {
   findPage(
     restaurantId: string,
-    pagination: Required<CategoryListQuery>,
+    pagination: ResolvedSearchPaginationQuery,
   ): Promise<CategoryPage>;
+  findOptions(restaurantId: string): Promise<Category[]>;
   findById(restaurantId: string, categoryId: string): Promise<Category | null>;
   create(restaurantId: string, data: CreateCategoryRequest): Promise<Category>;
   update(

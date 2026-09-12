@@ -10,6 +10,7 @@ import {
   RestaurantServiceError,
   type RestaurantRepository,
 } from "./restaurant.service";
+import type { ProductImageStorage } from "../products/types";
 
 const createRestaurant = (overrides: Partial<Restaurant> = {}): Restaurant => ({
   id: "restaurant-id",
@@ -28,7 +29,10 @@ const createRepository = (
   findById: async () => null,
   create: async (_superAdminId, data) => createRestaurant(data),
   update: async (_superAdminId, _restaurantId, data) => createRestaurant(data),
-  delete: async () => createRestaurant(),
+  delete: async () => ({
+    restaurant: createRestaurant(),
+    productImageKeys: [],
+  }),
   ...overrides,
 });
 
@@ -104,19 +108,29 @@ describe("RestaurantService", () => {
   });
 
   it("deletes a restaurant by id", async () => {
+    const deletedImageKeys: string[][] = [];
     const service = new RestaurantService(
       createRepository({
         delete: async (superAdminId, restaurantId) => {
           assert.equal(superAdminId, "super-admin-id");
           assert.equal(restaurantId, "restaurant-id");
-          return createRestaurant();
+          return {
+            restaurant: createRestaurant(),
+            productImageKeys: ["image-one", "image-two"],
+          };
         },
       }),
+      {
+        deleteMany: async (keys) => {
+          deletedImageKeys.push([...keys]);
+        },
+      } satisfies Pick<ProductImageStorage, "deleteMany">,
     );
 
     assert.equal(
       (await service.delete("super-admin-id", "restaurant-id")).id,
       "restaurant-id",
     );
+    assert.deepEqual(deletedImageKeys, [["image-one", "image-two"]]);
   });
 });

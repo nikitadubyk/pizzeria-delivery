@@ -4,8 +4,9 @@ import {
   IconCategory,
   IconCategoryPlus,
   IconEdit,
+  IconTrash,
 } from "@tabler/icons-react";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 
 import type { CategoryDto } from "@/api-contracts";
 import {
@@ -17,13 +18,22 @@ import {
   Badge,
   Button,
   Dialog,
+  SearchInput,
   Table,
   Typography,
   type TableColumn,
 } from "@/components/ui";
-import { RESTAURANT_PERMISSION as P } from "@/lib/auth/restaurant-permissions";
-import { useRestaurantPermission } from "@/hooks/use-restaurant-permission";
 import {
+  showErrorNotification,
+  showSuccessNotification,
+} from "@/components/ui/notification";
+import { useRestaurantPermission } from "@/hooks/use-restaurant-permission";
+import { useSearchPagination } from "@/hooks/use-search-pagination";
+import { useSearchQueryValue } from "@/hooks/use-search-query-value";
+import { RESTAURANT_PERMISSION as P } from "@/lib/auth/restaurant-permissions";
+import { formatDateTime } from "@/lib/date";
+import {
+  useDeleteCategoryMutation,
   useGetCategoriesQuery,
   useGetCategoryQuery,
 } from "@/store/api/categories.api";
@@ -31,11 +41,6 @@ import {
 import { CategoryFormDialog } from "./category-form-dialog";
 
 const CATEGORIES_PER_PAGE = 10;
-
-const dateTimeFormatter = new Intl.DateTimeFormat("ru-RU", {
-  dateStyle: "medium",
-  timeStyle: "short",
-});
 
 const categoryColumns: readonly TableColumn<CategoryDto>[] = [
   {
@@ -69,25 +74,37 @@ const categoryColumns: readonly TableColumn<CategoryDto>[] = [
     mobileFullWidth: true,
     render: (category) => (
       <time className="whitespace-nowrap" dateTime={category.updatedAt}>
-        {dateTimeFormatter.format(new Date(category.updatedAt))}
+        {formatDateTime(category.updatedAt)}
       </time>
     ),
     width: 190,
   },
 ];
 
-export default function CategoriesPage() {
-  const [page, setPage] = useState(1);
+function CategoriesPage() {
+  const search = useSearchQueryValue();
+  const [page, setPage] = useSearchPagination(search);
   const [formOpened, setFormOpened] = useState(false);
-  const [editingCategory, setEditingCategory] =
-    useState<CategoryDto | null>(null);
+  const [editingCategory, setEditingCategory] = useState<CategoryDto | null>(
+    null,
+  );
   const [detailsCategoryId, setDetailsCategoryId] = useState<string | null>(
     null,
   );
   const [detailsOpened, setDetailsOpened] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState<CategoryDto | null>(
+    null,
+  );
+  const [deleteDialogOpened, setDeleteDialogOpened] = useState(false);
+  const [deleteCategory, { isLoading: isDeleting }] =
+    useDeleteCategoryMutation();
   const canManage = useRestaurantPermission(P.MENU_MANAGE);
   const { data, isError, isFetching, isLoading, refetch } =
-    useGetCategoriesQuery({ page, limit: CATEGORIES_PER_PAGE });
+    useGetCategoriesQuery({
+      page,
+      limit: CATEGORIES_PER_PAGE,
+      search: search || undefined,
+    });
   const {
     data: categoryDetails,
     isError: isDetailsError,
@@ -101,6 +118,7 @@ export default function CategoriesPage() {
   const categories = data?.items ?? [];
   const total = data?.pagination.total ?? 0;
   const totalPages = Math.max(1, data?.pagination.totalPages ?? 1);
+
   const openCreateDialog = () => {
     setEditingCategory(null);
     setFormOpened(true);
@@ -115,6 +133,31 @@ export default function CategoriesPage() {
     setDetailsOpened(true);
   };
   const closeDetailsDialog = () => setDetailsOpened(false);
+  const openDeleteDialog = (category: CategoryDto) => {
+    setCategoryToDelete(category);
+    setDeleteDialogOpened(true);
+  };
+  const closeDeleteDialog = () => {
+    if (!isDeleting) setDeleteDialogOpened(false);
+  };
+  const handleDelete = async () => {
+    if (!categoryToDelete) return;
+
+    try {
+      await deleteCategory({ categoryId: categoryToDelete.id }).unwrap();
+      showSuccessNotification({ message: "Категория удалена" });
+      setDeleteDialogOpened(false);
+
+      if (categories.length === 1 && page > 1) {
+        setPage((currentPage) => currentPage - 1);
+      }
+    } catch {
+      showErrorNotification({
+        message:
+          "Не удалось удалить категорию. Проверьте, что в ней нет продуктов.",
+      });
+    }
+  };
   const columns: readonly TableColumn<CategoryDto>[] = canManage
     ? [
         ...categoryColumns,
@@ -137,9 +180,18 @@ export default function CategoriesPage() {
               >
                 Изменить
               </Button>
+              <Button
+                className="w-full whitespace-nowrap !text-danger hover:!bg-danger-soft md:w-auto"
+                leftSection={<IconTrash aria-hidden="true" size={16} />}
+                onClick={() => openDeleteDialog(category)}
+                size="xs"
+                variant="ghost"
+              >
+                Удалить
+              </Button>
             </div>
           ),
-          width: 170,
+          width: 280,
         },
       ]
     : categoryColumns;
@@ -147,7 +199,7 @@ export default function CategoriesPage() {
   return (
     <RestaurantPermissionPage permission={P.MENU_READ}>
       <>
-        <section className="grid min-h-[calc(100dvh-8rem)] grid-rows-[auto_minmax(0,1fr)] gap-lg">
+        <section className="grid min-h-full grid-rows-[auto_auto] gap-lg md:h-full md:min-h-0 md:grid-rows-[auto_minmax(0,1fr)]">
           <div className="flex flex-wrap items-end justify-between gap-md">
             <div>
               <Typography muted variant="eyebrow">
@@ -169,43 +221,55 @@ export default function CategoriesPage() {
             </RestaurantPermissionGate>
           </div>
 
-          <Details
-            className="flex min-h-0 flex-col"
-            errorMessage="Не удалось загрузить категории"
-            isError={isError}
-            isFetching={isFetching}
-            isLoading={isLoading}
-            onRetry={refetch}
-          >
-            <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-xs overflow-hidden">
+          <div className="flex min-h-0 min-w-0 flex-col gap-xs">
+            <div className="flex flex-col gap-xs sm:flex-row sm:items-center sm:justify-between">
+              <SearchInput
+                className="sm:max-w-sm"
+                placeholder="Найти категорию..."
+              />
               <div className="flex justify-end">
                 <Typography muted variant="caption">
-                  Всего: {total}
+                  {search ? "Найдено" : "Всего"}: {total}
                 </Typography>
               </div>
-
-              <Table
-                ariaLabel="Список категорий"
-                className="[&_[role=list]]:!h-0 [&_[role=list]]:touch-pan-y"
-                columns={columns}
-                emptyState="Категории пока не добавлены"
-                getRowAriaLabel={(category) =>
-                  `Открыть информацию о категории ${category.name}`
-                }
-                getRowKey={(category) => category.id}
-                minWidth={canManage ? 900 : 730}
-                pagination={{
-                  ariaLabel: "Страницы списка категорий",
-                  onChange: setPage,
-                  total: totalPages,
-                  value: page,
-                  withEdges: true,
-                }}
-                onRowClick={openDetailsDialog}
-                rows={categories}
-              />
             </div>
-          </Details>
+
+            <Details
+              className="flex min-h-0 flex-1 flex-col"
+              errorMessage="Не удалось загрузить категории"
+              isError={isError}
+              isFetching={isFetching}
+              isLoading={isLoading}
+              onRetry={refetch}
+            >
+              <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+                <Table
+                  ariaLabel="Список категорий"
+
+                  columns={columns}
+                  emptyState={
+                    search
+                      ? "По вашему запросу категории не найдены"
+                      : "Категории пока не добавлены"
+                  }
+                  getRowAriaLabel={(category) =>
+                    `Открыть информацию о категории ${category.name}`
+                  }
+                  getRowKey={(category) => category.id}
+                  minWidth={canManage ? 900 : 730}
+                  pagination={{
+                    ariaLabel: "Страницы списка категорий",
+                    onChange: setPage,
+                    total: totalPages,
+                    value: page,
+                    withEdges: true,
+                  }}
+                  onRowClick={openDetailsDialog}
+                  rows={categories}
+                />
+              </div>
+            </Details>
+          </div>
         </section>
 
         <RestaurantPermissionGate permission={P.MENU_MANAGE}>
@@ -270,9 +334,7 @@ export default function CategoriesPage() {
                   <dt className="text-xs font-bold text-muted">Публикация</dt>
                   <dd className="m-0">
                     <Badge
-                      tone={
-                        categoryDetails.isPublished ? "success" : "neutral"
-                      }
+                      tone={categoryDetails.isPublished ? "success" : "neutral"}
                     >
                       {categoryDetails.isPublished ? "Опубликована" : "Скрыта"}
                     </Badge>
@@ -290,9 +352,7 @@ export default function CategoriesPage() {
                   <dt className="text-xs font-bold text-muted">Создана</dt>
                   <dd className="m-0 font-semibold">
                     <time dateTime={categoryDetails.createdAt}>
-                      {dateTimeFormatter.format(
-                        new Date(categoryDetails.createdAt),
-                      )}
+                      {formatDateTime(categoryDetails.createdAt)}
                     </time>
                   </dd>
                 </div>
@@ -300,9 +360,7 @@ export default function CategoriesPage() {
                   <dt className="text-xs font-bold text-muted">Обновлена</dt>
                   <dd className="m-0 font-semibold">
                     <time dateTime={categoryDetails.updatedAt}>
-                      {dateTimeFormatter.format(
-                        new Date(categoryDetails.updatedAt),
-                      )}
+                      {formatDateTime(categoryDetails.updatedAt)}
                     </time>
                   </dd>
                 </div>
@@ -310,7 +368,61 @@ export default function CategoriesPage() {
             ) : null}
           </Details>
         </Dialog>
+
+        <Dialog
+          actions={
+            <>
+              <Button
+                disabled={isDeleting}
+                onClick={closeDeleteDialog}
+                variant="secondary"
+              >
+                Отменить
+              </Button>
+              <Button
+                className="!bg-danger hover:!bg-danger-hover"
+                leftSection={<IconTrash aria-hidden="true" size={18} />}
+                loading={isDeleting}
+                onClick={() => void handleDelete()}
+              >
+                Удалить категорию
+              </Button>
+            </>
+          }
+          closeButtonProps={{ disabled: isDeleting }}
+          closeOnClickOutside={!isDeleting}
+          closeOnEscape={!isDeleting}
+          description="Категорию можно удалить, только если в ней нет продуктов."
+          icon={<IconTrash size={22} />}
+          onClose={closeDeleteDialog}
+          onExitTransitionEnd={() => setCategoryToDelete(null)}
+          opened={deleteDialogOpened}
+          title="Удалить категорию?"
+          tone="danger"
+        >
+          {categoryToDelete ? (
+            <div className="rounded-lg bg-danger-soft p-md text-sm">
+              <strong>{categoryToDelete.name}</strong>
+            </div>
+          ) : null}
+        </Dialog>
       </>
     </RestaurantPermissionPage>
+  );
+}
+
+export default function CategoriesPageRoute() {
+  return (
+    <Suspense
+      fallback={
+        <div
+          aria-label="Загрузка списка категорий"
+          className="h-full min-h-0"
+          role="status"
+        />
+      }
+    >
+      <CategoriesPage />
+    </Suspense>
   );
 }

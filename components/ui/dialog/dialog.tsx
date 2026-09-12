@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  FocusTrap,
   Modal as MantineModal,
   type ModalProps as MantineModalProps,
 } from "@mantine/core";
@@ -8,24 +9,16 @@ import { cn, interactiveMotionTransitionClassName } from "@/lib/class-names";
 import type { ReactNode } from "react";
 
 export type AppDialogTone =
-  | "primary"
-  | "success"
-  | "info"
-  | "warning"
-  | "danger"
-  | "failed"
-  | "neutral";
+  "primary" | "success" | "info" | "warning" | "danger" | "failed" | "neutral";
 
-export type AppDialogProps = Omit<
-  MantineModalProps,
-  "children" | "title"
-> & {
+export type AppDialogProps = Omit<MantineModalProps, "children" | "title"> & {
   actions?: ReactNode;
   children?: ReactNode;
   description?: ReactNode;
   icon?: ReactNode;
   title?: ReactNode;
   tone?: AppDialogTone;
+  preventInitialFocus?: boolean;
   withAccent?: boolean;
 };
 
@@ -67,15 +60,15 @@ const toneClassNames: Record<
 };
 
 const dialogSlotClassNames = {
-  body: "!px-4 !pb-4 !pt-0 sm:!px-6 sm:!pb-6",
+  body: "!flex !min-h-0 !flex-1 !flex-col !overflow-hidden !px-4 !pb-4 !pt-0 sm:!px-6 sm:!pb-6",
   close: cn(
     "!cursor-pointer !rounded-full !text-muted hover:!bg-primary-soft hover:!text-primary-active active:!scale-95 focus-visible:!outline focus-visible:!outline-2 focus-visible:!outline-offset-2 focus-visible:!outline-primary-active",
     interactiveMotionTransitionClassName,
   ),
   content:
-    "!overflow-hidden !border !border-border !bg-background !text-text shadow-[0_24px_60px_rgb(36_25_17_/_18%)]",
+    "!flex !max-h-[calc(100dvh-2rem)] !flex-col !overflow-hidden !border !border-border !bg-background !text-text shadow-[0_24px_60px_rgb(36_25_17_/_18%)] sm:!max-h-[calc(100dvh-4rem)]",
   header:
-    "!items-start !gap-sm !border-b !border-border !bg-background !px-4 !py-3 sm:!px-6 sm:!py-4",
+    "!shrink-0 !items-start !gap-sm !border-b !border-border !bg-background !px-4 !py-3 sm:!px-6 sm:!py-4",
   title: "!min-w-0 !text-lg !font-extrabold !leading-snug !text-text",
 };
 
@@ -88,6 +81,7 @@ export function Dialog({
   description,
   icon,
   overlayProps,
+  preventInitialFocus = false,
   title,
   tone = "primary",
   withAccent = true,
@@ -141,25 +135,35 @@ export function Dialog({
       title={renderedTitle}
       {...props}
     >
+      {preventInitialFocus ? <FocusTrap.InitialFocus /> : null}
+
       {withAccent ? (
         <div
           aria-hidden="true"
           className={cn(
-            "-mx-4 mb-4 h-1 sm:-mx-6 sm:mb-5",
+            "-mx-4 mb-4 h-1 shrink-0 sm:-mx-6 sm:mb-5",
             toneClassNames[tone].accent,
           )}
         />
       ) : null}
 
-      <div className="grid min-w-0 gap-md">
-        {description ? (
-          <p className="m-0 text-sm leading-snug text-muted">{description}</p>
-        ) : null}
+      <div className="flex min-h-0 flex-1 flex-col">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain [scrollbar-gutter:stable]">
+          <div className="grid min-w-0 gap-md pr-1">
+            {description ? (
+              <p className="m-0 text-sm leading-snug text-muted">
+                {description}
+              </p>
+            ) : null}
 
-        {children ? <div className="min-w-0 text-text">{children}</div> : null}
+            {children ? (
+              <div className="min-w-0 text-text">{children}</div>
+            ) : null}
+          </div>
+        </div>
 
         {actions ? (
-          <div className="flex flex-col-reverse gap-2 border-t border-border pt-md [&>*]:w-full md:flex-row md:flex-wrap md:justify-end md:[&>*]:w-auto">
+          <div className="mt-md flex shrink-0 flex-col-reverse gap-2 border-t border-border pt-md [&>*]:w-full md:flex-row md:flex-wrap md:justify-end md:[&>*]:w-auto">
             {actions}
           </div>
         ) : null}

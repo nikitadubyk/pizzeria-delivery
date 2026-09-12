@@ -1,6 +1,6 @@
 import type {
   CreateRestaurantUserRequest,
-  RestaurantUserListQuery,
+  ResolvedSearchPaginationQuery,
   SuperAdminLoginRequest,
   SuperAdminLoginResponse,
   SuperAdminRefreshRequest,
@@ -182,7 +182,7 @@ export class UserService {
 
   getRestaurantUserPage(
     superAdminId: string,
-    pagination: Required<RestaurantUserListQuery>,
+    pagination: ResolvedSearchPaginationQuery,
   ) {
     return this.repository.findRestaurantUserPage(superAdminId, pagination);
   }
@@ -298,11 +298,25 @@ const userRepository: UserRepository = {
         isActive: true,
       },
     }),
-  findRestaurantUserPage: async (superAdminId, { page, limit }) => {
+  findRestaurantUserPage: async (superAdminId, { page, limit, search }) => {
     const db = await getSuperAdminDb(superAdminId);
     const where: Prisma.UserWhereInput = {
       restaurantId: { not: null },
       role: { in: ["OWNER", "EMPLOYEE"] },
+      ...(search
+        ? {
+            OR: [
+              { name: { contains: search, mode: "insensitive" } },
+              { email: { contains: search, mode: "insensitive" } },
+              { phone: { contains: search } },
+              {
+                restaurant: {
+                  name: { contains: search, mode: "insensitive" },
+                },
+              },
+            ],
+          }
+        : {}),
     };
     const [items, total] = await db.$transaction([
       db.user.findMany({

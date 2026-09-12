@@ -36,11 +36,13 @@ export {
   InputField,
   PasswordField,
   SelectField,
+  TextareaField,
   ToggleField,
   type CheckboxFieldProps,
   type InputFieldProps,
   type PasswordFieldProps,
   type SelectFieldProps,
+  type TextareaFieldProps,
   type ToggleFieldProps,
 } from "./fields";
 export {
@@ -80,6 +82,7 @@ export {
   type RadioGroupProps,
 } from "./radio";
 export { Select, type AppSelectProps } from "./select";
+export { SearchInput, type SearchInputProps } from "./search-input";
 export { Tabs, type AppTabsProps, type TabItem } from "./tabs";
 export {
   Table,
@@ -89,7 +92,7 @@ export {
   type TableDisplayMode,
   type TableMobileLayout,
 } from "./table";
-export { Textarea } from "./textarea";
+export { Textarea, type AppTextareaProps } from "./textarea";
 export { Toggle, type AppToggleProps } from "./toggle";
 export {
   Typography,

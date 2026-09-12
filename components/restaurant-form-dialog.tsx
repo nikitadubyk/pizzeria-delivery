@@ -167,6 +167,7 @@ export const RestaurantFormDialog = ({
             }
             onClose={handleClose}
             opened={opened}
+            preventInitialFocus
             title={isEditing ? "Редактировать ресторан" : "Новый ресторан"}
           >
             <Form className="grid gap-md" id={RESTAURANT_FORM_ID} noValidate>
