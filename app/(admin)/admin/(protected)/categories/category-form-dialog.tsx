@@ -1,16 +1,20 @@
 "use client";
 
-import { IconCategoryPlus } from "@tabler/icons-react";
+import { IconCategoryPlus, IconEdit } from "@tabler/icons-react";
 import { Form, Formik, type FormikHelpers } from "formik";
 import * as yup from "yup";
 
 import {
   CATEGORY_NAME_MAX_LENGTH,
   CATEGORY_SORT_ORDER_MAX,
+  type CategoryDto,
 } from "@/api-contracts";
 import { Button, Dialog, InputField, ToggleField } from "@/components/ui";
 import { showSuccessNotification } from "@/components/ui/notification";
-import { useCreateCategoryMutation } from "@/store/api/categories.api";
+import {
+  useCreateCategoryMutation,
+  useUpdateCategoryMutation,
+} from "@/store/api/categories.api";
 
 type CategoryFormValues = {
   name: string;
@@ -19,6 +23,7 @@ type CategoryFormValues = {
 };
 
 type CategoryFormDialogProps = {
+  category: CategoryDto | null;
   onClose: () => void;
   onCreated: () => void;
   opened: boolean;
@@ -26,11 +31,13 @@ type CategoryFormDialogProps = {
 
 const CATEGORY_FORM_ID = "category-form";
 
-const initialValues: CategoryFormValues = {
-  name: "",
-  sortOrder: 0,
-  isPublished: false,
-};
+const getInitialValues = (
+  category: CategoryDto | null,
+): CategoryFormValues => ({
+  name: category?.name ?? "",
+  sortOrder: category?.sortOrder ?? 0,
+  isPublished: category?.isPublished ?? false,
+});
 
 const categoryFormValidationSchema: yup.ObjectSchema<CategoryFormValues> =
   yup.object({
@@ -56,25 +63,39 @@ const categoryFormValidationSchema: yup.ObjectSchema<CategoryFormValues> =
   });
 
 export function CategoryFormDialog({
+  category,
   onClose,
   onCreated,
   opened,
 }: CategoryFormDialogProps) {
-  const [createCategory, { isLoading }] = useCreateCategoryMutation();
+  const [createCategory, { isLoading: isCreating }] =
+    useCreateCategoryMutation();
+  const [updateCategory, { isLoading: isUpdating }] =
+    useUpdateCategoryMutation();
+  const isEditing = category !== null;
+  const isSaving = isCreating || isUpdating;
 
   const handleSubmit = async (
     values: CategoryFormValues,
     { resetForm }: FormikHelpers<CategoryFormValues>,
   ) => {
     try {
-      await createCategory({
+      const data = {
         name: values.name.trim(),
         sortOrder: Number(values.sortOrder),
         isPublished: values.isPublished,
-      }).unwrap();
-      showSuccessNotification({ message: "Категория создана" });
+      };
+
+      if (category) {
+        await updateCategory({ categoryId: category.id, data }).unwrap();
+        showSuccessNotification({ message: "Категория обновлена" });
+      } else {
+        await createCategory(data).unwrap();
+        showSuccessNotification({ message: "Категория создана" });
+        onCreated();
+      }
+
       resetForm();
-      onCreated();
       onClose();
     } catch {
       // Axios interceptor displays the API error notification.
@@ -83,12 +104,13 @@ export function CategoryFormDialog({
 
   return (
     <Formik
-      initialValues={initialValues}
+      enableReinitialize
+      initialValues={getInitialValues(category)}
       onSubmit={handleSubmit}
       validationSchema={categoryFormValidationSchema}
     >
       {({ isSubmitting, resetForm }) => {
-        const pending = isSubmitting || isLoading;
+        const pending = isSubmitting || isSaving;
         const handleClose = () => {
           if (pending) return;
 
@@ -109,18 +131,24 @@ export function CategoryFormDialog({
                   Отменить
                 </Button>
                 <Button form={CATEGORY_FORM_ID} loading={pending} type="submit">
-                  Создать категорию
+                  {isEditing ? "Сохранить" : "Создать категорию"}
                 </Button>
               </>
             }
             closeButtonProps={{ disabled: pending }}
             closeOnClickOutside={!pending}
             closeOnEscape={!pending}
-            description="Укажите название, положение в меню и видимость категории на витрине."
-            icon={<IconCategoryPlus size={22} />}
+            description={
+              isEditing
+                ? "Измените данные категории и сохраните изменения."
+                : "Укажите название, положение в меню и видимость категории на витрине."
+            }
+            icon={
+              isEditing ? <IconEdit size={22} /> : <IconCategoryPlus size={22} />
+            }
             onClose={handleClose}
             opened={opened}
-            title="Новая категория"
+            title={isEditing ? "Редактировать категорию" : "Новая категория"}
           >
             <Form className="grid gap-md" id={CATEGORY_FORM_ID} noValidate>
               <InputField
