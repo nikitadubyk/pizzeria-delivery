@@ -17,6 +17,15 @@ describe("product request validation", () => {
         baseComposition: " Тесто, соус, сыр ",
         sortOrder: 10,
         isPublished: true,
+        variants: [
+          {
+            name: " 30 см ",
+            price: 57_900,
+            weight: " 520 г ",
+            isAvailable: true,
+            restaurantId: "untrusted-restaurant-id",
+          },
+        ],
         restaurantId: "untrusted-restaurant-id",
         imageKey: "untrusted-key",
       },
@@ -30,6 +39,14 @@ describe("product request validation", () => {
       baseComposition: "Тесто, соус, сыр",
       sortOrder: 10,
       isPublished: true,
+      variants: [
+        {
+          name: "30 см",
+          price: 57_900,
+          weight: "520 г",
+          isAvailable: true,
+        },
+      ],
     });
   });
 
@@ -63,6 +80,39 @@ describe("product request validation", () => {
         categoryId: "category-id",
         name: "Маргарита",
         sortOrder: -1,
+        variants: [{ price: 57_900 }],
+      }),
+    );
+  });
+
+  it("accepts an empty variant list and requires integer prices in kopecks", async () => {
+    assert.deepEqual(
+      await createProductRequestSchema.validate({
+        categoryId: "category-id",
+        name: "Маргарита",
+        variants: [],
+      }),
+      {
+        categoryId: "category-id",
+        name: "Маргарита",
+        variants: [],
+      },
+    );
+    await assert.rejects(
+      createProductRequestSchema.validate({
+        categoryId: "category-id",
+        name: "Маргарита",
+        variants: [{ price: 57_900.5 }],
+      }),
+    );
+  });
+
+  it("requires names when a product has multiple variants", async () => {
+    await assert.rejects(
+      createProductRequestSchema.validate({
+        categoryId: "category-id",
+        name: "Маргарита",
+        variants: [{ price: 49_900 }, { name: "30 см", price: 57_900 }],
       }),
     );
   });

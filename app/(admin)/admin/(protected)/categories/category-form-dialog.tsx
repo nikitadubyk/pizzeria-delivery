@@ -2,13 +2,7 @@
 
 import { IconCategoryPlus, IconEdit } from "@tabler/icons-react";
 import { Form, Formik, type FormikHelpers } from "formik";
-import * as yup from "yup";
 
-import {
-  CATEGORY_NAME_MAX_LENGTH,
-  CATEGORY_SORT_ORDER_MAX,
-  type CategoryDto,
-} from "@/api-contracts";
 import { Button, Dialog, InputField, ToggleField } from "@/components/ui";
 import { showSuccessNotification } from "@/components/ui/notification";
 import {
@@ -16,51 +10,12 @@ import {
   useUpdateCategoryMutation,
 } from "@/store/api/categories.api";
 
-type CategoryFormValues = {
-  name: string;
-  sortOrder: number;
-  isPublished: boolean;
-};
-
-type CategoryFormDialogProps = {
-  category: CategoryDto | null;
-  onClose: () => void;
-  onCreated: () => void;
-  opened: boolean;
-};
-
-const CATEGORY_FORM_ID = "category-form";
-
-const getInitialValues = (
-  category: CategoryDto | null,
-): CategoryFormValues => ({
-  name: category?.name ?? "",
-  sortOrder: category?.sortOrder ?? 0,
-  isPublished: category?.isPublished ?? false,
-});
-
-const categoryFormValidationSchema: yup.ObjectSchema<CategoryFormValues> =
-  yup.object({
-    name: yup
-      .string()
-      .trim()
-      .max(
-        CATEGORY_NAME_MAX_LENGTH,
-        `Название не должно превышать ${CATEGORY_NAME_MAX_LENGTH} символов`,
-      )
-      .required("Введите название категории"),
-    sortOrder: yup
-      .number()
-      .typeError("Введите целое число")
-      .integer("Порядок должен быть целым числом")
-      .min(0, "Порядок не должен быть отрицательным")
-      .max(
-        CATEGORY_SORT_ORDER_MAX,
-        `Порядок не должен превышать ${CATEGORY_SORT_ORDER_MAX}`,
-      )
-      .required("Введите порядок категории"),
-    isPublished: yup.boolean().required("Укажите статус публикации"),
-  });
+import {
+  CATEGORY_FORM_ID,
+  categoryFormValidationSchema,
+  getCategoryFormInitialValues,
+} from "./config";
+import type { CategoryFormDialogProps, CategoryFormValues } from "./types";
 
 export function CategoryFormDialog({
   category,
@@ -105,11 +60,11 @@ export function CategoryFormDialog({
   return (
     <Formik
       enableReinitialize
-      initialValues={getInitialValues(category)}
+      initialValues={getCategoryFormInitialValues(category)}
       onSubmit={handleSubmit}
       validationSchema={categoryFormValidationSchema}
     >
-      {({ isSubmitting, resetForm }) => {
+      {({ dirty, isSubmitting, resetForm }) => {
         const pending = isSubmitting || isSaving;
         const handleClose = () => {
           if (pending) return;
@@ -130,7 +85,12 @@ export function CategoryFormDialog({
                 >
                   Отменить
                 </Button>
-                <Button form={CATEGORY_FORM_ID} loading={pending} type="submit">
+                <Button
+                  disabled={!dirty || pending}
+                  form={CATEGORY_FORM_ID}
+                  loading={pending}
+                  type="submit"
+                >
                   {isEditing ? "Сохранить" : "Создать категорию"}
                 </Button>
               </>

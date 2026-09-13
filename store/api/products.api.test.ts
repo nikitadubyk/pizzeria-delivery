@@ -33,6 +33,7 @@ const product = {
   imageUrl: null,
   sortOrder: 0,
   isPublished: false,
+  variants: [],
   createdAt: "2026-01-01T00:00:00.000Z",
   updatedAt: "2026-01-01T00:00:00.000Z",
 };
@@ -92,6 +93,7 @@ describe("product RTK Query API", () => {
           productsApi.endpoints.createProduct.initiate({
             categoryId: "category-id",
             name: "Маргарита",
+            variants: [{ price: 57_900 }],
           }),
         )
         .unwrap();

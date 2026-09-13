@@ -8,16 +8,8 @@ import {
 import { Form, Formik, type FormikHelpers } from "formik";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import * as yup from "yup";
 
-import {
-  PRODUCT_BASE_COMPOSITION_MAX_LENGTH,
-  PRODUCT_DESCRIPTION_MAX_LENGTH,
-  PRODUCT_NAME_MAX_LENGTH,
-  PRODUCT_SORT_ORDER_MAX,
-  type CreateProductRequest,
-  type ProductDto,
-} from "@/api-contracts";
+import type { ProductDto } from "@/api-contracts";
 import { Details } from "@/components/details";
 import { ImageDropzone } from "@/components/image-dropzone";
 import {
@@ -42,83 +34,16 @@ import {
   useUpdateProductMutation,
 } from "@/store/api/products.api";
 
-type ProductFormValues = {
-  categoryId: string;
-  name: string;
-  description: string;
-  baseComposition: string;
-  sortOrder: number;
-  isPublished: boolean;
-  image: File | null;
-  removeImage: boolean;
-};
-
-type ProductFormPageProps = {
-  productId?: string;
-};
-
-const PRODUCT_FORM_ID = "product-form";
-
-const getProductInitialValues = (
-  product: ProductDto | null,
-  defaultCategoryId = "",
-): ProductFormValues => ({
-  categoryId: product?.categoryId ?? defaultCategoryId,
-  name: product?.name ?? "",
-  description: product?.description ?? "",
-  baseComposition: product?.baseComposition ?? "",
-  sortOrder: product?.sortOrder ?? 0,
-  isPublished: product?.isPublished ?? false,
-  image: null,
-  removeImage: false,
-});
-
-const productFormValidationSchema: yup.ObjectSchema<ProductFormValues> =
-  yup.object({
-    categoryId: yup.string().trim().required("Выберите категорию"),
-    name: yup
-      .string()
-      .trim()
-      .max(
-        PRODUCT_NAME_MAX_LENGTH,
-        `Название не должно превышать ${PRODUCT_NAME_MAX_LENGTH} символов`,
-      )
-      .required("Введите название продукта"),
-    description: yup
-      .string()
-      .trim()
-      .max(
-        PRODUCT_DESCRIPTION_MAX_LENGTH,
-        `Описание не должно превышать ${PRODUCT_DESCRIPTION_MAX_LENGTH} символов`,
-      )
-      .ensure(),
-    baseComposition: yup
-      .string()
-      .trim()
-      .max(
-        PRODUCT_BASE_COMPOSITION_MAX_LENGTH,
-        `Состав не должен превышать ${PRODUCT_BASE_COMPOSITION_MAX_LENGTH} символов`,
-      )
-      .ensure(),
-    sortOrder: yup
-      .number()
-      .typeError("Введите целое число")
-      .integer("Порядок должен быть целым числом")
-      .min(0, "Порядок не должен быть отрицательным")
-      .max(
-        PRODUCT_SORT_ORDER_MAX,
-        `Порядок не должен превышать ${PRODUCT_SORT_ORDER_MAX}`,
-      )
-      .required("Введите порядок продукта"),
-    isPublished: yup.boolean().required("Укажите статус публикации"),
-    image: yup
-      .mixed<File>()
-      .nullable()
-      .defined("Выберите изображение или оставьте поле пустым"),
-    removeImage: yup
-      .boolean()
-      .required("Укажите, нужно ли удалить изображение"),
-  });
+import {
+  getProductFormInitialValues,
+  getProductRequestData,
+  productFormValidationSchema,
+} from "./product-form-page.config";
+import type {
+  ProductFormPageProps,
+  ProductFormValues,
+} from "./product-form-page.types";
+import { ProductVariantFields } from "./product-variant-fields";
 
 export function ProductFormPage({ productId }: ProductFormPageProps) {
   const router = useRouter();
@@ -159,14 +84,7 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
     helpers: FormikHelpers<ProductFormValues>,
   ) => {
     let savedProduct: ProductDto | null = null;
-    const data: CreateProductRequest = {
-      categoryId: values.categoryId,
-      name: values.name.trim(),
-      description: values.description.trim() || null,
-      baseComposition: values.baseComposition.trim() || null,
-      sortOrder: Number(values.sortOrder),
-      isPublished: values.isPublished,
-    };
+    const data = getProductRequestData(values);
 
     try {
       savedProduct = product
@@ -253,23 +171,22 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
         ) : (
           <Formik
             enableReinitialize
-            initialValues={getProductInitialValues(
+            initialValues={getProductFormInitialValues(
               product ?? null,
               categories[0]?.id,
             )}
             onSubmit={handleSubmit}
             validationSchema={productFormValidationSchema}
           >
-            {({ isSubmitting, setFieldValue, values }) => {
+            {({ dirty, isSubmitting, setFieldValue, values }) => {
               const pending = isSubmitting || isSaving;
 
               return (
                 <Form
                   className="grid gap-lg rounded-xl border border-border bg-background p-md sm:p-lg"
-                  id={PRODUCT_FORM_ID}
                   noValidate
                 >
-                  <div className="grid gap-xl lg:grid-cols-[minmax(0,1fr)_minmax(20rem,26rem)]">
+                  <div className="grid gap-xl xl:grid-cols-[minmax(0,1fr)_minmax(20rem,26rem)]">
                     <div className="grid content-start gap-md">
                       <InputField
                         autoComplete="off"
@@ -357,6 +274,8 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
                     </div>
                   </div>
 
+                  <ProductVariantFields disabled={pending} />
+
                   <div className="flex flex-col-reverse gap-sm border-t border-border pt-md sm:flex-row sm:justify-end">
                     <Button
                       disabled={pending}
@@ -367,6 +286,7 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
                       Отменить
                     </Button>
                     <Button
+                      disabled={!dirty || pending}
                       leftSection={
                         <IconDeviceFloppy aria-hidden="true" size={18} />
                       }

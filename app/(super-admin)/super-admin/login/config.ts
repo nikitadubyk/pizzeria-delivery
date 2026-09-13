@@ -1,12 +1,13 @@
-import type { SuperAdminLoginRequest } from "@/api-contracts";
 import * as yup from "yup";
+
+import type { SuperAdminLoginFormValues } from "./types";
 
 export const superAdminLoginInitialValues = {
   email: "",
   password: "",
 };
 
-export const superAdminLoginValidationSchema: yup.ObjectSchema<SuperAdminLoginRequest> =
+export const superAdminLoginValidationSchema: yup.ObjectSchema<SuperAdminLoginFormValues> =
   yup.object({
     email: yup
       .string()
@@ -17,5 +18,3 @@ export const superAdminLoginValidationSchema: yup.ObjectSchema<SuperAdminLoginRe
       .min(8, "Пароль должен содержать не менее 8 символов")
       .required("Введите пароль"),
   });
-
-export type SuperAdminLoginFormValues = SuperAdminLoginRequest;

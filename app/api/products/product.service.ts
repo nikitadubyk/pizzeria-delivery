@@ -7,6 +7,10 @@ import { Prisma } from "@/app/generated/prisma/client";
 import { getRestaurantDb } from "@/lib/prisma";
 
 import { productImageStorage } from "./product-image.storage";
+import {
+  productVariantService,
+  type ProductVariantService,
+} from "./product-variant.service";
 import type {
   ProductImageStorage,
   ProductPage,
@@ -50,6 +54,7 @@ export class ProductService {
   constructor(
     private readonly repository: ProductRepository,
     private readonly imageStorage: ProductImageStorage,
+    private readonly variantService: ProductVariantService = productVariantService,
   ) {}
 
   getPage(
@@ -76,9 +81,14 @@ export class ProductService {
     input: CreateProductRequest,
   ): Promise<ProductWithCategory> {
     await this.assertCategoryExists(restaurantId, input.categoryId);
+    const { variants, ...productData } = input;
 
     try {
-      return await this.repository.create(restaurantId, input);
+      return await this.repository.create(
+        restaurantId,
+        productData,
+        this.variantService.prepareForCreate(variants),
+      );
     } catch (error) {
       return mapRepositoryError(error);
     }
@@ -94,8 +104,15 @@ export class ProductService {
       await this.assertCategoryExists(restaurantId, input.categoryId);
     }
 
+    const { variants, ...productData } = input;
+
     try {
-      return await this.repository.update(restaurantId, productId, input);
+      return await this.repository.update(
+        restaurantId,
+        productId,
+        productData,
+        variants ? this.variantService.prepareForUpdate(variants) : undefined,
+      );
     } catch (error) {
       return mapRepositoryError(error);
     }
@@ -211,7 +228,10 @@ const productRepository: ProductRepository = {
     const [items, total] = await db.$transaction([
       db.product.findMany({
         where,
-        include: { category: { select: { id: true, name: true } } },
+        include: {
+          category: { select: { id: true, name: true } },
+          variants: { orderBy: [{ sortOrder: "asc" }, { id: "asc" }] },
+        },
         orderBy: [{ sortOrder: "asc" }, { id: "asc" }],
         skip: (page - 1) * limit,
         take: limit,
@@ -225,7 +245,10 @@ const productRepository: ProductRepository = {
     const db = getRestaurantDb(restaurantId);
     return db.product.findUnique({
       where: { id: productId },
-      include: { category: { select: { id: true, name: true } } },
+      include: {
+        category: { select: { id: true, name: true } },
+        variants: { orderBy: [{ sortOrder: "asc" }, { id: "asc" }] },
+      },
     });
   },
   categoryExists: async (restaurantId, categoryId) => {
@@ -237,26 +260,78 @@ const productRepository: ProductRepository = {
       }),
     );
   },
-  create: async (restaurantId, data) => {
+  create: async (restaurantId, data, variants) => {
     const db = getRestaurantDb(restaurantId);
     return db.product.create({
-      data: { ...data, restaurantId },
-      include: { category: { select: { id: true, name: true } } },
+      data: {
+        ...data,
+        restaurantId,
+        variants: {
+          create: productVariantService.createForNewProduct(
+            restaurantId,
+            variants,
+          ),
+        },
+      },
+      include: {
+        category: { select: { id: true, name: true } },
+        variants: { orderBy: [{ sortOrder: "asc" }, { id: "asc" }] },
+      },
     });
   },
-  update: async (restaurantId, productId, data) => {
+  update: async (restaurantId, productId, data, variants) => {
     const db = getRestaurantDb(restaurantId);
+    const { categoryId, ...productData } = data;
+    const existingVariants = variants?.filter((variant) => variant.id) ?? [];
+    const newVariants = variants?.filter((variant) => !variant.id) ?? [];
+    const existingVariantIds = existingVariants.map((variant) => variant.id!);
+
     return db.product.update({
       where: { id: productId },
-      data,
-      include: { category: { select: { id: true, name: true } } },
+      data: {
+        ...productData,
+        ...(categoryId
+          ? {
+              category: {
+                connect: {
+                  restaurantId_id: { restaurantId, id: categoryId },
+                },
+              },
+            }
+          : {}),
+        ...(variants
+          ? {
+              variants: {
+                deleteMany:
+                  existingVariantIds.length > 0
+                    ? { id: { notIn: existingVariantIds } }
+                    : {},
+                update: existingVariants.map(({ id, ...variant }) => ({
+                  where: { id },
+                  data: variant,
+                })),
+                create: productVariantService.createForExistingProduct(
+                  restaurantId,
+                  newVariants,
+                ),
+              },
+            }
+          : {}),
+      },
+      include: {
+        category: { select: { id: true, name: true } },
+        variants: { orderBy: [{ sortOrder: "asc" }, { id: "asc" }] },
+      },
     });
   },
   delete: async (restaurantId, productId) => {
     const db = getRestaurantDb(restaurantId);
     return db.product.delete({
       where: { id: productId },
-      include: { category: { select: { id: true, name: true } } },
+      include: {
+        category: { select: { id: true, name: true } },
+        variants: { orderBy: [{ sortOrder: "asc" }, { id: "asc" }] },
+      },
     });
   },
 };

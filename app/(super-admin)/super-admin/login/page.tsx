@@ -19,8 +19,8 @@ import { setAuthUser } from "@/store/slices/auth.slice";
 import {
   superAdminLoginInitialValues,
   superAdminLoginValidationSchema,
-  type SuperAdminLoginFormValues,
 } from "./config";
+import type { SuperAdminLoginFormValues } from "./types";
 
 const SuperAdminLoginPage = () => {
   const dispatch = useAppDispatch();

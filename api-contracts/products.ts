@@ -6,6 +6,10 @@ export const PRODUCT_BASE_COMPOSITION_MAX_LENGTH = 2_000;
 export const PRODUCT_LIST_DEFAULT_LIMIT = 20;
 export const PRODUCT_LIST_MAX_LIMIT = 100;
 export const PRODUCT_SORT_ORDER_MAX = 2_147_483_647;
+export const PRODUCT_VARIANT_NAME_MAX_LENGTH = 80;
+export const PRODUCT_VARIANT_WEIGHT_MAX_LENGTH = 80;
+export const PRODUCT_VARIANT_PRICE_MAX = 2_147_483_647;
+export const PRODUCT_VARIANTS_MAX_COUNT = 50;
 export const PRODUCT_IMAGE_MIME_TYPES = [
   "image/jpeg",
   "image/png",
@@ -26,8 +30,26 @@ export type ProductDto = {
   imageUrl: string | null;
   sortOrder: number;
   isPublished: boolean;
+  variants: ProductVariantDto[];
   createdAt: string;
   updatedAt: string;
+};
+
+export type ProductVariantDto = {
+  id: string;
+  name: string | null;
+  price: number;
+  weight: string | null;
+  isAvailable: boolean;
+  sortOrder: number;
+};
+
+export type ProductVariantRequest = {
+  id?: string;
+  name?: string | null;
+  price: number;
+  weight?: string | null;
+  isAvailable?: boolean;
 };
 
 export type ProductPathParams = {
@@ -48,6 +70,7 @@ export type CreateProductRequest = {
   baseComposition?: string | null;
   sortOrder?: number;
   isPublished?: boolean;
+  variants: ProductVariantRequest[];
 };
 
 export type UpdateProductRequest = Partial<CreateProductRequest>;

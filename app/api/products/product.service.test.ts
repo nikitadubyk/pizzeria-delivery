@@ -28,6 +28,7 @@ const createProduct = (
   createdAt: new Date("2026-01-01T00:00:00.000Z"),
   updatedAt: new Date("2026-01-01T00:00:00.000Z"),
   category: { id: "category-id", name: "Пицца" },
+  variants: [],
   ...overrides,
 });
 
@@ -62,6 +63,7 @@ describe("ProductService", () => {
       service.create("restaurant-id", {
         categoryId: "other-restaurant-category",
         name: "Маргарита",
+        variants: [{ price: 57_900 }],
       }),
       (error: unknown) =>
         error instanceof ProductServiceError &&
@@ -73,8 +75,10 @@ describe("ProductService", () => {
     const calls: string[] = [];
     const service = new ProductService(
       createRepository({
-        create: async (restaurantId, data) => {
-          calls.push(`create:${restaurantId}:${data.name}`);
+        create: async (restaurantId, data, variants) => {
+          calls.push(
+            `create:${restaurantId}:${data.name}:${variants[0].price}:${variants[0].sortOrder}`,
+          );
           return createProduct(data);
         },
       }),
@@ -84,10 +88,57 @@ describe("ProductService", () => {
     const product = await service.create("restaurant-id", {
       categoryId: "category-id",
       name: "Маргарита",
+      variants: [{ price: 57_900 }],
     });
 
     assert.equal(product.imageKey, null);
-    assert.deepEqual(calls, ["create:restaurant-id:Маргарита"]);
+    assert.deepEqual(calls, ["create:restaurant-id:Маргарита:57900:0"]);
+  });
+
+  it("preserves variant ids and derives their order during update", async () => {
+    const calls: string[] = [];
+    const service = new ProductService(
+      createRepository({
+        update: async (_restaurantId, _productId, _data, variants) => {
+          calls.push(
+            variants
+              ?.map(
+                (variant) =>
+                  `${variant.id ?? "new"}:${variant.name}:${variant.sortOrder}`,
+              )
+              .join(",") ?? "unchanged",
+          );
+          return createProduct();
+        },
+      }),
+      createImageStorage(),
+    );
+
+    await service.update("restaurant-id", "product-id", {
+      variants: [
+        { id: "variant-30", name: "30 см", price: 57_900 },
+        { name: "40 см", price: 79_900 },
+      ],
+    });
+
+    assert.deepEqual(calls, ["variant-30:30 см:0,new:40 см:1"]);
+  });
+
+  it("passes an empty variant list through so all variants can be removed", async () => {
+    let receivedVariantCount: number | undefined;
+    const service = new ProductService(
+      createRepository({
+        update: async (_restaurantId, _productId, _data, variants) => {
+          receivedVariantCount = variants?.length;
+          return createProduct();
+        },
+      }),
+      createImageStorage(),
+    );
+
+    await service.update("restaurant-id", "product-id", { variants: [] });
+
+    assert.equal(receivedVariantCount, 0);
   });
 
   it("attaches an uploaded image before deleting the previous one", async () => {

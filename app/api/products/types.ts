@@ -1,13 +1,19 @@
 import type {
   CreateProductRequest,
   ProductListQuery,
+  ProductVariantRequest,
   ResolvedSearchPaginationQuery,
   UpdateProductRequest,
 } from "@/api-contracts";
-import type { Category, Product } from "@/app/generated/prisma/client";
+import type {
+  Category,
+  Product,
+  ProductVariant,
+} from "@/app/generated/prisma/client";
 
 export type ProductWithCategory = Product & {
   category: Pick<Category, "id" | "name">;
+  variants: ProductVariant[];
 };
 
 export type ProductPage = {
@@ -18,6 +24,12 @@ export type ProductPage = {
 export type ProductUpdateData = UpdateProductRequest & {
   imageUrl?: string | null;
   imageKey?: string | null;
+};
+
+export type ProductData = Omit<CreateProductRequest, "variants">;
+export type ProductVariantWrite = Omit<ProductVariantRequest, "id"> & {
+  id?: string;
+  sortOrder: number;
 };
 
 export type ResolvedProductListQuery = ResolvedSearchPaginationQuery &
@@ -35,12 +47,14 @@ export interface ProductRepository {
   categoryExists(restaurantId: string, categoryId: string): Promise<boolean>;
   create(
     restaurantId: string,
-    data: CreateProductRequest,
+    data: ProductData,
+    variants: readonly ProductVariantWrite[],
   ): Promise<ProductWithCategory>;
   update(
     restaurantId: string,
     productId: string,
-    data: ProductUpdateData,
+    data: Omit<ProductUpdateData, "variants">,
+    variants?: readonly ProductVariantWrite[],
   ): Promise<ProductWithCategory>;
   delete(restaurantId: string, productId: string): Promise<ProductWithCategory>;
 }

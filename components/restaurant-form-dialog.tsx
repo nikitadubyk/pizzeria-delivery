@@ -2,16 +2,7 @@
 
 import { IconBuildingStore, IconEdit } from "@tabler/icons-react";
 import { Form, Formik, type FormikHelpers } from "formik";
-import * as yup from "yup";
 
-import {
-  RESTAURANT_NAME_MAX_LENGTH,
-  RESTAURANT_SLUG_MAX_LENGTH,
-  RESTAURANT_SLUG_PATTERN,
-  RESTAURANT_STATUSES,
-  type RestaurantDto,
-  type RestaurantStatus,
-} from "@/api-contracts";
 import { Button, Dialog, InputField, SelectField } from "@/components/ui";
 import { showSuccessNotification } from "@/components/ui/notification";
 import {
@@ -19,64 +10,16 @@ import {
   useUpdateRestaurantMutation,
 } from "@/store/api/super-admin.api";
 
-type RestaurantFormValues = {
-  name: string;
-  slug: string;
-  status: RestaurantStatus;
-};
-
-type RestaurantFormDialogProps = {
-  onClose: () => void;
-  opened: boolean;
-  restaurant: RestaurantDto | null;
-};
-
-const RESTAURANT_FORM_ID = "restaurant-form";
-
-const statusOptions: { label: string; value: RestaurantStatus }[] = [
-  { label: "Активен", value: "ACTIVE" },
-  { label: "Приостановлен", value: "SUSPENDED" },
-  { label: "В архиве", value: "ARCHIVED" },
-];
-
-const restaurantFormValidationSchema: yup.ObjectSchema<RestaurantFormValues> =
-  yup.object({
-    name: yup
-      .string()
-      .trim()
-      .max(
-        RESTAURANT_NAME_MAX_LENGTH,
-        "Название не должно превышать " +
-          RESTAURANT_NAME_MAX_LENGTH +
-          " символов",
-      )
-      .required("Введите название ресторана"),
-    slug: yup
-      .string()
-      .trim()
-      .lowercase()
-      .max(
-        RESTAURANT_SLUG_MAX_LENGTH,
-        "Slug не должен превышать " + RESTAURANT_SLUG_MAX_LENGTH + " символов",
-      )
-      .matches(
-        RESTAURANT_SLUG_PATTERN,
-        "Используйте строчные латинские буквы, цифры и одиночные дефисы",
-      )
-      .required("Введите slug ресторана"),
-    status: yup
-      .mixed<RestaurantStatus>()
-      .oneOf(RESTAURANT_STATUSES, "Выберите корректный статус")
-      .required("Выберите статус"),
-  });
-
-const getInitialValues = (
-  restaurant: RestaurantDto | null,
-): RestaurantFormValues => ({
-  name: restaurant?.name ?? "",
-  slug: restaurant?.slug ?? "",
-  status: restaurant?.status ?? "ACTIVE",
-});
+import {
+  getRestaurantFormInitialValues,
+  RESTAURANT_FORM_ID,
+  restaurantFormValidationSchema,
+  restaurantStatusOptions,
+} from "./restaurant-form-dialog.config";
+import type {
+  RestaurantFormDialogProps,
+  RestaurantFormValues,
+} from "./restaurant-form-dialog.types";
 
 export const RestaurantFormDialog = ({
   onClose,
@@ -116,11 +59,11 @@ export const RestaurantFormDialog = ({
   return (
     <Formik
       enableReinitialize
-      initialValues={getInitialValues(restaurant)}
+      initialValues={getRestaurantFormInitialValues(restaurant)}
       onSubmit={handleSubmit}
       validationSchema={restaurantFormValidationSchema}
     >
-      {({ isSubmitting, resetForm }) => {
+      {({ dirty, isSubmitting, resetForm }) => {
         const pending = isSubmitting || isSaving;
         const handleClose = () => {
           if (pending) return;
@@ -142,6 +85,7 @@ export const RestaurantFormDialog = ({
                   Отменить
                 </Button>
                 <Button
+                  disabled={!dirty || pending}
                   form={RESTAURANT_FORM_ID}
                   loading={pending}
                   type="submit"
@@ -186,7 +130,7 @@ export const RestaurantFormDialog = ({
               />
               <SelectField
                 allowDeselect={false}
-                data={statusOptions}
+                data={restaurantStatusOptions}
                 label="Статус"
                 name="status"
               />

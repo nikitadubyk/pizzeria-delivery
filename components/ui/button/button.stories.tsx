@@ -3,6 +3,7 @@ import {
   IconChevronRight,
   IconPizza,
   IconShoppingBag,
+  IconTrash,
 } from "@tabler/icons-react";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Button } from ".";
@@ -18,7 +19,7 @@ const meta = {
   argTypes: {
     variant: {
       control: "select",
-      options: ["primary", "secondary", "ghost", "dark"],
+      options: ["primary", "secondary", "ghost", "dark", "danger"],
     },
   },
 } satisfies Meta<typeof Button>;
@@ -44,6 +45,9 @@ export const Variants: Story = {
         Самовывоз
       </Button>
       <Button variant="ghost">Назад</Button>
+      <Button leftSection={<IconTrash size={iconSize} />} variant="danger">
+        Удалить
+      </Button>
       <Button disabled>Недоступно</Button>
     </div>
   ),

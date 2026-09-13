@@ -8,29 +8,28 @@ import {
 import { cn, interactiveMotionTransitionClassName } from "@/lib/class-names";
 import { forwardRef, type ReactNode } from "react";
 
-export type AppButtonVariant = "primary" | "secondary" | "ghost" | "dark";
+export type AppButtonVariant =
+  "primary" | "secondary" | "ghost" | "dark" | "danger";
 
 export type AppButtonProps = Omit<ButtonProps, "color" | "variant"> & {
   variant?: AppButtonVariant;
   children: ReactNode;
 };
 
-const variantMap: Record<AppButtonVariant, Pick<ButtonProps, "variant" | "color">> = {
+const variantMap: Record<
+  AppButtonVariant,
+  Pick<ButtonProps, "variant" | "color">
+> = {
   primary: { variant: "filled", color: "brand" },
   secondary: { variant: "outline", color: "dough" },
   ghost: { variant: "subtle", color: "dough" },
   dark: { variant: "filled", color: "dough" },
+  danger: { variant: "filled", color: "tomato" },
 };
 
 const ButtonBase = forwardRef<HTMLButtonElement, AppButtonProps>(
   function Button(
-    {
-      variant = "primary",
-      size = "md",
-      children,
-      className,
-      ...props
-    },
+    { variant = "primary", size = "md", children, className, ...props },
     ref,
   ) {
     return (

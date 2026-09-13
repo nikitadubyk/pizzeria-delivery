@@ -1,6 +1,8 @@
 import type { ProductDto } from "@/api-contracts";
 import type { ProductWithCategory } from "@/app/api/products/types";
 
+import { toProductVariantDto } from "./product-variant.mapper";
+
 export const toProductDto = (product: ProductWithCategory): ProductDto => ({
   id: product.id,
   restaurantId: product.restaurantId,
@@ -12,6 +14,7 @@ export const toProductDto = (product: ProductWithCategory): ProductDto => ({
   imageUrl: product.imageUrl,
   sortOrder: product.sortOrder,
   isPublished: product.isPublished,
+  variants: product.variants.map(toProductVariantDto),
   createdAt: product.createdAt.toISOString(),
   updatedAt: product.updatedAt.toISOString(),
 });

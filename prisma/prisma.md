@@ -7,9 +7,12 @@
 - `models/restaurant.prisma` contains the tenant root (`Restaurant`) and its
   status.
 - `models/user.prisma` contains administrative accounts and their roles.
-- `models/catalog.prisma` contains restaurant-owned menu categories and
-  products. Products reference a category from the same restaurant and store
-  copy, image metadata, sort order, and publication state.
+- `models/catalog.prisma` contains restaurant-owned menu categories, products,
+  and product variants. Products reference a category from the same restaurant
+  and store copy, image metadata, sort order, and publication state. Variants
+  own the price in kopecks, display name, weight/volume, availability, and
+  ordering. Products may have no variants. A simple priced product can use one
+  unnamed variant so the storefront does not need to render a selector.
 - Add future bounded domains as separate files in `models/`, for example
   `menu.prisma`, `order.prisma`, and `delivery.prisma`.
 - `migrations/` contains generated database migrations and stays next to
@@ -156,6 +159,13 @@ as categories. Product `POST` and `PATCH` requests are JSON and never accept a
 client-supplied image URL or storage key. The client first creates a product and
 then uploads its image through the shared `/api/admin/uploads` UploadThing
 FileRouter using the `productImage` endpoint and `{ productId }` input.
+
+Product create requests accept an empty variant array. Product updates replace
+the submitted variant collection atomically with the product fields: existing
+variant ids are updated, omitted ids are deleted, rows without ids are created,
+and an empty array removes every variant. Variant ownership is constrained by
+the same `(restaurantId, productId)` pair as the parent product; client-supplied
+tenant ids are ignored.
 
 The upload middleware verifies `MENU_MANAGE`, restricts files to JPEG, PNG, or
 WebP, and loads the product through the authenticated restaurant scope before
