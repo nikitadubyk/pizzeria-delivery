@@ -17,7 +17,7 @@ function fixture() {
     phone: id === "pizza-a" ? "+79991234567" : "+79997654321",
     name: id, password, role: id === "pizza-a" ? "OWNER" : "EMPLOYEE",
     isActive: true, authVersion: 0, createdAt: new Date(), updatedAt: new Date(),
-    restaurant: { id, name: id, slug: id, status: "ACTIVE", createdAt: new Date(), updatedAt: new Date() },
+    restaurant: { id, name: id, slug: id, status: "ACTIVE", deliveryPrice: 0, createdAt: new Date(), updatedAt: new Date() },
   }));
   const repository: RestaurantAuthRepository = {
     findCandidates: async login => users.filter(user => user.email === login || user.phone === login),

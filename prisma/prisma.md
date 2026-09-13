@@ -5,7 +5,8 @@
 - `schema.prisma` contains only the Prisma Client generator and PostgreSQL
   datasource.
 - `models/restaurant.prisma` contains the tenant root (`Restaurant`) and its
-  status.
+  status. The restaurant also stores its fixed delivery price in kopecks;
+  `0` means free delivery.
 - `models/user.prisma` contains administrative accounts and their roles.
 - `models/catalog.prisma` contains restaurant-owned menu categories, products,
   and product variants. Products reference a category from the same restaurant
@@ -179,6 +180,11 @@ database update succeeds and removes the new file if persistence fails. Only
 Restaurant deletion first removes product rows in the same database transaction
 so the category relation cannot block the restaurant cascade. After commit, all
 collected UploadThing product image keys are deleted from managed storage.
+
+Restaurant settings live under `/api/admin/settings`. Only OWNER accounts may
+read or update them through `SETTINGS_MANAGE`. The delivery price is stored on
+the tenant-root `Restaurant` in integer kopecks and is always loaded and updated
+through `getRestaurantDb` using the restaurant id from the verified session.
 
 Every paginated list accepts the shared `page`, `limit`, and optional `search`
 query parameters. Category search covers the name; product search covers name,

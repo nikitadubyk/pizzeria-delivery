@@ -2,6 +2,7 @@ export enum URL {
   RESTAURANT_CATEGORIES = "/admin/categories",
   RESTAURANT_CATEGORY_OPTIONS = "/admin/categories/options",
   RESTAURANT_PRODUCTS = "/admin/products",
+  RESTAURANT_SETTINGS = "/admin/settings",
   RESTAURANT_UPLOADS = "/admin/uploads",
   RESTAURANT_LOGIN = "/admin/login",
   RESTAURANT_ME = "/admin/me",

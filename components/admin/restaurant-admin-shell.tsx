@@ -49,16 +49,16 @@ const menuItems: (AdminMenuItem & { permission: RestaurantPermission })[] = [
     label: "Заказы",
   },
   {
-    href: ROUTES.ADMIN.SETTINGS,
-    permission: P.SETTINGS_MANAGE,
-    icon: IconSettings,
-    label: "Настройки",
-  },
-  {
     href: ROUTES.ADMIN.EMPLOYEES,
     permission: P.EMPLOYEES_READ,
     icon: IconUsers,
     label: "Доступ сотрудников",
+  },
+  {
+    href: ROUTES.ADMIN.SETTINGS,
+    permission: P.SETTINGS_MANAGE,
+    icon: IconSettings,
+    label: "Настройки",
   },
 ];
 

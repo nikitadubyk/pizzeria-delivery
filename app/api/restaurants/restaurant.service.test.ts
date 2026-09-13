@@ -17,6 +17,7 @@ const createRestaurant = (overrides: Partial<Restaurant> = {}): Restaurant => ({
   name: "Pizza Place",
   slug: "pizza-place",
   status: "ACTIVE",
+  deliveryPrice: 0,
   createdAt: dayjs("2026-01-01T00:00:00Z").toDate(),
   updatedAt: dayjs("2026-01-01T00:00:00Z").toDate(),
   ...overrides,

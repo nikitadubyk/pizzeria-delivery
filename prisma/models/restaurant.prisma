@@ -5,12 +5,13 @@ enum RestaurantStatus {
 }
 
 model Restaurant {
-  id        String           @id @default(cuid())
-  name      String
-  slug      String           @unique
-  status    RestaurantStatus @default(ACTIVE)
-  createdAt DateTime         @default(now())
-  updatedAt DateTime         @updatedAt
+  id            String           @id @default(cuid())
+  name          String
+  slug          String           @unique
+  status        RestaurantStatus @default(ACTIVE)
+  deliveryPrice Int              @default(0)
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
 
   users           User[]
   categories      Category[]
