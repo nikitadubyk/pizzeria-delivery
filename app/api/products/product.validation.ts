@@ -117,6 +117,10 @@ export const productPathParamsSchema = yup.object({
   productId: requiredIdSchema("Идентификатор продукта обязателен"),
 });
 
+export const updateProductAvailabilityRequestSchema = yup.object({
+  isAvailable: yup.boolean().required("Укажите доступность продукта"),
+});
+
 export const createProductRequestSchema = yup.object({
   ...productFields,
   description: productFields.description.optional(),

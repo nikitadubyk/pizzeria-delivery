@@ -7,7 +7,7 @@ import type { ProductDto } from "@/api-contracts";
 
 export function ProductImage({ product }: { product: ProductDto }) {
   return (
-    <div className="grid size-14 place-items-center overflow-hidden rounded-lg border border-border bg-surface">
+    <div className="grid size-12 place-items-center overflow-hidden rounded-lg border border-border bg-surface">
       {product.imageUrl ? (
         <Box
           alt=""

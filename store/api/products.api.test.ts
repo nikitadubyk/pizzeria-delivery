@@ -33,6 +33,7 @@ const product = {
   imageUrl: null,
   sortOrder: 0,
   isPublished: false,
+  isAvailable: true,
   variants: [],
   createdAt: "2026-01-01T00:00:00.000Z",
   updatedAt: "2026-01-01T00:00:00.000Z",
@@ -112,6 +113,14 @@ describe("product RTK Query API", () => {
         .unwrap();
       await store
         .dispatch(
+          productsApi.endpoints.updateProductAvailability.initiate({
+            productId: "product-id",
+            data: { isAvailable: false },
+          }),
+        )
+        .unwrap();
+      await store
+        .dispatch(
           productsApi.endpoints.removeProductImage.initiate({
             productId: "product-id",
           }),
@@ -131,6 +140,7 @@ describe("product RTK Query API", () => {
           ["post", "/admin/products"],
           ["get", "/admin/products/product-id"],
           ["patch", "/admin/products/product-id"],
+          ["patch", "/admin/products/product-id/availability"],
           ["delete", "/admin/products/product-id/image"],
           ["delete", "/admin/products/product-id"],
         ],

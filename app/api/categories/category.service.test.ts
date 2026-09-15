@@ -30,6 +30,8 @@ const createRepository = (
   findById: async () => null,
   create: async (_restaurantId, data) => createCategory(data),
   update: async (_restaurantId, _categoryId, data) => createCategory(data),
+  updateVisibility: async (_restaurantId, _categoryId, isPublished) =>
+    createCategory({ isPublished }),
   delete: async () => createCategory(),
   ...overrides,
 });
@@ -137,10 +139,38 @@ describe("CategoryService", () => {
     ]);
   });
 
+  it("updates only category visibility inside the authenticated restaurant", async () => {
+    const calls: unknown[][] = [];
+    const service = new CategoryService(
+      createRepository({
+        updateVisibility: async (
+          restaurantId,
+          categoryId,
+          isPublished,
+        ) => {
+          calls.push([restaurantId, categoryId, isPublished]);
+          return createCategory({ isPublished });
+        },
+      }),
+    );
+
+    const category = await service.updateVisibility(
+      "restaurant-id",
+      "category-id",
+      true,
+    );
+
+    assert.equal(category.isPublished, true);
+    assert.deepEqual(calls, [["restaurant-id", "category-id", true]]);
+  });
+
   it("maps missing update and delete records to not found", async () => {
     const service = new CategoryService(
       createRepository({
         update: async () => {
+          throw prismaError("P2025");
+        },
+        updateVisibility: async () => {
           throw prismaError("P2025");
         },
         delete: async () => {
@@ -151,6 +181,7 @@ describe("CategoryService", () => {
 
     for (const operation of [
       () => service.update("restaurant-id", "missing-id", { name: "Напитки" }),
+      () => service.updateVisibility("restaurant-id", "missing-id", false),
       () => service.delete("restaurant-id", "missing-id"),
     ]) {
       await assert.rejects(

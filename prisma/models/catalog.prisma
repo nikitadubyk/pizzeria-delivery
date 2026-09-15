@@ -25,6 +25,7 @@ model Product {
   imageKey        String?
   sortOrder       Int      @default(0)
   isPublished     Boolean  @default(false)
+  isAvailable     Boolean  @default(true)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
@@ -35,6 +36,7 @@ model Product {
   @@unique([restaurantId, id])
   @@index([restaurantId, categoryId, sortOrder, id])
   @@index([restaurantId, isPublished, sortOrder, id])
+  @@index([restaurantId, isAvailable, sortOrder, id])
 }
 
 model ProductVariant {

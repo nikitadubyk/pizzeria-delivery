@@ -14,6 +14,7 @@ export const toProductDto = (product: ProductWithCategory): ProductDto => ({
   imageUrl: product.imageUrl,
   sortOrder: product.sortOrder,
   isPublished: product.isPublished,
+  isAvailable: product.isAvailable,
   variants: product.variants.map(toProductVariantDto),
   createdAt: product.createdAt.toISOString(),
   updatedAt: product.updatedAt.toISOString(),

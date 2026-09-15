@@ -20,6 +20,7 @@ import {
   Dialog,
   SearchInput,
   Table,
+  Toggle,
   Typography,
   type TableColumn,
 } from "@/components/ui";
@@ -36,50 +37,12 @@ import {
   useDeleteCategoryMutation,
   useGetCategoriesQuery,
   useGetCategoryQuery,
+  useUpdateCategoryVisibilityMutation,
 } from "@/store/api/categories.api";
 
 import { CategoryFormDialog } from "./category-form-dialog";
 
 const CATEGORIES_PER_PAGE = 10;
-
-const categoryColumns: readonly TableColumn<CategoryDto>[] = [
-  {
-    key: "name",
-    header: "Название",
-    mobileLayout: "primary",
-    render: (category) => (
-      <span className="break-words font-extrabold">{category.name}</span>
-    ),
-    width: 260,
-  },
-  {
-    key: "sortOrder",
-    header: "Порядок",
-    render: (category) => (category.sortOrder === 0 ? "—" : category.sortOrder),
-    width: 120,
-  },
-  {
-    key: "isPublished",
-    header: "Публикация",
-    render: (category) => (
-      <Badge tone={category.isPublished ? "success" : "neutral"}>
-        {category.isPublished ? "Опубликована" : "Скрыта"}
-      </Badge>
-    ),
-    width: 160,
-  },
-  {
-    key: "updatedAt",
-    header: "Обновлена",
-    mobileFullWidth: true,
-    render: (category) => (
-      <time className="whitespace-nowrap" dateTime={category.updatedAt}>
-        {formatDateTime(category.updatedAt)}
-      </time>
-    ),
-    width: 190,
-  },
-];
 
 function CategoriesPage() {
   const search = useSearchQueryValue();
@@ -99,6 +62,11 @@ function CategoriesPage() {
   const [deleteCategory, { isLoading: isDeleting }] =
     useDeleteCategoryMutation();
   const canManage = useRestaurantPermission(P.MENU_MANAGE);
+  const canManageVisibility = useRestaurantPermission(P.STOP_LIST_MANAGE);
+  const [
+    updateCategoryVisibility,
+    { isLoading: isUpdatingVisibility },
+  ] = useUpdateCategoryVisibilityMutation();
   const { data, isError, isFetching, isLoading, refetch } =
     useGetCategoriesQuery({
       page,
@@ -158,43 +126,121 @@ function CategoriesPage() {
       });
     }
   };
-  const columns: readonly TableColumn<CategoryDto>[] = canManage
-    ? [
-        ...categoryColumns,
-        {
-          key: "actions",
-          header: "Действия",
-          align: "right",
-          mobileLayout: "full",
-          render: (category) => (
-            <div
-              className="grid w-full grid-cols-1 gap-xs md:flex md:w-auto md:justify-end"
-              onClick={(event) => event.stopPropagation()}
-            >
-              <Button
-                className="w-full whitespace-nowrap md:w-auto"
-                leftSection={<IconEdit aria-hidden="true" size={16} />}
-                onClick={() => openEditDialog(category)}
-                size="xs"
-                variant="ghost"
+  const handleVisibilityChange = async (
+    category: CategoryDto,
+    isPublished: boolean,
+  ) => {
+    try {
+      await updateCategoryVisibility({
+        categoryId: category.id,
+        data: { isPublished },
+      }).unwrap();
+      showSuccessNotification({
+        message: isPublished ? "Категория показана" : "Категория скрыта",
+      });
+    } catch {
+      showErrorNotification({
+        message: "Не удалось изменить видимость категории",
+      });
+    }
+  };
+  const columns: readonly TableColumn<CategoryDto>[] = [
+    {
+      key: "name",
+      header: "Название",
+      mobileLayout: "primary",
+      render: (category) => (
+        <span className="break-words font-extrabold">{category.name}</span>
+      ),
+      width: 260,
+    },
+    {
+      key: "sortOrder",
+      header: "Порядок",
+      render: (category) =>
+        category.sortOrder === 0 ? "—" : category.sortOrder,
+      width: 120,
+    },
+    {
+      key: "isPublished",
+      header: "Видимость",
+      render: (category) =>
+        canManageVisibility ? (
+          <div
+            className="flex items-center gap-xs"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <Toggle
+              aria-label={`${category.name}: видна в меню`}
+              checked={category.isPublished}
+              disabled={isUpdatingVisibility}
+              onChange={(event) =>
+                void handleVisibilityChange(
+                  category,
+                  event.currentTarget.checked,
+                )
+              }
+              size="sm"
+            />
+            <span className="whitespace-nowrap text-xs text-muted">
+              {category.isPublished ? "В меню" : "Скрыта"}
+            </span>
+          </div>
+        ) : (
+          <Badge tone={category.isPublished ? "success" : "neutral"}>
+            {category.isPublished ? "В меню" : "Скрыта"}
+          </Badge>
+        ),
+      width: 160,
+    },
+    {
+      key: "updatedAt",
+      header: "Обновлена",
+      mobileFullWidth: true,
+      render: (category) => (
+        <time className="whitespace-nowrap" dateTime={category.updatedAt}>
+          {formatDateTime(category.updatedAt)}
+        </time>
+      ),
+      width: 190,
+    },
+    ...(canManage
+      ? [
+          {
+            key: "actions",
+            header: "Действия",
+            align: "right" as const,
+            mobileLayout: "full" as const,
+            render: (category: CategoryDto) => (
+              <div
+                className="grid w-full grid-cols-1 gap-xs md:flex md:w-auto md:justify-end"
+                onClick={(event) => event.stopPropagation()}
               >
-                Изменить
-              </Button>
-              <Button
-                className="w-full whitespace-nowrap !text-danger hover:!bg-danger-soft md:w-auto"
-                leftSection={<IconTrash aria-hidden="true" size={16} />}
-                onClick={() => openDeleteDialog(category)}
-                size="xs"
-                variant="ghost"
-              >
-                Удалить
-              </Button>
-            </div>
-          ),
-          width: 280,
-        },
-      ]
-    : categoryColumns;
+                <Button
+                  className="w-full whitespace-nowrap md:w-auto"
+                  leftSection={<IconEdit aria-hidden="true" size={16} />}
+                  onClick={() => openEditDialog(category)}
+                  size="xs"
+                  variant="ghost"
+                >
+                  Изменить
+                </Button>
+                <Button
+                  className="w-full whitespace-nowrap !text-danger hover:!bg-danger-soft md:w-auto"
+                  leftSection={<IconTrash aria-hidden="true" size={16} />}
+                  onClick={() => openDeleteDialog(category)}
+                  size="xs"
+                  variant="ghost"
+                >
+                  Удалить
+                </Button>
+              </div>
+            ),
+            width: 280,
+          },
+        ]
+      : []),
+  ];
 
   return (
     <RestaurantPermissionPage permission={P.MENU_READ}>

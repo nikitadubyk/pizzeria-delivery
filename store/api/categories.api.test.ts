@@ -126,6 +126,14 @@ describe("category RTK Query API", () => {
         .unwrap();
       await store
         .dispatch(
+          categoriesApi.endpoints.updateCategoryVisibility.initiate({
+            categoryId: "category-id",
+            data: { isPublished: false },
+          }),
+        )
+        .unwrap();
+      await store
+        .dispatch(
           categoriesApi.endpoints.deleteCategory.initiate({
             categoryId: "category-id",
           }),
@@ -138,6 +146,7 @@ describe("category RTK Query API", () => {
           ["post", "/admin/categories"],
           ["get", "/admin/categories/category-id"],
           ["patch", "/admin/categories/category-id"],
+          ["patch", "/admin/categories/category-id/visibility"],
           ["delete", "/admin/categories/category-id"],
         ],
       );
@@ -148,6 +157,9 @@ describe("category RTK Query API", () => {
       });
       assert.deepEqual(JSON.parse(calls[2].data as string), {
         isPublished: true,
+      });
+      assert.deepEqual(JSON.parse(calls[3].data as string), {
+        isPublished: false,
       });
     } finally {
       store.dispatch(restaurantAuthApi.util.resetApiState());

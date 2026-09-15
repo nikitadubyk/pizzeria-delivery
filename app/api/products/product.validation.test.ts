@@ -4,6 +4,7 @@ import { describe, it } from "node:test";
 import {
   createProductRequestSchema,
   productListQuerySchema,
+  updateProductAvailabilityRequestSchema,
   updateProductRequestSchema,
 } from "./product.validation";
 
@@ -63,6 +64,24 @@ describe("product request validation", () => {
         description: null,
       }),
       { description: null },
+    );
+  });
+
+  it("accepts only the availability flag for stop-list updates", async () => {
+    assert.deepEqual(
+      await updateProductAvailabilityRequestSchema.validate(
+        {
+          isAvailable: false,
+          name: "Подменённое название",
+          price: 1,
+          restaurantId: "other-restaurant",
+        },
+        { stripUnknown: true },
+      ),
+      { isAvailable: false },
+    );
+    await assert.rejects(
+      updateProductAvailabilityRequestSchema.validate({}),
     );
   });
 

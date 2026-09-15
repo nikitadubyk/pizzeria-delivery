@@ -17,6 +17,7 @@ describe("toProductDto", () => {
       imageKey: "private-uploadthing-key",
       sortOrder: 10,
       isPublished: true,
+      isAvailable: false,
       createdAt: new Date("2026-01-01T00:00:00.000Z"),
       updatedAt: new Date("2026-01-02T00:00:00.000Z"),
       category: { id: "category-id", name: "Пицца" },
@@ -47,6 +48,7 @@ describe("toProductDto", () => {
       imageUrl: "https://example.com/pizza.webp",
       sortOrder: 10,
       isPublished: true,
+      isAvailable: false,
       variants: [
         {
           id: "variant-id",

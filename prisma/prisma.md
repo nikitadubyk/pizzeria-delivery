@@ -10,10 +10,12 @@
 - `models/user.prisma` contains administrative accounts and their roles.
 - `models/catalog.prisma` contains restaurant-owned menu categories, products,
   and product variants. Products reference a category from the same restaurant
-  and store copy, image metadata, sort order, and publication state. Variants
-  own the price in kopecks, display name, weight/volume, availability, and
-  ordering. Products may have no variants. A simple priced product can use one
-  unnamed variant so the storefront does not need to render a selector.
+  and store copy, image metadata, sort order, publication state, and temporary
+  stop-list availability. Variants own the price in kopecks, display name,
+  weight/volume, availability, and ordering. Product availability is independent
+  from OWNER-managed publication. Products may have no variants. A simple priced
+  product can use one unnamed variant so the storefront does not need to render
+  a selector.
 - Add future bounded domains as separate files in `models/`, for example
   `menu.prisma`, `order.prisma`, and `delivery.prisma`.
 - `migrations/` contains generated database migrations and stays next to
@@ -155,11 +157,24 @@ can read them through `MENU_READ`. The restaurant id always comes from the
 verified restaurant session. Category lists are ordered by `sortOrder` and use
 page/limit pagination.
 
+Category visibility changes use
+`PATCH /api/admin/categories/[categoryId]/visibility` with `STOP_LIST_MANAGE`.
+The endpoint accepts only `isPublished`, so OWNER and EMPLOYEE can show or hide
+a category without gaining permission to change its name, order, or other menu
+data. Visibility is updated through the authenticated restaurant scope.
+
 Product APIs live under `/api/admin/products` and use the same menu permissions
 as categories. Product `POST` and `PATCH` requests are JSON and never accept a
 client-supplied image URL or storage key. The client first creates a product and
 then uploads its image through the shared `/api/admin/uploads` UploadThing
 FileRouter using the `productImage` endpoint and `{ productId }` input.
+
+Product stop-list changes use
+`PATCH /api/admin/products/[productId]/availability` with `STOP_LIST_MANAGE`.
+The endpoint accepts only `isAvailable`, so OWNER and EMPLOYEE can pause or
+resume sales without gaining permission to change product copy, publication,
+variants, or prices. Availability is updated through the authenticated
+restaurant scope.
 
 Product create requests accept an empty variant array. Product updates replace
 the submitted variant collection atomically with the product fields: existing

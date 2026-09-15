@@ -16,10 +16,14 @@ export enum URL {
 export const API_ROUTES = {
   restaurantCategory: (categoryId: string) =>
     `${URL.RESTAURANT_CATEGORIES}/${categoryId}`,
+  restaurantCategoryVisibility: (categoryId: string) =>
+    `${URL.RESTAURANT_CATEGORIES}/${categoryId}/visibility`,
   restaurantProduct: (productId: string) =>
     `${URL.RESTAURANT_PRODUCTS}/${productId}`,
   restaurantProductImage: (productId: string) =>
     `${URL.RESTAURANT_PRODUCTS}/${productId}/image`,
+  restaurantProductAvailability: (productId: string) =>
+    `${URL.RESTAURANT_PRODUCTS}/${productId}/availability`,
   superAdminRestaurant: (restaurantId: string) =>
     `${URL.SUPER_ADMIN_RESTAURANTS}/${restaurantId}`,
   superAdminUser: (userId: string) => `${URL.SUPER_ADMIN_USERS}/${userId}`,

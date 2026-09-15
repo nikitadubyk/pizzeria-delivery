@@ -56,6 +56,11 @@ export interface ProductRepository {
     data: Omit<ProductUpdateData, "variants">,
     variants?: readonly ProductVariantWrite[],
   ): Promise<ProductWithCategory>;
+  updateAvailability(
+    restaurantId: string,
+    productId: string,
+    isAvailable: boolean,
+  ): Promise<ProductWithCategory>;
   delete(restaurantId: string, productId: string): Promise<ProductWithCategory>;
 }
 

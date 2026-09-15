@@ -6,6 +6,7 @@ import type {
   CreateCategoryRequest,
   ResolvedSearchPaginationQuery,
   UpdateCategoryApiRequest,
+  UpdateCategoryVisibilityApiRequest,
 } from "@/api-contracts";
 
 import { API_ROUTES, URL } from "./config";
@@ -56,6 +57,54 @@ export const categoriesApi = restaurantAuthApi.injectEndpoints({
       }),
       invalidatesTags: [CATEGORY_TAG],
     }),
+    updateCategoryVisibility: builder.mutation<
+      CategoryDto,
+      UpdateCategoryVisibilityApiRequest
+    >({
+      query: ({ categoryId, data }) => ({
+        url: API_ROUTES.restaurantCategoryVisibility(categoryId),
+        method: "PATCH",
+        data,
+      }),
+      onQueryStarted: async (
+        { categoryId, data },
+        { dispatch, getState, queryFulfilled },
+      ) => {
+        const listPatches = categoriesApi.util
+          .selectCachedArgsForQuery(getState(), "getCategories")
+          .map((query) =>
+            dispatch(
+              categoriesApi.util.updateQueryData(
+                "getCategories",
+                query,
+                (draft) => {
+                  const category = draft.items.find(
+                    (item) => item.id === categoryId,
+                  );
+                  if (category) category.isPublished = data.isPublished;
+                },
+              ),
+            ),
+          );
+        const categoryPatch = dispatch(
+          categoriesApi.util.updateQueryData(
+            "getCategory",
+            { categoryId },
+            (draft) => {
+              draft.isPublished = data.isPublished;
+            },
+          ),
+        );
+
+        try {
+          await queryFulfilled;
+        } catch {
+          categoryPatch.undo();
+          listPatches.forEach((patch) => patch.undo());
+        }
+      },
+      invalidatesTags: [CATEGORY_TAG],
+    }),
     deleteCategory: builder.mutation<CategoryDto, CategoryPathParams>({
       query: ({ categoryId }) => ({
         url: API_ROUTES.restaurantCategory(categoryId),
@@ -73,4 +122,5 @@ export const {
   useGetCategoryOptionsQuery,
   useGetCategoryQuery,
   useUpdateCategoryMutation,
+  useUpdateCategoryVisibilityMutation,
 } = categoriesApi;

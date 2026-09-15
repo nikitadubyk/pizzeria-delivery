@@ -40,3 +40,11 @@ export type UpdateCategoryRequest = {
 export type UpdateCategoryApiRequest = CategoryPathParams & {
   data: UpdateCategoryRequest;
 };
+
+export type UpdateCategoryVisibilityRequest = {
+  isPublished: boolean;
+};
+
+export type UpdateCategoryVisibilityApiRequest = CategoryPathParams & {
+  data: UpdateCategoryVisibilityRequest;
+};

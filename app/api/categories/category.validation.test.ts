@@ -6,6 +6,7 @@ import {
   categoryPathParamsSchema,
   createCategoryRequestSchema,
   updateCategoryRequestSchema,
+  updateCategoryVisibilityRequestSchema,
 } from "./category.validation";
 
 describe("category request validation", () => {
@@ -63,6 +64,23 @@ describe("category request validation", () => {
     assert.deepEqual(
       await updateCategoryRequestSchema.validate({ isPublished: false }),
       { isPublished: false },
+    );
+  });
+
+  it("accepts only the publication flag for visibility updates", async () => {
+    assert.deepEqual(
+      await updateCategoryVisibilityRequestSchema.validate(
+        {
+          isPublished: false,
+          name: "Подменённое название",
+          restaurantId: "other-restaurant",
+        },
+        { stripUnknown: true },
+      ),
+      { isPublished: false },
+    );
+    await assert.rejects(
+      updateCategoryVisibilityRequestSchema.validate({}),
     );
   });
 

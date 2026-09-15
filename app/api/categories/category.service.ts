@@ -96,6 +96,22 @@ export class CategoryService {
     }
   }
 
+  async updateVisibility(
+    restaurantId: string,
+    categoryId: string,
+    isPublished: boolean,
+  ): Promise<Category> {
+    try {
+      return await this.repository.updateVisibility(
+        restaurantId,
+        categoryId,
+        isPublished,
+      );
+    } catch (error) {
+      return mapRepositoryError(error);
+    }
+  }
+
   async delete(restaurantId: string, categoryId: string): Promise<Category> {
     try {
       return await this.repository.delete(restaurantId, categoryId);
@@ -140,6 +156,13 @@ const categoryRepository: CategoryRepository = {
   update: async (restaurantId, categoryId, data) => {
     const db = getRestaurantDb(restaurantId);
     return db.category.update({ where: { id: categoryId }, data });
+  },
+  updateVisibility: async (restaurantId, categoryId, isPublished) => {
+    const db = getRestaurantDb(restaurantId);
+    return db.category.update({
+      where: { id: categoryId },
+      data: { isPublished },
+    });
   },
   delete: async (restaurantId, categoryId) => {
     const db = getRestaurantDb(restaurantId);

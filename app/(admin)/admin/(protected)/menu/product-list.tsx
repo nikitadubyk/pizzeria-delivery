@@ -15,6 +15,7 @@ import {
   Button,
   SearchInput,
   Table,
+  Toggle,
   Typography,
   type TableColumn,
 } from "@/components/ui";
@@ -31,6 +32,7 @@ import { formatDateTime } from "@/lib/date";
 import {
   useDeleteProductMutation,
   useGetProductsQuery,
+  useUpdateProductAvailabilityMutation,
 } from "@/store/api/products.api";
 
 import { ProductDeleteDialog } from "./product-delete-dialog";
@@ -46,7 +48,12 @@ export function ProductList() {
   );
   const [deleteDialogOpened, setDeleteDialogOpened] = useState(false);
   const canManage = useRestaurantPermission(P.MENU_MANAGE);
+  const canManageStopList = useRestaurantPermission(P.STOP_LIST_MANAGE);
   const [deleteProduct, { isLoading: isDeleting }] = useDeleteProductMutation();
+  const [
+    updateProductAvailability,
+    { isLoading: isUpdatingAvailability },
+  ] = useUpdateProductAvailabilityMutation();
   const { data, isError, isFetching, isLoading, refetch } = useGetProductsQuery(
     {
       page,
@@ -81,13 +88,34 @@ export function ProductList() {
     }
   };
 
+  const handleAvailabilityChange = async (
+    product: ProductDto,
+    isAvailable: boolean,
+  ) => {
+    try {
+      await updateProductAvailability({
+        productId: product.id,
+        data: { isAvailable },
+      }).unwrap();
+      showSuccessNotification({
+        message: isAvailable
+          ? "Продукт возвращён в продажу"
+          : "Продукт добавлен в стоп-лист",
+      });
+    } catch {
+      showErrorNotification({
+        message: "Не удалось изменить доступность продукта",
+      });
+    }
+  };
+
   const columns: readonly TableColumn<ProductDto>[] = [
     {
       key: "image",
       header: "Фото",
       mobileLayout: "hidden",
       render: (product) => <ProductImage product={product} />,
-      width: 88,
+      width: 72,
     },
     {
       key: "name",
@@ -103,19 +131,53 @@ export function ProductList() {
           ) : null}
         </div>
       ),
-      width: 300,
+      width: 220,
     },
     {
       key: "category",
       header: "Категория",
-      render: (product) => product.category.name,
-      width: 190,
+      render: (product) => (
+        <span className="break-words">{product.category.name}</span>
+      ),
+      width: 110,
     },
     {
       key: "sortOrder",
       header: "Порядок",
       render: (product) => product.sortOrder,
-      width: 110,
+      width: 80,
+    },
+    {
+      key: "isAvailable",
+      header: "Доступность",
+      render: (product) => {
+        const isAvailable = product.isAvailable;
+
+        return canManageStopList ? (
+          <div className="flex items-center gap-xs">
+            <Toggle
+              aria-label={`${product.name}: доступен для заказа`}
+              checked={isAvailable}
+              disabled={isUpdatingAvailability}
+              onChange={(event) =>
+                void handleAvailabilityChange(
+                  product,
+                  event.currentTarget.checked,
+                )
+              }
+              size="sm"
+            />
+            <span className="whitespace-nowrap text-xs text-muted">
+              {isAvailable ? "В продаже" : "Стоп-лист"}
+            </span>
+          </div>
+        ) : (
+          <Badge tone={isAvailable ? "success" : "danger"}>
+            {isAvailable ? "Доступен" : "Стоп-лист"}
+          </Badge>
+        );
+      },
+      width: 130,
     },
     {
       key: "isPublished",
@@ -125,18 +187,18 @@ export function ProductList() {
           {product.isPublished ? "Опубликован" : "Скрыт"}
         </Badge>
       ),
-      width: 150,
+      width: 115,
     },
     {
       key: "updatedAt",
       header: "Обновлён",
       mobileFullWidth: true,
       render: (product) => (
-        <time className="whitespace-nowrap" dateTime={product.updatedAt}>
+        <time className="block text-xs leading-tight" dateTime={product.updatedAt}>
           {formatDateTime(product.updatedAt)}
         </time>
       ),
-      width: 190,
+      width: 145,
     },
     ...(canManage
       ? [
@@ -148,27 +210,33 @@ export function ProductList() {
             render: (product: ProductDto) => (
               <div className="grid w-full grid-cols-1 gap-xs md:flex md:w-auto md:flex-nowrap md:justify-end">
                 <Button
-                  className="w-full whitespace-nowrap md:w-auto"
+                  aria-label={`Изменить ${product.name}`}
+                  className="w-full whitespace-nowrap md:!size-8 md:!min-w-8 md:!p-0 2xl:!h-8 2xl:!w-auto 2xl:!px-3"
                   component={Link}
                   href={ROUTES.ADMIN.menuEditProduct(product.id)}
-                  leftSection={<IconEdit aria-hidden="true" size={16} />}
                   size="xs"
                   variant="ghost"
                 >
-                  Изменить
+                  <IconEdit aria-hidden="true" size={16} />
+                  <span className="ml-1 md:sr-only 2xl:not-sr-only">
+                    Изменить
+                  </span>
                 </Button>
                 <Button
-                  className="w-full whitespace-nowrap !text-danger hover:!bg-danger-soft md:w-auto"
-                  leftSection={<IconTrash aria-hidden="true" size={16} />}
+                  aria-label={`Удалить ${product.name}`}
+                  className="w-full whitespace-nowrap !text-danger hover:!bg-danger-soft md:!size-8 md:!min-w-8 md:!p-0 2xl:!h-8 2xl:!w-auto 2xl:!px-3"
                   onClick={() => openDeleteDialog(product)}
                   size="xs"
                   variant="ghost"
                 >
-                  Удалить
+                  <IconTrash aria-hidden="true" size={16} />
+                  <span className="ml-1 md:sr-only 2xl:not-sr-only">
+                    Удалить
+                  </span>
                 </Button>
               </div>
             ),
-            width: 280,
+            width: 100,
           },
         ]
       : []),
@@ -228,7 +296,7 @@ export function ProductList() {
                       : "Продукты пока не добавлены"
                   }
                   getRowKey={(product) => product.id}
-                  minWidth={canManage ? 1220 : 940}
+                  minWidth={canManage ? 1000 : 900}
                   pagination={{
                     ariaLabel: "Страницы списка продуктов",
                     onChange: setPage,
@@ -237,6 +305,7 @@ export function ProductList() {
                     withEdges: true,
                   }}
                   rows={products}
+                  tableProps={{ horizontalSpacing: "sm" }}
                 />
               </div>
             </Details>

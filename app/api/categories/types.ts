@@ -23,5 +23,10 @@ export interface CategoryRepository {
     categoryId: string,
     data: UpdateCategoryRequest,
   ): Promise<Category>;
+  updateVisibility(
+    restaurantId: string,
+    categoryId: string,
+    isPublished: boolean,
+  ): Promise<Category>;
   delete(restaurantId: string, categoryId: string): Promise<Category>;
 }

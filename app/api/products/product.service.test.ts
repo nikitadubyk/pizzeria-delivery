@@ -25,6 +25,7 @@ const createProduct = (
   imageKey: null,
   sortOrder: 10,
   isPublished: false,
+  isAvailable: true,
   createdAt: new Date("2026-01-01T00:00:00.000Z"),
   updatedAt: new Date("2026-01-01T00:00:00.000Z"),
   category: { id: "category-id", name: "Пицца" },
@@ -40,6 +41,8 @@ const createRepository = (
   categoryExists: async () => true,
   create: async (_restaurantId, data) => createProduct(data),
   update: async (_restaurantId, _productId, data) => createProduct(data),
+  updateAvailability: async (_restaurantId, _productId, isAvailable) =>
+    createProduct({ isAvailable }),
   delete: async () => createProduct(),
   ...overrides,
 });
@@ -139,6 +142,32 @@ describe("ProductService", () => {
     await service.update("restaurant-id", "product-id", { variants: [] });
 
     assert.equal(receivedVariantCount, 0);
+  });
+
+  it("updates only product availability inside the authenticated restaurant", async () => {
+    const calls: unknown[][] = [];
+    const service = new ProductService(
+      createRepository({
+        updateAvailability: async (
+          restaurantId,
+          productId,
+          isAvailable,
+        ) => {
+          calls.push([restaurantId, productId, isAvailable]);
+          return createProduct({ isAvailable });
+        },
+      }),
+      createImageStorage(),
+    );
+
+    const product = await service.updateAvailability(
+      "restaurant-id",
+      "product-id",
+      false,
+    );
+
+    assert.equal(product.isAvailable, false);
+    assert.deepEqual(calls, [["restaurant-id", "product-id", false]]);
   });
 
   it("attaches an uploaded image before deleting the previous one", async () => {

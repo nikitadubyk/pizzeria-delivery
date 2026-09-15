@@ -30,6 +30,7 @@ export type ProductDto = {
   imageUrl: string | null;
   sortOrder: number;
   isPublished: boolean;
+  isAvailable: boolean;
   variants: ProductVariantDto[];
   createdAt: string;
   updatedAt: string;
@@ -77,4 +78,12 @@ export type UpdateProductRequest = Partial<CreateProductRequest>;
 
 export type UpdateProductApiRequest = ProductPathParams & {
   data: UpdateProductRequest;
+};
+
+export type UpdateProductAvailabilityRequest = {
+  isAvailable: boolean;
+};
+
+export type UpdateProductAvailabilityApiRequest = ProductPathParams & {
+  data: UpdateProductAvailabilityRequest;
 };

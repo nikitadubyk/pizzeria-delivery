@@ -118,6 +118,22 @@ export class ProductService {
     }
   }
 
+  async updateAvailability(
+    restaurantId: string,
+    productId: string,
+    isAvailable: boolean,
+  ): Promise<ProductWithCategory> {
+    try {
+      return await this.repository.updateAvailability(
+        restaurantId,
+        productId,
+        isAvailable,
+      );
+    } catch (error) {
+      return mapRepositoryError(error);
+    }
+  }
+
   async attachUploadedImage(
     restaurantId: string,
     productId: string,
@@ -318,6 +334,17 @@ const productRepository: ProductRepository = {
             }
           : {}),
       },
+      include: {
+        category: { select: { id: true, name: true } },
+        variants: { orderBy: [{ sortOrder: "asc" }, { id: "asc" }] },
+      },
+    });
+  },
+  updateAvailability: async (restaurantId, productId, isAvailable) => {
+    const db = getRestaurantDb(restaurantId);
+    return db.product.update({
+      where: { id: productId },
+      data: { isAvailable },
       include: {
         category: { select: { id: true, name: true } },
         variants: { orderBy: [{ sortOrder: "asc" }, { id: "asc" }] },

@@ -6,6 +6,7 @@ import type {
   ProductPathParams,
   ResolvedSearchPaginationQuery,
   UpdateProductApiRequest,
+  UpdateProductAvailabilityApiRequest,
 } from "@/api-contracts";
 
 import { API_ROUTES, URL } from "./config";
@@ -49,6 +50,54 @@ export const productsApi = restaurantAuthApi.injectEndpoints({
       }),
       invalidatesTags: [PRODUCT_TAG],
     }),
+    updateProductAvailability: builder.mutation<
+      ProductDto,
+      UpdateProductAvailabilityApiRequest
+    >({
+      query: ({ productId, data }) => ({
+        url: API_ROUTES.restaurantProductAvailability(productId),
+        method: "PATCH",
+        data,
+      }),
+      onQueryStarted: async (
+        { productId, data },
+        { dispatch, getState, queryFulfilled },
+      ) => {
+        const listPatches = productsApi.util
+          .selectCachedArgsForQuery(getState(), "getProducts")
+          .map((query) =>
+            dispatch(
+              productsApi.util.updateQueryData(
+                "getProducts",
+                query,
+                (draft) => {
+                  const product = draft.items.find(
+                    (item) => item.id === productId,
+                  );
+                  if (product) product.isAvailable = data.isAvailable;
+                },
+              ),
+            ),
+          );
+        const productPatch = dispatch(
+          productsApi.util.updateQueryData(
+            "getProduct",
+            { productId },
+            (draft) => {
+              draft.isAvailable = data.isAvailable;
+            },
+          ),
+        );
+
+        try {
+          await queryFulfilled;
+        } catch {
+          productPatch.undo();
+          listPatches.forEach((patch) => patch.undo());
+        }
+      },
+      invalidatesTags: [PRODUCT_TAG],
+    }),
     deleteProduct: builder.mutation<ProductDto, ProductPathParams>({
       query: ({ productId }) => ({
         url: API_ROUTES.restaurantProduct(productId),
@@ -73,4 +122,5 @@ export const {
   useGetProductsQuery,
   useRemoveProductImageMutation,
   useUpdateProductMutation,
+  useUpdateProductAvailabilityMutation,
 } = productsApi;

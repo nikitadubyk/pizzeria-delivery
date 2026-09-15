@@ -39,6 +39,10 @@ export const categoryPathParamsSchema = yup.object({
     .required("Идентификатор категории обязателен"),
 });
 
+export const updateCategoryVisibilityRequestSchema = yup.object({
+  isPublished: yup.boolean().required("Укажите видимость категории"),
+});
+
 export const createCategoryRequestSchema = yup.object({
   name: nameSchema,
   sortOrder: sortOrderSchema.optional(),
