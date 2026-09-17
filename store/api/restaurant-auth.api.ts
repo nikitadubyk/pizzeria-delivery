@@ -37,7 +37,7 @@ const restaurantBaseQuery: ReturnType<typeof createAxiosBaseQuery> = (
 export const restaurantAuthApi = createApi({
   reducerPath: "restaurantAuthApi",
   baseQuery: restaurantBaseQuery,
-  tagTypes: ["Category", "Product", "RestaurantSettings"],
+  tagTypes: ["Addon", "Category", "Product", "RestaurantSettings"],
   endpoints: (builder) => ({
     loginRestaurant: builder.mutation<
       RestaurantLoginResponse,

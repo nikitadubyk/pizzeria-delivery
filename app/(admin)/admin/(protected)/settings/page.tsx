@@ -5,7 +5,7 @@ import { Form, Formik, type FormikHelpers } from "formik";
 
 import { RestaurantPermissionPage } from "@/components/admin/restaurant-permission-gate";
 import { Details } from "@/components/details";
-import { Button, InputField, Typography } from "@/components/ui";
+import { Button, PriceInputField, Typography } from "@/components/ui";
 import {
   showErrorNotification,
   showSuccessNotification,
@@ -108,16 +108,12 @@ export default function SettingsPage() {
                       </div>
                     </div>
 
-                    <InputField
+                    <PriceInputField
                       autoComplete="off"
                       disabled={pending}
-                      inputMode="decimal"
                       label="Цена доставки, ₽"
-                      min={0}
                       name="deliveryPrice"
                       placeholder="Например, 300"
-                      step={0.01}
-                      type="number"
                     />
 
                     <div className="flex justify-end border-t border-border pt-md">

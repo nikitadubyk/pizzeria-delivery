@@ -3,6 +3,7 @@ export const ROUTES = {
     ROOT: "/admin",
     LOGIN: "/admin/login",
     CATEGORIES: "/admin/categories",
+    ADDONS: "/admin/addons",
     MENU: "/admin/menu",
     MENU_CREATE_PRODUCT: "/admin/menu/new",
     menuEditProduct: (productId: string) => `/admin/menu/${productId}/edit`,

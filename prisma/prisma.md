@@ -16,6 +16,9 @@
   from OWNER-managed publication. Products may have no variants. A simple priced
   product can use one unnamed variant so the storefront does not need to render
   a selector.
+- `models/addon.prisma` contains reusable paid add-ons owned by one restaurant.
+  Their prices are positive integer kopecks; availability is a separate
+  operational stop-list flag. Product-to-add-on links are a later catalog step.
 - Add future bounded domains as separate files in `models/`, for example
   `menu.prisma`, `order.prisma`, and `delivery.prisma`.
 - `migrations/` contains generated database migrations and stays next to
@@ -175,6 +178,12 @@ The endpoint accepts only `isAvailable`, so OWNER and EMPLOYEE can pause or
 resume sales without gaining permission to change product copy, publication,
 variants, or prices. Availability is updated through the authenticated
 restaurant scope.
+
+Add-on APIs live under `/api/admin/addons`. OWNER can create, update, and delete
+add-ons through `MENU_MANAGE`; OWNER and EMPLOYEE can read them through
+`MENU_READ` and change only `isAvailable` through `STOP_LIST_MANAGE`. List
+search and pagination follow the shared catalog pattern. Add-on prices are
+positive integer kopecks, and every query uses the authenticated restaurant id.
 
 Product create requests accept an empty variant array. Product updates replace
 the submitted variant collection atomically with the product fields: existing

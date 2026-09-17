@@ -133,13 +133,6 @@ export const productFormValidationSchema: yup.ObjectSchema<ProductFormValues> =
               PRODUCT_VARIANT_PRICE_MAX_RUBLES,
               `Цена не должна превышать ${PRODUCT_VARIANT_PRICE_MAX_RUBLES} ₽`,
             )
-            .test(
-              "kopecks-precision",
-              "Укажите не больше двух знаков после запятой",
-              (value) =>
-                value === undefined ||
-                Math.abs(value * 100 - Math.round(value * 100)) < 1e-8,
-            )
             .required("Введите цену"),
           weight: yup
             .string()

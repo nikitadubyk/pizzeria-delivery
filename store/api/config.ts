@@ -1,5 +1,6 @@
 export enum URL {
   RESTAURANT_CATEGORIES = "/admin/categories",
+  RESTAURANT_ADDONS = "/admin/addons",
   RESTAURANT_CATEGORY_OPTIONS = "/admin/categories/options",
   RESTAURANT_PRODUCTS = "/admin/products",
   RESTAURANT_SETTINGS = "/admin/settings",
@@ -14,6 +15,9 @@ export enum URL {
 }
 
 export const API_ROUTES = {
+  restaurantAddon: (addonId: string) => `${URL.RESTAURANT_ADDONS}/${addonId}`,
+  restaurantAddonAvailability: (addonId: string) =>
+    `${URL.RESTAURANT_ADDONS}/${addonId}/availability`,
   restaurantCategory: (categoryId: string) =>
     `${URL.RESTAURANT_CATEGORIES}/${categoryId}`,
   restaurantCategoryVisibility: (categoryId: string) =>

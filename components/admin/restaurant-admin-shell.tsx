@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Alert } from "@mantine/core";
 import {
   IconCategory,
+  IconPlus,
   IconHome,
   IconPizza,
   IconReceipt,
@@ -35,6 +36,12 @@ const menuItems: (AdminMenuItem & { permission: RestaurantPermission })[] = [
     permission: P.MENU_READ,
     icon: IconCategory,
     label: "Категории",
+  },
+  {
+    href: ROUTES.ADMIN.ADDONS,
+    permission: P.MENU_READ,
+    icon: IconPlus,
+    label: "Добавки",
   },
   {
     href: ROUTES.ADMIN.MENU,

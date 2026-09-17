@@ -8,7 +8,7 @@ import {
   PRODUCT_VARIANT_WEIGHT_MAX_LENGTH,
   PRODUCT_VARIANTS_MAX_COUNT,
 } from "@/api-contracts";
-import { Button, InputField, ToggleField, Typography } from "@/components/ui";
+import { Button, InputField, PriceInputField, ToggleField, Typography } from "@/components/ui";
 
 import { createEmptyProductVariant } from "./product-form-page.config";
 import type { ProductFormValues } from "./product-form-page.types";
@@ -46,14 +46,10 @@ export function ProductVariantFields({ disabled }: ProductVariantFieldsProps) {
                   name={`variants.${index}.name`}
                   placeholder="Например, 30 см"
                 />
-                <InputField
+                <PriceInputField
                   disabled={disabled}
-                  inputMode="decimal"
                   label="Цена, ₽"
-                  min={0}
                   name={`variants.${index}.price`}
-                  step={0.01}
-                  type="number"
                 />
                 <InputField
                   autoComplete="off"
