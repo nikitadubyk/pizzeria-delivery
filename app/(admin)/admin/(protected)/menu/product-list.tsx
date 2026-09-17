@@ -2,6 +2,7 @@
 
 import { IconEdit, IconPlus, IconTrash } from "@tabler/icons-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import type { ProductDto } from "@/api-contracts";
@@ -41,6 +42,7 @@ import { ProductImage } from "./product-image";
 const PRODUCTS_PER_PAGE = 20;
 
 export function ProductList() {
+  const router = useRouter();
   const search = useSearchQueryValue();
   const [page, setPage] = useSearchPagination(search);
   const [productToDelete, setProductToDelete] = useState<ProductDto | null>(
@@ -296,7 +298,9 @@ export function ProductList() {
                       : "Продукты пока не добавлены"
                   }
                   getRowKey={(product) => product.id}
+                  getRowAriaLabel={(product) => `Открыть детали продукта ${product.name}`}
                   minWidth={canManage ? 1000 : 900}
+                  onRowClick={(product) => router.push(ROUTES.ADMIN.menuProduct(product.id))}
                   pagination={{
                     ariaLabel: "Страницы списка продуктов",
                     onChange: setPage,

@@ -10,7 +10,7 @@ type ProductDeleteDialogProps = {
   isDeleting: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  onExited: () => void;
+  onExited?: () => void;
   opened: boolean;
   product: ProductDto | null;
 };

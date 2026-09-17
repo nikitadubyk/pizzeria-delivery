@@ -6,6 +6,7 @@ export const ROUTES = {
     ADDONS: "/admin/addons",
     MENU: "/admin/menu",
     MENU_CREATE_PRODUCT: "/admin/menu/new",
+    menuProduct: (productId: string) => `/admin/menu/${productId}`,
     menuEditProduct: (productId: string) => `/admin/menu/${productId}/edit`,
     ORDERS: "/admin/orders",
     SETTINGS: "/admin/settings",
