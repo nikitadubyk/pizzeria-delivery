@@ -87,6 +87,7 @@ describe("Restaurant login service", () => {
       P.MENU_MANAGE,
       P.SETTINGS_MANAGE,
       P.EMPLOYEES_READ,
+      P.EMPLOYEES_MANAGE,
       P.EMPLOYEES_DISABLE,
       P.EMPLOYEES_RECOVER,
     ]) {

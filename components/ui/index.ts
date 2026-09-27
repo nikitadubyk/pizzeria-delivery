@@ -34,6 +34,7 @@ export { Dialog, type AppDialogProps, type AppDialogTone } from "./dialog";
 export {
   CheckboxField,
   InputField,
+  PhoneInputField,
   MultiSelectField,
   PriceInputField,
   PasswordField,
@@ -42,6 +43,7 @@ export {
   ToggleField,
   type CheckboxFieldProps,
   type InputFieldProps,
+  type PhoneInputFieldProps,
   type MultiSelectFieldProps,
   type PriceInputFieldProps,
   type PasswordFieldProps,

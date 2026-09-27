@@ -15,20 +15,28 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Content: Story = {};
-export const Loading: Story = { args: { isLoading: true } };
+export const Loading: Story = { args: { query: { isLoading: true } } };
 export const Fetching: Story = {
-  args: { isFetching: true, children: <Button>Действие с данными</Button> },
+  args: {
+    query: { isFetching: true },
+    children: <Button>Действие с данными</Button>,
+  },
 };
 export const Error: Story = {
-  args: { isError: true, errorMessage: "Не удалось загрузить рестораны" },
+  args: {
+    query: { isError: true },
+    errorMessage: "Не удалось загрузить рестораны",
+  },
 };
 
 function RetryExample() {
   const [status, setStatus] = useState<"error" | "fetching" | "ready">("error");
   return (
     <Details
-      isError={status !== "ready"}
-      isFetching={status === "fetching"}
+      query={{
+        isError: status !== "ready",
+        isFetching: status === "fetching",
+      }}
       onRetry={() => {
         setStatus("fetching");
         setTimeout(() => setStatus("ready"), 800);

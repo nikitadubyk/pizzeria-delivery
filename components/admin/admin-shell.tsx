@@ -163,7 +163,7 @@ export const AdminShell = ({
       </aside>
 
       <div className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden">
-        <header className="gap-xs border-border bg-background px-md sm:px-lg sticky top-0 z-20 flex min-h-16 shrink-0 items-center border-b shadow-sm">
+        <header className="gap-xs border-border bg-background px-md sm:px-lg sticky top-0 z-20 flex min-h-16 shrink-0 items-center justify-between border-b shadow-sm xl:justify-end">
           <button
             aria-label="Открыть меню"
             className="mr-xs bg-primary-soft text-primary hover:bg-primary hover:text-primary-contrast focus-visible:outline-primary grid size-10 shrink-0 place-items-center rounded-xl transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 xl:hidden"

@@ -28,11 +28,12 @@ export function AddonsPage() {
   const [deleteDialogOpened, setDeleteDialogOpened] = useState(false);
   const canManage = useRestaurantPermission(P.MENU_MANAGE);
   const canManageAvailability = useRestaurantPermission(P.STOP_LIST_MANAGE);
-  const { data, isError, isFetching, isLoading, refetch } = useGetAddonsQuery({
+  const query = useGetAddonsQuery({
     page,
     limit: ADDONS_PER_PAGE,
     search: search || undefined,
   });
+  const { data } = query;
   const {
     saveAddon,
     removeAddon,
@@ -115,10 +116,7 @@ export function AddonsPage() {
             <Details
               className="flex min-h-0 flex-1 flex-col"
               errorMessage="Не удалось загрузить добавки"
-              isError={isError}
-              isFetching={isFetching}
-              isLoading={isLoading}
-              onRetry={refetch}
+              query={query}
             >
               <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
                 <Table

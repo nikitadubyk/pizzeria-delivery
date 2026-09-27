@@ -94,10 +94,9 @@ export function ProductDetailsPage({ productId }: ProductDetailsPageProps) {
       </div>
 
       <Details
-        {...queryProps}
         className="min-h-96"
         errorMessage="Не удалось загрузить продукт"
-        onRetry={queryProps.refetch}
+        query={queryProps}
       >
         {product ? <ProductContent product={product} /> : null}
       </Details>

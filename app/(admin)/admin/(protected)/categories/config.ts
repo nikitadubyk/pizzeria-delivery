@@ -8,8 +8,6 @@ import {
 
 import type { CategoryFormValues } from "./types";
 
-export const CATEGORY_FORM_ID = "category-form";
-
 export const getCategoryFormInitialValues = (
   category: CategoryDto | null
 ): CategoryFormValues => ({

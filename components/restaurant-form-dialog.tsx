@@ -1,7 +1,7 @@
 "use client";
 
 import { IconBuildingStore, IconEdit } from "@tabler/icons-react";
-import { Form, Formik, type FormikHelpers } from "formik";
+import { Formik, type FormikHelpers } from "formik";
 
 import { Button, Dialog, InputField, SelectField } from "@/components/ui";
 import { showSuccessNotification } from "@/components/ui/notification";
@@ -12,7 +12,6 @@ import {
 
 import {
   getRestaurantFormInitialValues,
-  RESTAURANT_FORM_ID,
   restaurantFormValidationSchema,
   restaurantStatusOptions,
 } from "./restaurant-form-dialog.config";
@@ -63,7 +62,7 @@ export const RestaurantFormDialog = ({
       onSubmit={handleSubmit}
       validationSchema={restaurantFormValidationSchema}
     >
-      {({ dirty, isSubmitting, resetForm }) => {
+      {({ dirty, handleSubmit, isSubmitting, resetForm }) => {
         const pending = isSubmitting || isSaving;
         const handleClose = () => {
           if (pending) return;
@@ -86,7 +85,6 @@ export const RestaurantFormDialog = ({
                 </Button>
                 <Button
                   disabled={!dirty || pending}
-                  form={RESTAURANT_FORM_ID}
                   loading={pending}
                   type="submit"
                 >
@@ -109,12 +107,13 @@ export const RestaurantFormDialog = ({
                 <IconBuildingStore size={22} />
               )
             }
+            formProps={{ onSubmit: handleSubmit }}
             onClose={handleClose}
             opened={opened}
             preventInitialFocus
             title={isEditing ? "Редактировать ресторан" : "Новый ресторан"}
           >
-            <Form className="gap-md grid" id={RESTAURANT_FORM_ID} noValidate>
+            <div className="gap-md grid">
               <InputField
                 autoComplete="organization"
                 label="Название"
@@ -134,7 +133,7 @@ export const RestaurantFormDialog = ({
                 label="Статус"
                 name="status"
               />
-            </Form>
+            </div>
           </Dialog>
         );
       }}

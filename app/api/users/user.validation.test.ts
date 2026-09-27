@@ -3,11 +3,14 @@ import { describe, it } from "node:test";
 
 import {
   authorizationHeaderSchema,
+  createEmployeeRequestSchema,
   createRestaurantUserRequestSchema,
   restaurantUserListQuerySchema,
   restaurantUserPathParamsSchema,
   superAdminLoginRequestSchema,
   superAdminRefreshRequestSchema,
+  updateEmployeeRequestSchema,
+  updateEmployeeStatusRequestSchema,
   updateRestaurantUserRequestSchema,
 } from "./user.validation";
 
@@ -122,6 +125,48 @@ describe("user request validation", () => {
   it("requires a restaurant user id in route params", async () => {
     await assert.rejects(
       restaurantUserPathParamsSchema.validate({ userId: " " })
+    );
+  });
+
+  it("accepts employee fields without tenant, role, or status input", async () => {
+    const result = await createEmployeeRequestSchema.validate(
+      {
+        name: " Анна Иванова ",
+        phone: " +79991234567 ",
+        email: " EMPLOYEE@EXAMPLE.COM ",
+        password: "strong-password",
+        restaurantId: "foreign-restaurant",
+        role: "OWNER",
+        isActive: false,
+      },
+      { stripUnknown: true }
+    );
+
+    assert.deepEqual(result, {
+      name: "Анна Иванова",
+      phone: "+79991234567",
+      email: "employee@example.com",
+      password: "strong-password",
+    });
+  });
+
+  it("limits employee updates to profile fields", async () => {
+    const result = await updateEmployeeRequestSchema.validate(
+      { name: " Новое имя ", role: "OWNER", isActive: false },
+      { stripUnknown: true }
+    );
+
+    assert.deepEqual(result, { name: "Новое имя" });
+    await assert.rejects(updateEmployeeRequestSchema.validate({}));
+  });
+
+  it("requires a boolean employee status", async () => {
+    assert.deepEqual(
+      await updateEmployeeStatusRequestSchema.validate({ isActive: false }),
+      { isActive: false }
+    );
+    await assert.rejects(
+      updateEmployeeStatusRequestSchema.validate({ isActive: null })
     );
   });
 });

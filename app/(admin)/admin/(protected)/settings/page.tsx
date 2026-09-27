@@ -25,13 +25,8 @@ import {
 import type { RestaurantSettingsFormValues } from "./types";
 
 export default function SettingsPage() {
-  const {
-    data: settings,
-    isError,
-    isFetching,
-    isLoading,
-    refetch,
-  } = useGetRestaurantSettingsQuery();
+  const query = useGetRestaurantSettingsQuery();
+  const { data: settings } = query;
   const [updateSettings, { isLoading: isSaving }] =
     useUpdateRestaurantSettingsMutation();
 
@@ -75,10 +70,7 @@ export default function SettingsPage() {
         <Details
           className="min-h-72 w-full"
           errorMessage="Не удалось загрузить настройки"
-          isError={isError}
-          isFetching={isFetching}
-          isLoading={isLoading}
-          onRetry={refetch}
+          query={query}
         >
           {settings ? (
             <Formik

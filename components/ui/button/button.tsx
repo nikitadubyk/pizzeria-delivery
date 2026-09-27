@@ -35,7 +35,7 @@ const ButtonBase = forwardRef<HTMLButtonElement, AppButtonProps>(
     return (
       <MantineButton
         className={cn(
-          "focus-visible:outline-primary-active cursor-pointer shadow-sm hover:-translate-y-px hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:translate-y-0 active:shadow-sm disabled:translate-y-0 disabled:cursor-not-allowed disabled:shadow-sm",
+          "focus-visible:outline-primary-active cursor-pointer shadow-sm hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:shadow-sm disabled:cursor-not-allowed disabled:shadow-sm",
           interactiveMotionTransitionClassName,
           className
         )}

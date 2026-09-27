@@ -65,22 +65,17 @@ function CategoriesPage() {
   const canManageVisibility = useRestaurantPermission(P.STOP_LIST_MANAGE);
   const [updateCategoryVisibility, { isLoading: isUpdatingVisibility }] =
     useUpdateCategoryVisibilityMutation();
-  const { data, isError, isFetching, isLoading, refetch } =
-    useGetCategoriesQuery({
-      page,
-      limit: CATEGORIES_PER_PAGE,
-      search: search || undefined,
-    });
-  const {
-    data: categoryDetails,
-    isError: isDetailsError,
-    isFetching: isDetailsFetching,
-    isLoading: isDetailsLoading,
-    refetch: refetchDetails,
-  } = useGetCategoryQuery(
+  const query = useGetCategoriesQuery({
+    page,
+    limit: CATEGORIES_PER_PAGE,
+    search: search || undefined,
+  });
+  const detailsQuery = useGetCategoryQuery(
     { categoryId: detailsCategoryId ?? "" },
-    { skip: detailsCategoryId === null }
+    { skip: !detailsCategoryId }
   );
+  const { data } = query;
+  const { data: categoryDetails } = detailsQuery;
   const categories = data?.items ?? [];
   const total = data?.pagination.total ?? 0;
   const totalPages = Math.max(1, data?.pagination.totalPages ?? 1);
@@ -281,10 +276,7 @@ function CategoriesPage() {
             <Details
               className="flex min-h-0 flex-1 flex-col"
               errorMessage="Не удалось загрузить категории"
-              isError={isError}
-              isFetching={isFetching}
-              isLoading={isLoading}
-              onRetry={refetch}
+              query={query}
             >
               <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
                 <Table
@@ -355,10 +347,7 @@ function CategoriesPage() {
           <Details
             className="min-h-48"
             errorMessage="Не удалось загрузить категорию"
-            isError={isDetailsError}
-            isFetching={isDetailsFetching}
-            isLoading={isDetailsLoading}
-            onRetry={refetchDetails}
+            query={detailsQuery}
           >
             {categoryDetails ? (
               <dl className="gap-x-lg gap-y-md m-0 grid grid-cols-1 sm:grid-cols-2">

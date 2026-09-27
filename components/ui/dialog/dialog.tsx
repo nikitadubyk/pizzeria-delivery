@@ -6,7 +6,7 @@ import {
   type ModalProps as MantineModalProps,
 } from "@mantine/core";
 import { cn, interactiveMotionTransitionClassName } from "@/lib/class-names";
-import type { ReactNode } from "react";
+import type { FormHTMLAttributes, ReactNode } from "react";
 
 export type AppDialogTone =
   "primary" | "success" | "info" | "warning" | "danger" | "failed" | "neutral";
@@ -15,6 +15,7 @@ export type AppDialogProps = Omit<MantineModalProps, "children" | "title"> & {
   actions?: ReactNode;
   children?: ReactNode;
   description?: ReactNode;
+  formProps?: Omit<FormHTMLAttributes<HTMLFormElement>, "children">;
   icon?: ReactNode;
   title?: ReactNode;
   tone?: AppDialogTone;
@@ -79,6 +80,7 @@ export function Dialog({
   classNames,
   closeButtonProps,
   description,
+  formProps,
   icon,
   overlayProps,
   preventInitialFocus = false,
@@ -147,27 +149,50 @@ export function Dialog({
         />
       ) : null}
 
-      <div className="flex min-h-0 flex-1 flex-col">
-        <div className="min-h-0 flex-1 [scrollbar-gutter:stable] overflow-y-auto overscroll-contain">
-          <div className="gap-md grid min-w-0 pr-1">
-            {description ? (
-              <p className="text-muted m-0 text-sm leading-snug">
-                {description}
-              </p>
-            ) : null}
-
-            {children ? (
-              <div className="text-text min-w-0">{children}</div>
-            ) : null}
-          </div>
+      {formProps ? (
+        <form
+          {...formProps}
+          className={cn("flex min-h-0 flex-1 flex-col", formProps.className)}
+        >
+          <DialogContent actions={actions} description={description}>
+            {children}
+          </DialogContent>
+        </form>
+      ) : (
+        <div className="flex min-h-0 flex-1 flex-col">
+          <DialogContent actions={actions} description={description}>
+            {children}
+          </DialogContent>
         </div>
-
-        {actions ? (
-          <div className="mt-md border-border pt-md flex shrink-0 flex-col-reverse gap-2 border-t md:flex-row md:flex-wrap md:justify-end [&>*]:w-full md:[&>*]:w-auto">
-            {actions}
-          </div>
-        ) : null}
-      </div>
+      )}
     </MantineModal>
+  );
+}
+
+function DialogContent({
+  actions,
+  children,
+  description,
+}: Pick<AppDialogProps, "actions" | "children" | "description">) {
+  return (
+    <>
+      <div className="min-h-0 flex-1 [scrollbar-gutter:stable] overflow-y-auto overscroll-contain">
+        <div className="gap-md grid min-w-0 pr-1">
+          {description ? (
+            <p className="text-muted m-0 text-sm leading-snug">{description}</p>
+          ) : null}
+
+          {children ? (
+            <div className="text-text min-w-0">{children}</div>
+          ) : null}
+        </div>
+      </div>
+
+      {actions ? (
+        <div className="mt-md border-border pt-md flex shrink-0 flex-col-reverse gap-2 border-t md:flex-row md:flex-wrap md:justify-end [&>*]:w-full md:[&>*]:w-auto">
+          {actions}
+        </div>
+      ) : null}
+    </>
   );
 }

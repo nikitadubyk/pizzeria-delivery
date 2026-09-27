@@ -1,6 +1,10 @@
 export { CheckboxField, type CheckboxFieldProps } from "./checkbox-field";
 export { InputField, type InputFieldProps } from "./input-field";
 export {
+  PhoneInputField,
+  type PhoneInputFieldProps,
+} from "./phone-input-field";
+export {
   MultiSelectField,
   type MultiSelectFieldProps,
 } from "./multi-select-field";

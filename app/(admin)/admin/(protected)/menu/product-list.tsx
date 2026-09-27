@@ -54,13 +54,12 @@ export function ProductList() {
   const [deleteProduct, { isLoading: isDeleting }] = useDeleteProductMutation();
   const [updateProductAvailability, { isLoading: isUpdatingAvailability }] =
     useUpdateProductAvailabilityMutation();
-  const { data, isError, isFetching, isLoading, refetch } = useGetProductsQuery(
-    {
-      page,
-      limit: PRODUCTS_PER_PAGE,
-      search: search || undefined,
-    }
-  );
+  const query = useGetProductsQuery({
+    page,
+    limit: PRODUCTS_PER_PAGE,
+    search: search || undefined,
+  });
+  const { data } = query;
   const products = data?.items ?? [];
   const total = data?.pagination.total ?? 0;
   const totalPages = Math.max(1, data?.pagination.totalPages ?? 1);
@@ -284,10 +283,7 @@ export function ProductList() {
             <Details
               className="flex min-h-0 flex-1 flex-col"
               errorMessage="Не удалось загрузить продукты"
-              isError={isError}
-              isFetching={isFetching}
-              isLoading={isLoading}
-              onRetry={refetch}
+              query={query}
             >
               <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
                 <Table

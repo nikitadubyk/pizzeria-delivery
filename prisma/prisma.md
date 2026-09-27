@@ -121,8 +121,8 @@ sessions. Explicit session revocation can increment authVersion. This trigger
 and the partial unique indexes live in the restaurant_login_identity migration;
 Prisma schema generation alone does not create them. Existing tokens from the
 previous timestamp format require a new login. Logout removes the token from localStorage; no server session registry is added.
-`/api/admin/me` returns only the safe identity DTO. Menu, orders, staff management,
-settings and recovery remain future work.
+`/api/admin/me` returns only the safe identity DTO. Menu, settings, and staff
+management are implemented; orders and password recovery remain future work.
 
 ## Restaurant permissions
 
@@ -131,7 +131,7 @@ and EMPLOYEE. Unknown roles and permissions are denied; SUPER_ADMIN has no
 implicit restaurant permissions. Its existing API remains separate.
 
 OWNER can read/manage menu and orders, manage the stop-list and settings, and
-read, disable and initiate recovery for employees. EMPLOYEE can read menu and
+read, create, edit, disable and re-enable employees. EMPLOYEE can read menu and
 orders, manage the stop-list and process orders, but cannot edit menu/prices,
 change settings or manage staff. These permissions describe access; most business
 operations are not implemented yet. Add future permissions explicitly to this
@@ -221,6 +221,15 @@ Restaurant settings live under `/api/admin/settings`. Only OWNER accounts may
 read or update them through `SETTINGS_MANAGE`. The delivery price is stored on
 the tenant-root `Restaurant` in integer kopecks and is always loaded and updated
 through `getRestaurantDb` using the restaurant id from the verified session.
+
+Employee management lives under `/api/admin/employees`. Only OWNER accounts can
+list and inspect employees, create an EMPLOYEE account, edit its name and
+contacts, or change its active state. Request bodies never accept a restaurant
+id or role: the restaurant comes from the verified session and the service
+always creates `EMPLOYEE`. Every lookup and mutation uses `getRestaurantDb` and
+also filters by `role = EMPLOYEE`, so an owner cannot use these endpoints to
+target an owner, themselves, or a user from another restaurant. Removing access
+is a reversible `isActive = false` update rather than a physical delete.
 
 Every paginated list accepts the shared `page`, `limit`, and optional `search`
 query parameters. Category search covers the name; product search covers name,

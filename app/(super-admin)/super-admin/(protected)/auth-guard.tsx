@@ -68,9 +68,12 @@ export const SuperAdminAuthGuard = ({ children }: SuperAdminAuthGuardProps) => {
   return (
     <Details
       className="flex h-dvh min-h-0 w-full flex-col"
-      isLoading={!hasSessionToken || isUnauthorized || (!isSuccess && !isError)}
-      isFetching={isFetching}
-      isError={isError && !isUnauthorized}
+      query={{
+        isLoading:
+          !hasSessionToken || isUnauthorized || (!isSuccess && !isError),
+        isFetching,
+        isError: isError && !isUnauthorized,
+      }}
       errorMessage="Не удалось проверить вход"
       loadingLabel="Проверка входа…"
       onRetry={refetch}

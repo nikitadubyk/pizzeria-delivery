@@ -175,9 +175,7 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
       <Details
         className="min-h-96 md:min-h-[32rem]"
         errorMessage="Не удалось загрузить данные формы"
-        isError={isError}
-        isFetching={isFetching}
-        isLoading={isLoading}
+        query={{ isError, isFetching, isLoading }}
         onRetry={retry}
       >
         {categories.length === 0 ? (

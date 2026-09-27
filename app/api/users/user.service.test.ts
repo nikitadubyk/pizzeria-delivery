@@ -60,6 +60,17 @@ const emptyRepository: UserRepository = {
   deleteRestaurantUser: async () => {
     throw new Error("Not implemented in this test");
   },
+  findEmployeePage: async () => ({ items: [], total: 0 }),
+  findEmployeeById: async () => null,
+  createEmployee: async () => {
+    throw new Error("Not implemented in this test");
+  },
+  updateEmployee: async () => {
+    throw new Error("Not implemented in this test");
+  },
+  updateEmployeeStatus: async () => {
+    throw new Error("Not implemented in this test");
+  },
 };
 
 const prismaError = (code: string) =>
@@ -398,5 +409,65 @@ describe("UserService", () => {
           error.status === HttpStatus.NOT_FOUND
       );
     }
+  });
+
+  it("creates only an employee in the authenticated restaurant scope", async () => {
+    const service = new UserService(
+      {
+        ...emptyRepository,
+        createEmployee: async (restaurantId, data) => {
+          assert.equal(restaurantId, "restaurant-id");
+          assert.notEqual(data.password, "strong-password");
+          assert.equal(
+            await bcrypt.compare("strong-password", data.password),
+            true
+          );
+          return createRestaurantUser({ ...data, restaurantId });
+        },
+      },
+      tokenService
+    );
+
+    const employee = await service.createEmployee("restaurant-id", {
+      name: "Анна Иванова",
+      phone: "+79991234567",
+      email: "employee@example.com",
+      password: "strong-password",
+    });
+
+    assert.equal(employee.restaurantId, "restaurant-id");
+  });
+
+  it("does not update another restaurant's employee or an owner", async () => {
+    let wroteEmployee = false;
+    const service = new UserService(
+      {
+        ...emptyRepository,
+        findEmployeeById: async () => null,
+        updateEmployee: async () => {
+          wroteEmployee = true;
+          return createRestaurantUser();
+        },
+        updateEmployeeStatus: async () => {
+          wroteEmployee = true;
+          return createRestaurantUser();
+        },
+      },
+      tokenService
+    );
+
+    for (const operation of [
+      () =>
+        service.updateEmployee("restaurant-id", "foreign-user", {
+          name: "Changed",
+        }),
+      () => service.updateEmployeeStatus("restaurant-id", "owner-user", false),
+    ]) {
+      await assert.rejects(operation(), {
+        status: HttpStatus.NOT_FOUND,
+      });
+    }
+
+    assert.equal(wroteEmployee, false);
   });
 });

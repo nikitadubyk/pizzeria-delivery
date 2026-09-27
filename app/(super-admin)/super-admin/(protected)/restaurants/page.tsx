@@ -103,12 +103,12 @@ const SuperAdminRestaurantsPageContent = () => {
   const [detailsOpened, setDetailsOpened] = useState(false);
   const [deleteRestaurant, { isLoading: isDeleting }] =
     useDeleteRestaurantMutation();
-  const { data, isError, isLoading, isFetching, refetch } =
-    useGetRestaurantsQuery({
-      page,
-      limit: RESTAURANTS_PER_PAGE,
-      search: search || undefined,
-    });
+  const query = useGetRestaurantsQuery({
+    page,
+    limit: RESTAURANTS_PER_PAGE,
+    search: search || undefined,
+  });
+  const { data } = query;
   const restaurants = data?.items ?? [];
   const total = data?.pagination.total ?? 0;
   const totalPages = Math.max(1, data?.pagination.totalPages ?? 1);
@@ -223,11 +223,8 @@ const SuperAdminRestaurantsPageContent = () => {
 
           <Details
             className="flex min-h-0 flex-1 flex-col"
-            isLoading={isLoading}
-            isFetching={isFetching}
-            isError={isError}
             errorMessage="Не удалось загрузить рестораны"
-            onRetry={refetch}
+            query={query}
           >
             <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
               <Table

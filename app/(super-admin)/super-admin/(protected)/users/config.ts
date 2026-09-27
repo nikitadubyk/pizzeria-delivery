@@ -14,8 +14,6 @@ import {
 
 import type { UserFormValues } from "./types";
 
-export const USER_FORM_ID = "restaurant-user-form";
-
 export const userRoleOptions: {
   label: string;
   value: RestaurantUserRole;

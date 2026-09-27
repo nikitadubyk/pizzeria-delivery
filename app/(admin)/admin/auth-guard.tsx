@@ -93,9 +93,11 @@ export function RestaurantAuthGuard({
   return (
     <Details
       className="flex min-h-dvh w-full flex-col"
-      isLoading={checking}
-      isFetching={isFetching}
-      isError={Boolean(storageError) || (isError && !unauthorized)}
+      query={{
+        isLoading: checking,
+        isFetching,
+        isError: Boolean(storageError) || (isError && !unauthorized),
+      }}
       errorMessage={storageError ?? "Не удалось проверить вход"}
       loadingLabel="Проверка входа…"
       onRetry={() => (storageError ? syncRestaurantSession(store) : refetch())}

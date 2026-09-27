@@ -1,6 +1,8 @@
 import type {
+  CreateEmployeeRequest,
   CreateRestaurantUserRequest,
   ResolvedSearchPaginationQuery,
+  UpdateEmployeeRequest,
   UpdateRestaurantUserRequest,
 } from "@/api-contracts";
 import type { Restaurant, User } from "@/app/generated/prisma/client";
@@ -43,6 +45,28 @@ export interface UserRepository {
   deleteRestaurantUser(
     superAdminId: string,
     userId: string
+  ): Promise<RestaurantUser>;
+  findEmployeePage(
+    restaurantId: string,
+    pagination: ResolvedSearchPaginationQuery
+  ): Promise<RestaurantUserPage>;
+  findEmployeeById(
+    restaurantId: string,
+    employeeId: string
+  ): Promise<RestaurantUser | null>;
+  createEmployee(
+    restaurantId: string,
+    data: CreateEmployeeRequest & { password: string }
+  ): Promise<RestaurantUser>;
+  updateEmployee(
+    restaurantId: string,
+    employeeId: string,
+    data: UpdateEmployeeRequest
+  ): Promise<RestaurantUser>;
+  updateEmployeeStatus(
+    restaurantId: string,
+    employeeId: string,
+    isActive: boolean
   ): Promise<RestaurantUser>;
 }
 

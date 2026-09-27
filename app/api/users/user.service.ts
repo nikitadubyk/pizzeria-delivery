@@ -1,4 +1,5 @@
 import type {
+  CreateEmployeeRequest,
   CreateRestaurantUserRequest,
   ResolvedSearchPaginationQuery,
   SuperAdminLoginRequest,
@@ -6,6 +7,7 @@ import type {
   SuperAdminRefreshRequest,
   SuperAdminRefreshResponse,
   SuperAdminUserDto,
+  UpdateEmployeeRequest,
   UpdateRestaurantUserRequest,
 } from "@/api-contracts";
 import { TokenSecret } from "@/app/api/users/config";
@@ -17,7 +19,7 @@ import type {
 } from "@/app/api/users/types";
 import { Prisma, type User } from "@/app/generated/prisma/client";
 import { ApiError, HttpStatus } from "@/app/api/common/api-response";
-import { getSuperAdminDb, systemDb } from "@/lib/prisma";
+import { getRestaurantDb, getSuperAdminDb, systemDb } from "@/lib/prisma";
 import { hashPassword, verifyPassword } from "@/lib/auth/crypto";
 import { JwtService } from "@/lib/auth/jwt.service";
 
@@ -281,6 +283,79 @@ export class UserService {
       return mapRepositoryError(error);
     }
   }
+
+  getEmployeePage(
+    restaurantId: string,
+    pagination: ResolvedSearchPaginationQuery
+  ) {
+    return this.repository.findEmployeePage(restaurantId, pagination);
+  }
+
+  async getEmployeeById(
+    restaurantId: string,
+    employeeId: string
+  ): Promise<RestaurantUser> {
+    const employee = await this.repository.findEmployeeById(
+      restaurantId,
+      employeeId
+    );
+
+    if (!employee) {
+      throw new UserServiceError("Сотрудник не найден", HttpStatus.NOT_FOUND);
+    }
+
+    return employee;
+  }
+
+  async createEmployee(
+    restaurantId: string,
+    input: CreateEmployeeRequest
+  ): Promise<RestaurantUser> {
+    try {
+      return await this.repository.createEmployee(restaurantId, {
+        ...input,
+        password: await this.hashPassword(input.password),
+      });
+    } catch (error) {
+      return mapRepositoryError(error);
+    }
+  }
+
+  async updateEmployee(
+    restaurantId: string,
+    employeeId: string,
+    input: UpdateEmployeeRequest
+  ): Promise<RestaurantUser> {
+    await this.getEmployeeById(restaurantId, employeeId);
+
+    try {
+      return await this.repository.updateEmployee(
+        restaurantId,
+        employeeId,
+        input
+      );
+    } catch (error) {
+      return mapRepositoryError(error);
+    }
+  }
+
+  async updateEmployeeStatus(
+    restaurantId: string,
+    employeeId: string,
+    isActive: boolean
+  ): Promise<RestaurantUser> {
+    await this.getEmployeeById(restaurantId, employeeId);
+
+    try {
+      return await this.repository.updateEmployeeStatus(
+        restaurantId,
+        employeeId,
+        isActive
+      );
+    } catch (error) {
+      return mapRepositoryError(error);
+    }
+  }
 }
 
 const userRepository: UserRepository = {
@@ -385,6 +460,59 @@ const userRepository: UserRepository = {
       include: { restaurant: { select: { id: true, name: true } } },
     });
   },
+  findEmployeePage: async (restaurantId, { page, limit, search }) => {
+    const db = getRestaurantDb(restaurantId);
+    const where: Prisma.UserWhereInput = {
+      role: "EMPLOYEE",
+      ...(search
+        ? {
+            OR: [
+              { name: { contains: search, mode: "insensitive" } },
+              { email: { contains: search, mode: "insensitive" } },
+              { phone: { contains: search } },
+            ],
+          }
+        : {}),
+    };
+    const [items, total] = await Promise.all([
+      db.user.findMany({
+        where,
+        include: { restaurant: { select: { id: true, name: true } } },
+        orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      db.user.count({ where }),
+    ]);
+
+    return { items, total };
+  },
+  findEmployeeById: (restaurantId, employeeId) =>
+    getRestaurantDb(restaurantId).user.findFirst({
+      where: { id: employeeId, role: "EMPLOYEE" },
+      include: { restaurant: { select: { id: true, name: true } } },
+    }),
+  createEmployee: (restaurantId, data) =>
+    getRestaurantDb(restaurantId).user.create({
+      data: {
+        ...data,
+        role: "EMPLOYEE",
+        isActive: true,
+      },
+      include: { restaurant: { select: { id: true, name: true } } },
+    }),
+  updateEmployee: (restaurantId, employeeId, data) =>
+    getRestaurantDb(restaurantId).user.update({
+      where: { id: employeeId, role: "EMPLOYEE" },
+      data,
+      include: { restaurant: { select: { id: true, name: true } } },
+    }),
+  updateEmployeeStatus: (restaurantId, employeeId, isActive) =>
+    getRestaurantDb(restaurantId).user.update({
+      where: { id: employeeId, role: "EMPLOYEE" },
+      data: { isActive },
+      include: { restaurant: { select: { id: true, name: true } } },
+    }),
 };
 
 export const userService = new UserService(

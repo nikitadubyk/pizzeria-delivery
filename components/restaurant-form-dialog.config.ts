@@ -11,8 +11,6 @@ import {
 
 import type { RestaurantFormValues } from "./restaurant-form-dialog.types";
 
-export const RESTAURANT_FORM_ID = "restaurant-form";
-
 export const restaurantStatusOptions: {
   label: string;
   value: RestaurantStatus;

@@ -9,6 +9,7 @@ export const RESTAURANT_PERMISSION = {
   ORDERS_MANAGE: "orders:manage",
   SETTINGS_MANAGE: "settings:manage",
   EMPLOYEES_READ: "employees:read",
+  EMPLOYEES_MANAGE: "employees:manage",
   EMPLOYEES_DISABLE: "employees:disable",
   EMPLOYEES_RECOVER: "employees:recover",
 } as const;
@@ -32,6 +33,7 @@ const permissionsByRole: Record<
     P.ORDERS_MANAGE,
     P.SETTINGS_MANAGE,
     P.EMPLOYEES_READ,
+    P.EMPLOYEES_MANAGE,
     P.EMPLOYEES_DISABLE,
     P.EMPLOYEES_RECOVER,
   ],

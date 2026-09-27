@@ -127,3 +127,38 @@ export const updateRestaurantUserRequestSchema = yup
       value.role !== undefined ||
       value.isActive !== undefined
   );
+
+export const employeeListQuerySchema = restaurantUserListQuerySchema;
+
+export const employeePathParamsSchema = yup.object({
+  employeeId: yup
+    .string()
+    .trim()
+    .required("Идентификатор сотрудника обязателен"),
+});
+
+export const createEmployeeRequestSchema = yup.object({
+  name: nameSchema,
+  phone: phoneSchema,
+  email: optionalEmailSchema,
+  password: passwordSchema,
+});
+
+export const updateEmployeeRequestSchema = yup
+  .object({
+    name: nameSchema.optional(),
+    phone: phoneSchema.optional(),
+    email: optionalEmailSchema,
+  })
+  .test(
+    "at-least-one-field",
+    "Передайте хотя бы одно поле для обновления",
+    (value) =>
+      value.name !== undefined ||
+      value.phone !== undefined ||
+      value.email !== undefined
+  );
+
+export const updateEmployeeStatusRequestSchema = yup.object({
+  isActive: yup.boolean().required("Статус сотрудника обязателен"),
+});

@@ -1,13 +1,7 @@
 "use client";
 
 import { IconEdit, IconUserPlus } from "@tabler/icons-react";
-import {
-  Field,
-  Form,
-  Formik,
-  type FieldProps,
-  type FormikHelpers,
-} from "formik";
+import { Formik, type FormikHelpers } from "formik";
 
 import { MIN_PASSWORD_LENGTH } from "@/api-contracts";
 import {
@@ -15,7 +9,7 @@ import {
   Dialog,
   InputField,
   PasswordField,
-  PhoneInput,
+  PhoneInputField,
   SelectField,
   ToggleField,
 } from "@/components/ui";
@@ -29,7 +23,6 @@ import {
   getRestaurantOptions,
   getUserFormInitialValues,
   getUserFormValidationSchema,
-  USER_FORM_ID,
   userRoleOptions,
 } from "./config";
 import type { UserFormDialogProps, UserFormValues } from "./types";
@@ -90,7 +83,7 @@ export const UserFormDialog = ({
       onSubmit={handleSubmit}
       validationSchema={getUserFormValidationSchema(isEditing)}
     >
-      {({ dirty, isSubmitting, resetForm }) => {
+      {({ dirty, handleSubmit, isSubmitting, resetForm }) => {
         const pending = isSubmitting || isSaving;
         const handleClose = () => {
           if (pending) return;
@@ -113,7 +106,6 @@ export const UserFormDialog = ({
                 </Button>
                 <Button
                   disabled={!dirty || pending}
-                  form={USER_FORM_ID}
                   loading={pending}
                   type="submit"
                 >
@@ -132,6 +124,7 @@ export const UserFormDialog = ({
             icon={
               isEditing ? <IconEdit size={22} /> : <IconUserPlus size={22} />
             }
+            formProps={{ onSubmit: handleSubmit }}
             onClose={handleClose}
             opened={opened}
             preventInitialFocus
@@ -139,7 +132,7 @@ export const UserFormDialog = ({
               isEditing ? "Редактировать пользователя" : "Новый пользователь"
             }
           >
-            <Form className="gap-md grid" id={USER_FORM_ID} noValidate>
+            <div className="gap-md grid">
               <SelectField
                 allowDeselect={false}
                 data={restaurantOptions}
@@ -154,20 +147,7 @@ export const UserFormDialog = ({
                 name="name"
                 placeholder="Например, Анна Иванова"
               />
-              <Field name="phone">
-                {({ field, form, meta }: FieldProps<string>) => (
-                  <PhoneInput
-                    error={meta.touched ? meta.error : undefined}
-                    label="Телефон"
-                    name={field.name}
-                    onBlur={field.onBlur}
-                    onChange={(value) =>
-                      void form.setFieldValue(field.name, value ?? "")
-                    }
-                    value={field.value}
-                  />
-                )}
-              </Field>
+              <PhoneInputField label="Телефон" name="phone" />
               <InputField
                 autoComplete="email"
                 description="Необязательно"
@@ -200,7 +180,7 @@ export const UserFormDialog = ({
                 label="Активный пользователь"
                 name="isActive"
               />
-            </Form>
+            </div>
           </Dialog>
         );
       }}

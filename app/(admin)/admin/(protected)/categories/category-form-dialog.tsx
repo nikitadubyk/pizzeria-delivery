@@ -1,7 +1,7 @@
 "use client";
 
 import { IconCategoryPlus, IconEdit } from "@tabler/icons-react";
-import { Form, Formik, type FormikHelpers } from "formik";
+import { Formik, type FormikHelpers } from "formik";
 
 import { Button, Dialog, InputField, ToggleField } from "@/components/ui";
 import { showSuccessNotification } from "@/components/ui/notification";
@@ -11,7 +11,6 @@ import {
 } from "@/store/api/categories.api";
 
 import {
-  CATEGORY_FORM_ID,
   categoryFormValidationSchema,
   getCategoryFormInitialValues,
 } from "./config";
@@ -64,7 +63,7 @@ export function CategoryFormDialog({
       onSubmit={handleSubmit}
       validationSchema={categoryFormValidationSchema}
     >
-      {({ dirty, isSubmitting, resetForm }) => {
+      {({ dirty, handleSubmit, isSubmitting, resetForm }) => {
         const pending = isSubmitting || isSaving;
         const handleClose = () => {
           if (pending) return;
@@ -87,7 +86,6 @@ export function CategoryFormDialog({
                 </Button>
                 <Button
                   disabled={!dirty || pending}
-                  form={CATEGORY_FORM_ID}
                   loading={pending}
                   type="submit"
                 >
@@ -110,12 +108,13 @@ export function CategoryFormDialog({
                 <IconCategoryPlus size={22} />
               )
             }
+            formProps={{ onSubmit: handleSubmit }}
             onClose={handleClose}
             opened={opened}
             preventInitialFocus
             title={isEditing ? "Редактировать категорию" : "Новая категория"}
           >
-            <Form className="gap-md grid" id={CATEGORY_FORM_ID} noValidate>
+            <div className="gap-md grid">
               <InputField
                 autoComplete="off"
                 label="Название"
@@ -136,7 +135,7 @@ export function CategoryFormDialog({
                 label="Опубликована"
                 name="isPublished"
               />
-            </Form>
+            </div>
           </Dialog>
         );
       }}

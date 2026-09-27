@@ -118,22 +118,17 @@ const SuperAdminUsersPageContent = () => {
   const [detailsOpened, setDetailsOpened] = useState(false);
   const [deleteUser, { isLoading: isDeleting }] =
     useDeleteRestaurantUserMutation();
-  const { data, isError, isLoading, isFetching, refetch } =
-    useGetRestaurantUsersQuery({
-      page,
-      limit: USERS_PER_PAGE,
-      search: search || undefined,
-    });
-  const {
-    data: restaurantsData,
-    isLoading: isRestaurantsLoading,
-    isFetching: isRestaurantsFetching,
-    isError: isRestaurantsError,
-    refetch: refetchRestaurants,
-  } = useGetRestaurantsQuery({
+  const query = useGetRestaurantUsersQuery({
+    page,
+    limit: USERS_PER_PAGE,
+    search: search || undefined,
+  });
+  const restaurantsQuery = useGetRestaurantsQuery({
     page: 1,
     limit: RESTAURANTS_FOR_SELECT_LIMIT,
   });
+  const { data } = query;
+  const { data: restaurantsData } = restaurantsQuery;
   const users = data?.items ?? [];
   const restaurants = restaurantsData?.items ?? [];
   const total = data?.pagination.total ?? 0;
@@ -228,8 +223,8 @@ const SuperAdminUsersPageContent = () => {
             className="w-full md:w-auto"
             disabled={
               restaurants.length === 0 ||
-              isRestaurantsFetching ||
-              isRestaurantsError
+              restaurantsQuery.isFetching ||
+              restaurantsQuery.isError
             }
             leftSection={<IconPlus aria-hidden="true" size={18} />}
             onClick={openCreateDialog}
@@ -256,17 +251,19 @@ const SuperAdminUsersPageContent = () => {
 
           <Details
             className="flex min-h-0 flex-1 flex-col"
-            isLoading={isLoading || isRestaurantsLoading}
-            isFetching={isFetching || isRestaurantsFetching}
-            isError={isError || isRestaurantsError}
+            query={{
+              isLoading: query.isLoading || restaurantsQuery.isLoading,
+              isFetching: query.isFetching || restaurantsQuery.isFetching,
+              isError: query.isError || restaurantsQuery.isError,
+            }}
             errorMessage={
-              isRestaurantsError
+              restaurantsQuery.isError
                 ? "Не удалось загрузить рестораны"
                 : "Не удалось загрузить пользователей"
             }
             onRetry={() => {
-              if (isError) void refetch();
-              if (isRestaurantsError) void refetchRestaurants();
+              if (query.isError) void query.refetch();
+              if (restaurantsQuery.isError) void restaurantsQuery.refetch();
             }}
           >
             <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
