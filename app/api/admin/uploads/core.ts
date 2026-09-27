@@ -66,10 +66,7 @@ const toUploadThingError = (error: unknown): UploadThingError => {
 };
 
 export const uploadRouter = {
-  productImage: upload(
-    productImageRouteConfig,
-    { awaitServerData: true },
-  )
+  productImage: upload(productImageRouteConfig, { awaitServerData: true })
     .input(productImageInputSchema)
     .middleware(async ({ req, input, files }) => {
       try {
@@ -85,7 +82,7 @@ export const uploadRouter = {
 
         const identity = await requireRestaurantPermission(
           req,
-          RESTAURANT_PERMISSION.MENU_MANAGE,
+          RESTAURANT_PERMISSION.MENU_MANAGE
         );
         await productService.getById(identity.restaurant.id, input.productId);
 
@@ -105,7 +102,7 @@ export const uploadRouter = {
         const product = await productService.attachUploadedImage(
           metadata.restaurantId,
           metadata.productId,
-          { key: file.key, url: file.ufsUrl },
+          { key: file.key, url: file.ufsUrl }
         );
 
         return { product: toProductDto(product) };

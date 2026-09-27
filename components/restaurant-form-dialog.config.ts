@@ -29,7 +29,7 @@ export const restaurantFormValidationSchema: yup.ObjectSchema<RestaurantFormValu
       .trim()
       .max(
         RESTAURANT_NAME_MAX_LENGTH,
-        `Название не должно превышать ${RESTAURANT_NAME_MAX_LENGTH} символов`,
+        `Название не должно превышать ${RESTAURANT_NAME_MAX_LENGTH} символов`
       )
       .required("Введите название ресторана"),
     slug: yup
@@ -38,11 +38,11 @@ export const restaurantFormValidationSchema: yup.ObjectSchema<RestaurantFormValu
       .lowercase()
       .max(
         RESTAURANT_SLUG_MAX_LENGTH,
-        `Slug не должен превышать ${RESTAURANT_SLUG_MAX_LENGTH} символов`,
+        `Slug не должен превышать ${RESTAURANT_SLUG_MAX_LENGTH} символов`
       )
       .matches(
         RESTAURANT_SLUG_PATTERN,
-        "Используйте строчные латинские буквы, цифры и одиночные дефисы",
+        "Используйте строчные латинские буквы, цифры и одиночные дефисы"
       )
       .required("Введите slug ресторана"),
     status: yup
@@ -52,7 +52,7 @@ export const restaurantFormValidationSchema: yup.ObjectSchema<RestaurantFormValu
   });
 
 export const getRestaurantFormInitialValues = (
-  restaurant: RestaurantDto | null,
+  restaurant: RestaurantDto | null
 ): RestaurantFormValues => ({
   name: restaurant?.name ?? "",
   slug: restaurant?.slug ?? "",

@@ -9,6 +9,8 @@ import {
   PRODUCT_VARIANT_PRICE_MAX,
   PRODUCT_VARIANT_WEIGHT_MAX_LENGTH,
   PRODUCT_VARIANTS_MAX_COUNT,
+  PRODUCT_INGREDIENTS_MAX_COUNT,
+  PRODUCT_ADDONS_MAX_COUNT,
 } from "@/api-contracts";
 import { createSearchPaginationSchema } from "@/app/api/common/list-query";
 import * as yup from "yup";
@@ -30,7 +32,7 @@ const sortOrderSchema = yup
   .min(0, "Порядок продукта не должен быть отрицательным")
   .max(
     PRODUCT_SORT_ORDER_MAX,
-    `Порядок продукта не должен превышать ${PRODUCT_SORT_ORDER_MAX}`,
+    `Порядок продукта не должен превышать ${PRODUCT_SORT_ORDER_MAX}`
   );
 
 const productFields = {
@@ -40,16 +42,16 @@ const productFields = {
     .trim()
     .max(
       PRODUCT_NAME_MAX_LENGTH,
-      `Название продукта не должно превышать ${PRODUCT_NAME_MAX_LENGTH} символов`,
+      `Название продукта не должно превышать ${PRODUCT_NAME_MAX_LENGTH} символов`
     )
     .required("Название продукта обязательно"),
   description: nullableTextSchema(
     PRODUCT_DESCRIPTION_MAX_LENGTH,
-    `Описание не должно превышать ${PRODUCT_DESCRIPTION_MAX_LENGTH} символов`,
+    `Описание не должно превышать ${PRODUCT_DESCRIPTION_MAX_LENGTH} символов`
   ),
   baseComposition: nullableTextSchema(
     PRODUCT_BASE_COMPOSITION_MAX_LENGTH,
-    `Базовый состав не должен превышать ${PRODUCT_BASE_COMPOSITION_MAX_LENGTH} символов`,
+    `Базовый состав не должен превышать ${PRODUCT_BASE_COMPOSITION_MAX_LENGTH} символов`
   ),
   sortOrder: sortOrderSchema,
   isPublished: yup.boolean(),
@@ -59,7 +61,7 @@ const productVariantSchema = yup.object({
   id: yup.string().trim().optional(),
   name: nullableTextSchema(
     PRODUCT_VARIANT_NAME_MAX_LENGTH,
-    `Название варианта не должно превышать ${PRODUCT_VARIANT_NAME_MAX_LENGTH} символов`,
+    `Название варианта не должно превышать ${PRODUCT_VARIANT_NAME_MAX_LENGTH} символов`
   ).optional(),
   price: yup
     .number()
@@ -68,12 +70,12 @@ const productVariantSchema = yup.object({
     .min(0, "Цена варианта не должна быть отрицательной")
     .max(
       PRODUCT_VARIANT_PRICE_MAX,
-      `Цена варианта не должна превышать ${PRODUCT_VARIANT_PRICE_MAX} копеек`,
+      `Цена варианта не должна превышать ${PRODUCT_VARIANT_PRICE_MAX} копеек`
     )
     .required("Цена варианта обязательна"),
   weight: nullableTextSchema(
     PRODUCT_VARIANT_WEIGHT_MAX_LENGTH,
-    `Вес или объём не должен превышать ${PRODUCT_VARIANT_WEIGHT_MAX_LENGTH} символов`,
+    `Вес или объём не должен превышать ${PRODUCT_VARIANT_WEIGHT_MAX_LENGTH} символов`
   ).optional(),
   isAvailable: yup.boolean().optional(),
 });
@@ -83,7 +85,7 @@ const productVariantsSchema = yup
   .of(productVariantSchema)
   .max(
     PRODUCT_VARIANTS_MAX_COUNT,
-    `Нельзя добавить больше ${PRODUCT_VARIANTS_MAX_COUNT} вариантов`,
+    `Нельзя добавить больше ${PRODUCT_VARIANTS_MAX_COUNT} вариантов`
   )
   .test(
     "named-multiple-variants",
@@ -91,7 +93,7 @@ const productVariantsSchema = yup
     (variants) =>
       !variants ||
       variants.length <= 1 ||
-      variants.every((variant) => Boolean(variant.name?.trim())),
+      variants.every((variant) => Boolean(variant.name?.trim()))
   )
   .test(
     "unique-variant-ids",
@@ -99,10 +101,36 @@ const productVariantsSchema = yup
     (variants) => {
       if (!variants) return true;
       const ids = variants.flatMap((variant) =>
-        variant.id ? [variant.id] : [],
+        variant.id ? [variant.id] : []
       );
       return new Set(ids).size === ids.length;
-    },
+    }
+  );
+
+const productIngredientIdsSchema = yup
+  .array()
+  .of(requiredIdSchema("Укажите ингредиент"))
+  .max(
+    PRODUCT_INGREDIENTS_MAX_COUNT,
+    `Нельзя выбрать больше ${PRODUCT_INGREDIENTS_MAX_COUNT} ингредиентов`
+  )
+  .test(
+    "unique-ingredient-ids",
+    "Один и тот же ингредиент выбран несколько раз",
+    (ids) => !ids || new Set(ids).size === ids.length
+  );
+
+const productAddonIdsSchema = yup
+  .array()
+  .of(requiredIdSchema("Укажите добавку"))
+  .max(
+    PRODUCT_ADDONS_MAX_COUNT,
+    `Нельзя выбрать больше ${PRODUCT_ADDONS_MAX_COUNT} добавок`
+  )
+  .test(
+    "unique-addon-ids",
+    "Одна и та же добавка выбрана несколько раз",
+    (ids) => !ids || new Set(ids).size === ids.length
   );
 
 export const productListQuerySchema = createSearchPaginationSchema({
@@ -128,6 +156,8 @@ export const createProductRequestSchema = yup.object({
   sortOrder: productFields.sortOrder.optional(),
   isPublished: productFields.isPublished.optional(),
   variants: productVariantsSchema.required("Варианты продукта обязательны"),
+  removableIngredientIds: productIngredientIdsSchema.optional(),
+  addonIds: productAddonIdsSchema.optional(),
 });
 
 export const updateProductRequestSchema = yup
@@ -139,9 +169,11 @@ export const updateProductRequestSchema = yup
     sortOrder: productFields.sortOrder.optional(),
     isPublished: productFields.isPublished.optional(),
     variants: productVariantsSchema.optional(),
+    removableIngredientIds: productIngredientIdsSchema.optional(),
+    addonIds: productAddonIdsSchema.optional(),
   })
   .test(
     "at-least-one-field",
     "Передайте хотя бы одно поле для обновления",
-    (value) => Object.values(value).some((field) => field !== undefined),
+    (value) => Object.values(value).some((field) => field !== undefined)
   );

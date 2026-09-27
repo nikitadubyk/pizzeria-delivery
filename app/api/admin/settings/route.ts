@@ -14,10 +14,10 @@ export async function GET(request: Request) {
   try {
     const identity = await requireRestaurantPermission(
       request,
-      RESTAURANT_PERMISSION.SETTINGS_MANAGE,
+      RESTAURANT_PERMISSION.SETTINGS_MANAGE
     );
     const settings = await restaurantSettingsService.get(
-      identity.restaurant.id,
+      identity.restaurant.id
     );
 
     return Response.json(settings satisfies RestaurantSettingsDto, {
@@ -33,16 +33,16 @@ export async function PATCH(request: Request) {
     const [identity, input] = await Promise.all([
       requireRestaurantPermission(
         request,
-        RESTAURANT_PERMISSION.SETTINGS_MANAGE,
+        RESTAURANT_PERMISSION.SETTINGS_MANAGE
       ),
       validateRequestBody<UpdateRestaurantSettingsRequest>(
         request,
-        updateRestaurantSettingsRequestSchema,
+        updateRestaurantSettingsRequestSchema
       ),
     ]);
     const settings = await restaurantSettingsService.update(
       identity.restaurant.id,
-      input,
+      input
     );
 
     return ApiResponse.success<RestaurantSettingsDto>(settings);

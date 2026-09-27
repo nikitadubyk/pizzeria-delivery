@@ -10,7 +10,7 @@ export type RestaurantSettingsRepository = {
   find(restaurantId: string): Promise<RestaurantSettingsDto | null>;
   update(
     restaurantId: string,
-    data: UpdateRestaurantSettingsRequest,
+    data: UpdateRestaurantSettingsRequest
   ): Promise<RestaurantSettingsDto>;
 };
 
@@ -30,7 +30,7 @@ const mapRepositoryError = (error: unknown): never => {
   ) {
     throw new RestaurantSettingsServiceError(
       "Ресторан не найден",
-      HttpStatus.NOT_FOUND,
+      HttpStatus.NOT_FOUND
     );
   }
 
@@ -46,7 +46,7 @@ export class RestaurantSettingsService {
     if (!settings) {
       throw new RestaurantSettingsServiceError(
         "Ресторан не найден",
-        HttpStatus.NOT_FOUND,
+        HttpStatus.NOT_FOUND
       );
     }
 
@@ -55,7 +55,7 @@ export class RestaurantSettingsService {
 
   async update(
     restaurantId: string,
-    input: UpdateRestaurantSettingsRequest,
+    input: UpdateRestaurantSettingsRequest
   ): Promise<RestaurantSettingsDto> {
     try {
       return await this.repository.update(restaurantId, input);
@@ -84,5 +84,5 @@ const restaurantSettingsRepository: RestaurantSettingsRepository = {
 };
 
 export const restaurantSettingsService = new RestaurantSettingsService(
-  restaurantSettingsRepository,
+  restaurantSettingsRepository
 );

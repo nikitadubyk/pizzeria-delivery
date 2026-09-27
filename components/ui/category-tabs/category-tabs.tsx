@@ -58,7 +58,7 @@ export function CategoryTabs({
   ...props
 }: CategoryTabsProps) {
   const [internalActiveId, setInternalActiveId] = useState(
-    activeId ?? items[0]?.id,
+    activeId ?? items[0]?.id
   );
   const tabsListRef = useRef<HTMLDivElement | null>(null);
   const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
@@ -134,15 +134,15 @@ export function CategoryTabs({
     <nav
       aria-label="Категории меню"
       className={cn(
-        "z-20 w-full min-w-0 bg-background/95 py-2 backdrop-blur supports-backdrop-filter:bg-background/85",
+        "bg-background/95 supports-backdrop-filter:bg-background/85 z-20 w-full min-w-0 py-2 backdrop-blur",
         sticky && "sticky",
-        className,
+        className
       )}
       {...props}
       style={{ ...props.style, top: sticky ? stickyTop : props.style?.top }}
     >
       <div
-        className="flex min-w-0 gap-2 overflow-x-auto overscroll-x-contain px-1 py-1 [-ms-overflow-style:none] scrollbar-none [&::-webkit-scrollbar]:hidden"
+        className="flex min-w-0 scrollbar-none gap-2 overflow-x-auto overscroll-x-contain px-1 py-1 [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
         ref={tabsListRef}
       >
         {items.map((item) => {
@@ -153,10 +153,10 @@ export function CategoryTabs({
               key={item.id}
               aria-current={isActive ? "true" : undefined}
               className={cn(
-                "inline-flex h-10 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full border border-border bg-background px-4 text-sm font-extrabold leading-none text-text shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-active hover:-translate-y-px hover:border-primary-hover hover:bg-primary-soft hover:text-primary-active active:translate-y-0 active:border-primary-active",
+                "border-border bg-background text-text focus-visible:outline-primary-active hover:border-primary-hover hover:bg-primary-soft hover:text-primary-active active:border-primary-active inline-flex h-10 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full border px-4 text-sm leading-none font-extrabold shadow-sm hover:-translate-y-px focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:translate-y-0",
                 isActive &&
                   "border-primary bg-primary text-primary-contrast hover:border-primary hover:bg-primary hover:text-primary-contrast",
-                interactiveMotionTransitionClassName,
+                interactiveMotionTransitionClassName
               )}
               onClick={() => handleTabClick(item.id)}
               ref={(node) => {

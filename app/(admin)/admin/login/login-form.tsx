@@ -31,13 +31,13 @@ export function RestaurantLoginForm() {
       activeRequest.current?.abort();
       activeRequest.current = null;
     },
-    [],
+    []
   );
 
   return (
-    <main className="grid min-h-dvh place-items-center p-md sm:p-xl">
-      <section className="w-full max-w-[440px] rounded-2xl border border-border bg-background p-lg shadow-xl sm:p-xl">
-        <div className="mb-xl grid gap-sm">
+    <main className="p-md sm:p-xl grid min-h-dvh place-items-center">
+      <section className="border-border bg-background p-lg sm:p-xl w-full max-w-[440px] rounded-2xl border shadow-xl">
+        <div className="mb-xl gap-sm grid">
           <Typography variant="h2">Вход в ресторан</Typography>
           <Typography muted>Для владельцев и сотрудников пиццерии</Typography>
         </div>
@@ -72,8 +72,8 @@ export function RestaurantLoginForm() {
               setStatus(
                 getApiErrorMessage(
                   error,
-                  "Не удалось выполнить вход. Попробуйте позже.",
-                ),
+                  "Не удалось выполнить вход. Попробуйте позже."
+                )
               );
             } finally {
               if (activeRequest.current === request)
@@ -82,7 +82,7 @@ export function RestaurantLoginForm() {
           }}
         >
           {({ isSubmitting, status }) => (
-            <Form className="grid gap-lg" noValidate>
+            <Form className="gap-lg grid" noValidate>
               {typeof status === "string" && (
                 <Alert color="red" role="alert">
                   {status}

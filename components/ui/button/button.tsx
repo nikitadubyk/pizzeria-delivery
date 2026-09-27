@@ -30,14 +30,14 @@ const variantMap: Record<
 const ButtonBase = forwardRef<HTMLButtonElement, AppButtonProps>(
   function Button(
     { variant = "primary", size = "md", children, className, ...props },
-    ref,
+    ref
   ) {
     return (
       <MantineButton
         className={cn(
-          "cursor-pointer shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-active hover:-translate-y-px hover:shadow-md active:translate-y-0 active:shadow-sm disabled:cursor-not-allowed disabled:translate-y-0 disabled:shadow-sm",
+          "focus-visible:outline-primary-active cursor-pointer shadow-sm hover:-translate-y-px hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:translate-y-0 active:shadow-sm disabled:translate-y-0 disabled:cursor-not-allowed disabled:shadow-sm",
           interactiveMotionTransitionClassName,
-          className,
+          className
         )}
         ref={ref}
         size={size}
@@ -47,9 +47,9 @@ const ButtonBase = forwardRef<HTMLButtonElement, AppButtonProps>(
         {children}
       </MantineButton>
     );
-  },
+  }
 );
 
 export const Button = createPolymorphicComponent<"button", AppButtonProps>(
-  ButtonBase,
+  ButtonBase
 );

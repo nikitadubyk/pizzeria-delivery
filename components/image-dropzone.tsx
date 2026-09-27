@@ -57,7 +57,7 @@ function RemoveImageButton({
   return (
     <button
       aria-label="Удалить изображение"
-      className="pointer-events-auto absolute right-sm top-sm grid size-10 cursor-pointer place-items-center rounded-full border border-danger-soft bg-background/95 text-danger shadow-sm hover:border-danger hover:bg-danger-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger-active disabled:cursor-not-allowed disabled:opacity-60"
+      className="right-sm top-sm border-danger-soft bg-background/95 text-danger hover:border-danger hover:bg-danger-soft focus-visible:outline-danger-active pointer-events-auto absolute grid size-10 cursor-pointer place-items-center rounded-full border shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
       disabled={disabled}
       onClick={(event) => {
         event.preventDefault();
@@ -86,7 +86,7 @@ export function ImageDropzone({
   const [rejectionError, setRejectionError] = useState<string | null>(null);
   const visibleError = error ?? rejectionError;
   return (
-    <div className={cn("grid min-w-0 gap-xs", className)}>
+    <div className={cn("gap-xs grid min-w-0", className)}>
       <Typography className="font-extrabold" variant="bodySm">
         {label}
       </Typography>
@@ -98,7 +98,7 @@ export function ImageDropzone({
           root: cn(
             "!rounded-xl !border-border !bg-background !p-sm text-text hover:!border-primary-hover hover:!bg-primary-soft focus-visible:!outline focus-visible:!outline-2 focus-visible:!outline-offset-2 focus-visible:!outline-primary-active",
             interactiveTransitionClassName,
-            visibleError && "!border-danger",
+            visibleError && "!border-danger"
           ),
         }}
         disabled={disabled}
@@ -117,9 +117,9 @@ export function ImageDropzone({
         }
         rejectColor="tomato"
       >
-        <div className="grid min-h-52 place-items-center overflow-hidden rounded-lg bg-surface">
+        <div className="bg-surface grid min-h-52 place-items-center overflow-hidden rounded-lg">
           {value ? (
-            <div className="relative h-52 w-full overflow-hidden rounded-lg bg-surface">
+            <div className="bg-surface relative h-52 w-full overflow-hidden rounded-lg">
               <SelectedImagePreview
                 file={value}
                 key={`${value.name}-${value.lastModified}-${value.size}`}
@@ -133,7 +133,7 @@ export function ImageDropzone({
               />
             </div>
           ) : currentImageUrl ? (
-            <div className="relative h-52 w-full overflow-hidden rounded-lg bg-surface">
+            <div className="bg-surface relative h-52 w-full overflow-hidden rounded-lg">
               <Box
                 alt="Текущее изображение продукта"
                 className="size-full object-cover"
@@ -149,12 +149,12 @@ export function ImageDropzone({
                   }}
                 />
               ) : null}
-              <span className="absolute bottom-sm left-sm rounded-lg bg-background/90 px-sm py-xs text-xs font-bold text-text">
+              <span className="bottom-sm left-sm bg-background/90 px-sm py-xs text-text absolute rounded-lg text-xs font-bold">
                 Нажмите, чтобы заменить
               </span>
             </div>
           ) : (
-            <div className="grid justify-items-center gap-sm px-md py-xl text-center">
+            <div className="gap-sm px-md py-xl grid justify-items-center text-center">
               <Dropzone.Accept>
                 <IconUpload
                   aria-hidden="true"

@@ -44,7 +44,7 @@ const userColumns: readonly TableColumn<RestaurantUserDto>[] = [
     header: "Пользователь",
     mobileLayout: "primary",
     render: (user) => (
-      <span className="break-words font-extrabold md:whitespace-nowrap">
+      <span className="font-extrabold break-words md:whitespace-nowrap">
         {user.name ?? "Без имени"}
       </span>
     ),
@@ -64,7 +64,7 @@ const userColumns: readonly TableColumn<RestaurantUserDto>[] = [
       <div className="grid gap-1">
         <span className="whitespace-nowrap">{user.phone}</span>
         {user.email ? (
-          <span className="break-all text-xs text-secondary">{user.email}</span>
+          <span className="text-secondary text-xs break-all">{user.email}</span>
         ) : null}
       </div>
     ),
@@ -106,14 +106,14 @@ const SuperAdminUsersPageContent = () => {
   const [page, setPage] = useSearchPagination(search);
   const [formOpened, setFormOpened] = useState(false);
   const [editingUser, setEditingUser] = useState<RestaurantUserDto | null>(
-    null,
+    null
   );
   const [userToDelete, setUserToDelete] = useState<RestaurantUserDto | null>(
-    null,
+    null
   );
   const [deleteDialogOpened, setDeleteDialogOpened] = useState(false);
   const [userDetails, setUserDetails] = useState<RestaurantUserDto | null>(
-    null,
+    null
   );
   const [detailsOpened, setDetailsOpened] = useState(false);
   const [deleteUser, { isLoading: isDeleting }] =
@@ -185,7 +185,7 @@ const SuperAdminUsersPageContent = () => {
       mobileLayout: "full",
       render: (user) => (
         <div
-          className="grid w-full grid-cols-1 gap-xs md:flex md:w-auto md:flex-nowrap md:justify-end"
+          className="gap-xs grid w-full grid-cols-1 md:flex md:w-auto md:flex-nowrap md:justify-end"
           onClick={(event) => event.stopPropagation()}
         >
           <Button
@@ -198,11 +198,11 @@ const SuperAdminUsersPageContent = () => {
             Изменить
           </Button>
           <Button
-            className="w-full whitespace-nowrap !text-danger hover:!bg-danger-soft md:w-auto"
+            className="!text-danger hover:!bg-danger-soft w-full whitespace-nowrap md:w-auto"
             leftSection={<IconTrash aria-hidden="true" size={16} />}
             onClick={() => openDeleteDialog(user)}
             size="xs"
-            variant="ghost"
+            variant="danger"
           >
             Удалить
           </Button>
@@ -215,7 +215,7 @@ const SuperAdminUsersPageContent = () => {
   return (
     <>
       <AdminPageWrapper className="grid-rows-[auto_auto] md:grid-rows-[auto_minmax(0,1fr)]">
-        <div className="flex flex-wrap items-end justify-between gap-md">
+        <div className="gap-md flex flex-wrap items-end justify-between">
           <div>
             <Typography muted variant="eyebrow">
               Управление доступом
@@ -241,8 +241,8 @@ const SuperAdminUsersPageContent = () => {
           </Button>
         </div>
 
-        <div className="flex min-h-0 min-w-0 flex-col gap-xs">
-          <div className="flex flex-col gap-xs sm:flex-row sm:items-center sm:justify-between">
+        <div className="gap-xs flex min-h-0 min-w-0 flex-col">
+          <div className="gap-xs flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <SearchInput
               className="sm:max-w-sm"
               placeholder="Найти пользователя..."
@@ -322,31 +322,31 @@ const SuperAdminUsersPageContent = () => {
       >
         {userDetails ? (
           <div>
-            <dl className="m-0 grid grid-cols-1 gap-x-lg gap-y-md sm:grid-cols-2">
+            <dl className="gap-x-lg gap-y-md m-0 grid grid-cols-1 sm:grid-cols-2">
               <div className="grid min-w-0 gap-1 sm:col-span-2">
-                <dt className="text-xs font-bold text-muted">Имя</dt>
-                <dd className="m-0 break-words font-extrabold">
+                <dt className="text-muted text-xs font-bold">Имя</dt>
+                <dd className="m-0 font-extrabold break-words">
                   {userDetails.name ?? "Не указано"}
                 </dd>
               </div>
               <div className="grid min-w-0 gap-1 sm:col-span-2">
-                <dt className="text-xs font-bold text-muted">Ресторан</dt>
+                <dt className="text-muted text-xs font-bold">Ресторан</dt>
                 <dd className="m-0 font-semibold">
                   {userDetails.restaurant.name}
                 </dd>
               </div>
               <div className="grid min-w-0 gap-1">
-                <dt className="text-xs font-bold text-muted">Телефон</dt>
+                <dt className="text-muted text-xs font-bold">Телефон</dt>
                 <dd className="m-0 font-semibold">{userDetails.phone}</dd>
               </div>
               <div className="grid min-w-0 gap-1">
-                <dt className="text-xs font-bold text-muted">Email</dt>
-                <dd className="m-0 break-all font-semibold">
+                <dt className="text-muted text-xs font-bold">Email</dt>
+                <dd className="m-0 font-semibold break-all">
                   {userDetails.email ?? "Не указан"}
                 </dd>
               </div>
               <div className="grid min-w-0 gap-1">
-                <dt className="text-xs font-bold text-muted">Роль</dt>
+                <dt className="text-muted text-xs font-bold">Роль</dt>
                 <dd className="m-0">
                   <Badge tone={rolePresentation[userDetails.role].tone}>
                     {rolePresentation[userDetails.role].label}
@@ -354,7 +354,7 @@ const SuperAdminUsersPageContent = () => {
                 </dd>
               </div>
               <div className="grid min-w-0 gap-1">
-                <dt className="text-xs font-bold text-muted">Статус</dt>
+                <dt className="text-muted text-xs font-bold">Статус</dt>
                 <dd className="m-0">
                   <Badge tone={userDetails.isActive ? "success" : "neutral"}>
                     {userDetails.isActive ? "Активен" : "Отключён"}
@@ -362,25 +362,25 @@ const SuperAdminUsersPageContent = () => {
                 </dd>
               </div>
               <div className="grid min-w-0 gap-1 sm:col-span-2">
-                <dt className="text-xs font-bold text-muted">
+                <dt className="text-muted text-xs font-bold">
                   ID пользователя
                 </dt>
                 <dd className="m-0">
-                  <code className="break-all text-xs text-secondary">
+                  <code className="text-secondary text-xs break-all">
                     {userDetails.id}
                   </code>
                 </dd>
               </div>
               <div className="grid min-w-0 gap-1 sm:col-span-2">
-                <dt className="text-xs font-bold text-muted">ID ресторана</dt>
+                <dt className="text-muted text-xs font-bold">ID ресторана</dt>
                 <dd className="m-0">
-                  <code className="break-all text-xs text-secondary">
+                  <code className="text-secondary text-xs break-all">
                     {userDetails.restaurantId}
                   </code>
                 </dd>
               </div>
               <div className="grid min-w-0 gap-1">
-                <dt className="text-xs font-bold text-muted">Создан</dt>
+                <dt className="text-muted text-xs font-bold">Создан</dt>
                 <dd className="m-0 font-semibold">
                   <time dateTime={userDetails.createdAt}>
                     {formatDateTime(userDetails.createdAt)}
@@ -388,7 +388,7 @@ const SuperAdminUsersPageContent = () => {
                 </dd>
               </div>
               <div className="grid min-w-0 gap-1">
-                <dt className="text-xs font-bold text-muted">Обновлён</dt>
+                <dt className="text-muted text-xs font-bold">Обновлён</dt>
                 <dd className="m-0 font-semibold">
                   <time dateTime={userDetails.updatedAt}>
                     {formatDateTime(userDetails.updatedAt)}
@@ -411,10 +411,10 @@ const SuperAdminUsersPageContent = () => {
               Отменить
             </Button>
             <Button
-              className="!bg-danger hover:!bg-danger-hover"
               leftSection={<IconTrash aria-hidden="true" size={18} />}
               loading={isDeleting}
               onClick={() => void handleDelete()}
+              variant="danger"
             >
               Удалить пользователя
             </Button>
@@ -432,7 +432,7 @@ const SuperAdminUsersPageContent = () => {
         tone="danger"
       >
         {userToDelete ? (
-          <div className="grid gap-xs rounded-lg bg-danger-soft p-md text-sm">
+          <div className="gap-xs bg-danger-soft p-md grid rounded-lg text-sm">
             <strong>{userToDelete.name ?? "Без имени"}</strong>
             <span className="text-danger-active">
               {userToDelete.restaurant.name} · {userToDelete.phone}

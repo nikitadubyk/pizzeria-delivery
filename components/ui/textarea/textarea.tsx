@@ -7,7 +7,7 @@ export type AppTextareaProps = TextareaProps;
 
 const textareaClassName = cn(
   "hover:border-primary-hover focus:border-primary-active focus:ring-2 focus:ring-primary-soft focus:ring-offset-0 disabled:cursor-not-allowed",
-  interactiveMotionTransitionClassName,
+  interactiveMotionTransitionClassName
 );
 
 export function Textarea({ classNames, ...props }: AppTextareaProps) {

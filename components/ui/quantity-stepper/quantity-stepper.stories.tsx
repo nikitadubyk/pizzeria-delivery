@@ -31,7 +31,7 @@ function ControlledQuantityStepper({
         step={step}
         value={quantity}
       />
-      <span className="text-sm text-muted">Количество: {quantity}</span>
+      <span className="text-muted text-sm">Количество: {quantity}</span>
     </div>
   );
 }
@@ -95,7 +95,7 @@ export const Sizes: Story = {
             size={size}
             value={index + 1}
           />
-          <span className="text-sm text-muted">Размер {size}</span>
+          <span className="text-muted text-sm">Размер {size}</span>
         </div>
       ))}
     </div>
@@ -113,7 +113,7 @@ export const Limits: Story = {
           onChange={() => undefined}
           value={1}
         />
-        <span className="text-sm text-muted">Минимум</span>
+        <span className="text-muted text-sm">Минимум</span>
       </div>
       <div className="grid w-max justify-items-start gap-2">
         <QuantityStepper
@@ -122,7 +122,7 @@ export const Limits: Story = {
           onChange={() => undefined}
           value={10}
         />
-        <span className="text-sm text-muted">Максимум</span>
+        <span className="text-muted text-sm">Максимум</span>
       </div>
       <div className="grid w-max justify-items-start gap-2">
         <QuantityStepper
@@ -132,7 +132,7 @@ export const Limits: Story = {
           onChange={() => undefined}
           value={3}
         />
-        <span className="text-sm text-muted">Недоступно</span>
+        <span className="text-muted text-sm">Недоступно</span>
       </div>
     </div>
   ),

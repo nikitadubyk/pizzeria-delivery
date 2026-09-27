@@ -34,6 +34,7 @@ const restaurantAuthSlice = createSlice({
   },
 });
 
-export const { setRestaurantToken, setRestaurantStorageError } = restaurantAuthSlice.actions;
+export const { setRestaurantToken, setRestaurantStorageError } =
+  restaurantAuthSlice.actions;
 export const selectRestaurantAuth = (state: RootState) => state.restaurantAuth;
 export const restaurantAuthReducer = restaurantAuthSlice.reducer;

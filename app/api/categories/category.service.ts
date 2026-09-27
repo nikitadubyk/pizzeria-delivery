@@ -29,7 +29,7 @@ const mapRepositoryError = (error: unknown): never => {
   ) {
     throw new CategoryServiceError(
       "Категория не найдена",
-      HttpStatus.NOT_FOUND,
+      HttpStatus.NOT_FOUND
     );
   }
 
@@ -39,7 +39,7 @@ const mapRepositoryError = (error: unknown): never => {
   ) {
     throw new CategoryServiceError(
       "Нельзя удалить категорию, пока в ней есть продукты",
-      HttpStatus.CONFLICT,
+      HttpStatus.CONFLICT
     );
   }
 
@@ -51,7 +51,7 @@ export class CategoryService {
 
   getPage(
     restaurantId: string,
-    pagination: ResolvedSearchPaginationQuery,
+    pagination: ResolvedSearchPaginationQuery
   ): Promise<CategoryPage> {
     return this.repository.findPage(restaurantId, pagination);
   }
@@ -66,7 +66,7 @@ export class CategoryService {
     if (!category) {
       throw new CategoryServiceError(
         "Категория не найдена",
-        HttpStatus.NOT_FOUND,
+        HttpStatus.NOT_FOUND
       );
     }
 
@@ -75,7 +75,7 @@ export class CategoryService {
 
   async create(
     restaurantId: string,
-    input: CreateCategoryRequest,
+    input: CreateCategoryRequest
   ): Promise<Category> {
     try {
       return await this.repository.create(restaurantId, input);
@@ -87,7 +87,7 @@ export class CategoryService {
   async update(
     restaurantId: string,
     categoryId: string,
-    input: UpdateCategoryRequest,
+    input: UpdateCategoryRequest
   ): Promise<Category> {
     try {
       return await this.repository.update(restaurantId, categoryId, input);
@@ -99,13 +99,13 @@ export class CategoryService {
   async updateVisibility(
     restaurantId: string,
     categoryId: string,
-    isPublished: boolean,
+    isPublished: boolean
   ): Promise<Category> {
     try {
       return await this.repository.updateVisibility(
         restaurantId,
         categoryId,
-        isPublished,
+        isPublished
       );
     } catch (error) {
       return mapRepositoryError(error);

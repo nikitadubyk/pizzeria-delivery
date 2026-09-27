@@ -5,7 +5,7 @@ import { ValidationError } from "yup";
 export const validateRequestData = async <T>(
   value: unknown,
   schema: Schema<T>,
-  errorStatus = HttpStatus.BAD_REQUEST,
+  errorStatus = HttpStatus.BAD_REQUEST
 ): Promise<T> => {
   try {
     return await schema.validate(value, {
@@ -23,10 +23,10 @@ export const validateRequestData = async <T>(
 
 export const validateRequestBody = async <T>(
   request: Request,
-  schema: Schema<T>,
+  schema: Schema<T>
 ): Promise<T> => validateRequestData<T>(await request.json(), schema);
 
 export const validateRouteParams = <T>(
   params: unknown,
-  schema: Schema<T>,
+  schema: Schema<T>
 ): Promise<T> => validateRequestData<T>(params, schema);

@@ -6,6 +6,10 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function RestaurantAdminLayout({ children }: { children: ReactNode }) {
-  return <div className="min-h-dvh bg-surface text-text">{children}</div>;
+export default function RestaurantAdminLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  return <div className="bg-surface text-text min-h-dvh">{children}</div>;
 }

@@ -38,9 +38,15 @@ type AdminNavigationProps = {
   pathname: string;
 };
 
-const AdminBrand = ({ title, subtitle }: { title: string; subtitle: string }) => (
-  <div className="flex min-w-0 items-center gap-sm">
-    <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary text-primary-contrast">
+const AdminBrand = ({
+  title,
+  subtitle,
+}: {
+  title: string;
+  subtitle: string;
+}) => (
+  <div className="gap-sm flex min-w-0 items-center">
+    <span className="bg-primary text-primary-contrast grid size-10 shrink-0 place-items-center rounded-xl">
       <IconPizza aria-hidden="true" size={24} />
     </span>
     <div className="min-w-0">
@@ -54,9 +60,14 @@ const AdminBrand = ({ title, subtitle }: { title: string; subtitle: string }) =>
   </div>
 );
 
-const AdminNavigation = ({ onNavigate, pathname, menuItems, navigationLabel }: AdminNavigationProps) => (
+const AdminNavigation = ({
+  onNavigate,
+  pathname,
+  menuItems,
+  navigationLabel,
+}: AdminNavigationProps) => (
   <nav aria-label={navigationLabel}>
-    <ul className="m-0 grid list-none gap-xs p-0">
+    <ul className="gap-xs m-0 grid list-none p-0">
       {menuItems.map(({ href, icon: MenuIcon, label }) => {
         const active = pathname === href;
 
@@ -65,10 +76,10 @@ const AdminNavigation = ({ onNavigate, pathname, menuItems, navigationLabel }: A
             <Link
               aria-current={active ? "page" : undefined}
               className={cn(
-                "flex min-h-11 items-center gap-sm rounded-xl px-md py-sm text-sm font-bold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+                "gap-sm px-md py-sm focus-visible:outline-primary flex min-h-11 items-center rounded-xl text-sm font-bold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
                 active
                   ? "bg-primary text-primary-contrast"
-                  : "text-dough-1 hover:bg-white/10 hover:text-white",
+                  : "text-dough-1 hover:bg-white/10 hover:text-white"
               )}
               href={href}
               onClick={onNavigate}
@@ -83,7 +94,14 @@ const AdminNavigation = ({ onNavigate, pathname, menuItems, navigationLabel }: A
   </nav>
 );
 
-export const AdminShell = ({ children, title, subtitle, menuItems, navigationLabel, onLogout }: AdminShellProps) => {
+export const AdminShell = ({
+  children,
+  title,
+  subtitle,
+  menuItems,
+  navigationLabel,
+  onLogout,
+}: AdminShellProps) => {
   const [menuOpened, menuHandlers] = useDisclosure(false);
   const pathname = usePathname();
 
@@ -111,12 +129,12 @@ export const AdminShell = ({ children, title, subtitle, menuItems, navigationLab
         }}
         withCloseButton={false}
       >
-        <div className="flex min-h-full flex-col p-lg text-white">
-          <div className="mb-xl flex items-center justify-between gap-md border-b border-white/10 pb-lg">
+        <div className="p-lg flex min-h-full flex-col text-white">
+          <div className="mb-xl gap-md pb-lg flex items-center justify-between border-b border-white/10">
             <AdminBrand title={title} subtitle={subtitle} />
             <button
               aria-label="Закрыть меню"
-              className="grid size-10 shrink-0 place-items-center rounded-xl text-dough-1 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              className="text-dough-1 focus-visible:outline-primary grid size-10 shrink-0 place-items-center rounded-xl transition-colors hover:bg-white/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
               onClick={menuHandlers.close}
               type="button"
             >
@@ -124,25 +142,31 @@ export const AdminShell = ({ children, title, subtitle, menuItems, navigationLab
             </button>
           </div>
 
-          <AdminNavigation menuItems={menuItems} navigationLabel={navigationLabel}
+          <AdminNavigation
+            menuItems={menuItems}
+            navigationLabel={navigationLabel}
             onNavigate={menuHandlers.close}
             pathname={pathname}
           />
         </div>
       </Drawer>
 
-      <aside className="hidden min-h-0 overflow-y-auto border-r border-border bg-secondary-active p-lg text-white xl:block">
+      <aside className="border-border bg-secondary-active p-lg hidden min-h-0 overflow-y-auto border-r text-white xl:block">
         <div className="mb-xl">
           <AdminBrand title={title} subtitle={subtitle} />
         </div>
-        <AdminNavigation menuItems={menuItems} navigationLabel={navigationLabel} pathname={pathname} />
+        <AdminNavigation
+          menuItems={menuItems}
+          navigationLabel={navigationLabel}
+          pathname={pathname}
+        />
       </aside>
 
       <div className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden">
-        <header className="sticky top-0 z-20 flex min-h-16 shrink-0 items-center gap-xs border-b border-border bg-background px-md shadow-sm sm:px-lg">
+        <header className="gap-xs border-border bg-background px-md sm:px-lg sticky top-0 z-20 flex min-h-16 shrink-0 items-center border-b shadow-sm">
           <button
             aria-label="Открыть меню"
-            className="mr-xs grid size-10 shrink-0 place-items-center rounded-xl bg-primary-soft text-primary transition-colors hover:bg-primary hover:text-primary-contrast focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary xl:hidden"
+            className="mr-xs bg-primary-soft text-primary hover:bg-primary hover:text-primary-contrast focus-visible:outline-primary grid size-10 shrink-0 place-items-center rounded-xl transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 xl:hidden"
             onClick={menuHandlers.toggle}
             type="button"
           >
@@ -165,4 +189,3 @@ export const AdminShell = ({ children, title, subtitle, menuItems, navigationLab
     </div>
   );
 };
-

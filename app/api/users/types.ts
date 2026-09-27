@@ -19,30 +19,30 @@ export interface UserRepository {
   findSuperAdminById(id: string): Promise<User | null>;
   findRestaurantUserPage(
     superAdminId: string,
-    pagination: ResolvedSearchPaginationQuery,
+    pagination: ResolvedSearchPaginationQuery
   ): Promise<RestaurantUserPage>;
   findRestaurantUserById(
     superAdminId: string,
-    userId: string,
+    userId: string
   ): Promise<RestaurantUser | null>;
   restaurantExists(
     superAdminId: string,
-    restaurantId: string,
+    restaurantId: string
   ): Promise<boolean>;
   createRestaurantUser(
     superAdminId: string,
-    data: CreateRestaurantUserRequest & { password: string },
+    data: CreateRestaurantUserRequest & { password: string }
   ): Promise<RestaurantUser>;
   updateRestaurantUser(
     superAdminId: string,
     userId: string,
     data: Omit<UpdateRestaurantUserRequest, "password"> & {
       password?: string;
-    },
+    }
   ): Promise<RestaurantUser>;
   deleteRestaurantUser(
     superAdminId: string,
-    userId: string,
+    userId: string
   ): Promise<RestaurantUser>;
 }
 

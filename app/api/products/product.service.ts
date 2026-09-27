@@ -16,6 +16,8 @@ import type {
   ProductPage,
   ProductRepository,
   ProductWithCategory,
+  ProductAddonWrite,
+  ProductRemovableIngredientWrite,
   ResolvedProductListQuery,
   StoredProductImage,
 } from "./types";
@@ -41,8 +43,8 @@ const mapRepositoryError = (error: unknown): never => {
 
     if (error.code === "P2003") {
       throw new ProductServiceError(
-        "Категория продукта не найдена",
-        HttpStatus.BAD_REQUEST,
+        "Категория, ингредиент или добавка продукта не найдены",
+        HttpStatus.BAD_REQUEST
       );
     }
   }
@@ -54,19 +56,19 @@ export class ProductService {
   constructor(
     private readonly repository: ProductRepository,
     private readonly imageStorage: ProductImageStorage,
-    private readonly variantService: ProductVariantService = productVariantService,
+    private readonly variantService: ProductVariantService = productVariantService
   ) {}
 
   getPage(
     restaurantId: string,
-    query: ResolvedProductListQuery,
+    query: ResolvedProductListQuery
   ): Promise<ProductPage> {
     return this.repository.findPage(restaurantId, query);
   }
 
   async getById(
     restaurantId: string,
-    productId: string,
+    productId: string
   ): Promise<ProductWithCategory> {
     const product = await this.repository.findById(restaurantId, productId);
     if (!product) {
@@ -78,16 +80,27 @@ export class ProductService {
 
   async create(
     restaurantId: string,
-    input: CreateProductRequest,
+    input: CreateProductRequest
   ): Promise<ProductWithCategory> {
     await this.assertCategoryExists(restaurantId, input.categoryId);
-    const { variants, ...productData } = input;
+    const { variants, removableIngredientIds, addonIds, ...productData } =
+      input;
+    const removableIngredients = this.prepareRemovableIngredients(
+      removableIngredientIds ?? []
+    );
+    const addons = this.prepareAddons(addonIds ?? []);
+    await Promise.all([
+      this.assertIngredientsExist(restaurantId, removableIngredientIds ?? []),
+      this.assertAddonsExist(restaurantId, addonIds ?? []),
+    ]);
 
     try {
       return await this.repository.create(
         restaurantId,
         productData,
         this.variantService.prepareForCreate(variants),
+        removableIngredients,
+        addons
       );
     } catch (error) {
       return mapRepositoryError(error);
@@ -97,14 +110,25 @@ export class ProductService {
   async update(
     restaurantId: string,
     productId: string,
-    input: UpdateProductRequest,
+    input: UpdateProductRequest
   ): Promise<ProductWithCategory> {
     await this.getById(restaurantId, productId);
     if (input.categoryId !== undefined) {
       await this.assertCategoryExists(restaurantId, input.categoryId);
     }
 
-    const { variants, ...productData } = input;
+    const { variants, removableIngredientIds, addonIds, ...productData } =
+      input;
+    const removableIngredients =
+      removableIngredientIds === undefined
+        ? undefined
+        : this.prepareRemovableIngredients(removableIngredientIds);
+    const addons =
+      addonIds === undefined ? undefined : this.prepareAddons(addonIds);
+    await Promise.all([
+      this.assertIngredientsExist(restaurantId, removableIngredientIds ?? []),
+      this.assertAddonsExist(restaurantId, addonIds ?? []),
+    ]);
 
     try {
       return await this.repository.update(
@@ -112,6 +136,8 @@ export class ProductService {
         productId,
         productData,
         variants ? this.variantService.prepareForUpdate(variants) : undefined,
+        removableIngredients,
+        addons
       );
     } catch (error) {
       return mapRepositoryError(error);
@@ -121,13 +147,13 @@ export class ProductService {
   async updateAvailability(
     restaurantId: string,
     productId: string,
-    isAvailable: boolean,
+    isAvailable: boolean
   ): Promise<ProductWithCategory> {
     try {
       return await this.repository.updateAvailability(
         restaurantId,
         productId,
-        isAvailable,
+        isAvailable
       );
     } catch (error) {
       return mapRepositoryError(error);
@@ -137,7 +163,7 @@ export class ProductService {
   async attachUploadedImage(
     restaurantId: string,
     productId: string,
-    image: StoredProductImage,
+    image: StoredProductImage
   ): Promise<ProductWithCategory> {
     let current: ProductWithCategory;
     try {
@@ -164,7 +190,7 @@ export class ProductService {
 
   async removeImage(
     restaurantId: string,
-    productId: string,
+    productId: string
   ): Promise<ProductWithCategory> {
     const current = await this.getById(restaurantId, productId);
     if (!current.imageUrl && !current.imageKey) return current;
@@ -183,7 +209,7 @@ export class ProductService {
 
   async delete(
     restaurantId: string,
-    productId: string,
+    productId: string
   ): Promise<ProductWithCategory> {
     try {
       const product = await this.repository.delete(restaurantId, productId);
@@ -196,14 +222,58 @@ export class ProductService {
 
   private async assertCategoryExists(
     restaurantId: string,
-    categoryId: string,
+    categoryId: string
   ): Promise<void> {
     if (!(await this.repository.categoryExists(restaurantId, categoryId))) {
       throw new ProductServiceError(
         "Категория продукта не найдена",
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
+  }
+
+  private async assertIngredientsExist(
+    restaurantId: string,
+    ingredientIds: readonly string[]
+  ): Promise<void> {
+    if (ingredientIds.length === 0) return;
+
+    if (
+      (await this.repository.ingredientsCount(restaurantId, ingredientIds)) !==
+      ingredientIds.length
+    ) {
+      throw new ProductServiceError(
+        "Один или несколько ингредиентов не найдены",
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
+
+  private async assertAddonsExist(
+    restaurantId: string,
+    addonIds: readonly string[]
+  ): Promise<void> {
+    if (addonIds.length === 0) return;
+
+    if (
+      (await this.repository.addonsCount(restaurantId, addonIds)) !==
+      addonIds.length
+    ) {
+      throw new ProductServiceError(
+        "Одна или несколько добавок не найдены",
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
+
+  private prepareRemovableIngredients(
+    ingredientIds: readonly string[]
+  ): ProductRemovableIngredientWrite[] {
+    return ingredientIds.map((ingredientId) => ({ ingredientId }));
+  }
+
+  private prepareAddons(addonIds: readonly string[]): ProductAddonWrite[] {
+    return addonIds.map((addonId) => ({ addonId }));
   }
 
   private async deleteImageQuietly(key: string): Promise<void> {
@@ -220,7 +290,7 @@ export class ProductService {
 const productRepository: ProductRepository = {
   findPage: async (
     restaurantId,
-    { page, limit, search, categoryId, isPublished },
+    { page, limit, search, categoryId, isPublished }
   ) => {
     const db = getRestaurantDb(restaurantId);
     const where: Prisma.ProductWhereInput = {
@@ -247,6 +317,23 @@ const productRepository: ProductRepository = {
         include: {
           category: { select: { id: true, name: true } },
           variants: { orderBy: [{ sortOrder: "asc" }, { id: "asc" }] },
+          removableIngredients: {
+            include: { ingredient: { select: { id: true, name: true } } },
+            orderBy: [{ id: "asc" }],
+          },
+          addons: {
+            include: {
+              addon: {
+                select: {
+                  id: true,
+                  name: true,
+                  price: true,
+                  isAvailable: true,
+                },
+              },
+            },
+            orderBy: [{ id: "asc" }],
+          },
         },
         orderBy: [{ sortOrder: "asc" }, { id: "asc" }],
         skip: (page - 1) * limit,
@@ -264,6 +351,23 @@ const productRepository: ProductRepository = {
       include: {
         category: { select: { id: true, name: true } },
         variants: { orderBy: [{ sortOrder: "asc" }, { id: "asc" }] },
+        removableIngredients: {
+          include: { ingredient: { select: { id: true, name: true } } },
+          orderBy: [{ id: "asc" }],
+        },
+        addons: {
+          include: {
+            addon: {
+              select: {
+                id: true,
+                name: true,
+                price: true,
+                isAvailable: true,
+              },
+            },
+          },
+          orderBy: [{ id: "asc" }],
+        },
       },
     });
   },
@@ -273,29 +377,70 @@ const productRepository: ProductRepository = {
       await db.category.findUnique({
         where: { id: categoryId },
         select: { id: true },
-      }),
+      })
     );
   },
-  create: async (restaurantId, data, variants) => {
+  ingredientsCount: async (restaurantId, ingredientIds) =>
+    getRestaurantDb(restaurantId).ingredient.count({
+      where: { id: { in: [...ingredientIds] } },
+    }),
+  addonsCount: async (restaurantId, addonIds) =>
+    getRestaurantDb(restaurantId).addon.count({
+      where: { id: { in: [...addonIds] } },
+    }),
+  create: async (
+    restaurantId,
+    data,
+    variants,
+    removableIngredients,
+    addons
+  ) => {
     const db = getRestaurantDb(restaurantId);
     return db.product.create({
       data: {
         ...data,
         restaurantId,
         variants: {
-          create: productVariantService.createForNewProduct(
-            restaurantId,
-            variants,
-          ),
+          create: productVariantService.createForNewProduct(variants),
+        },
+        removableIngredients: {
+          create: [...removableIngredients],
+        },
+        addons: {
+          create: [...addons],
         },
       },
       include: {
         category: { select: { id: true, name: true } },
         variants: { orderBy: [{ sortOrder: "asc" }, { id: "asc" }] },
+        removableIngredients: {
+          include: { ingredient: { select: { id: true, name: true } } },
+          orderBy: [{ id: "asc" }],
+        },
+        addons: {
+          include: {
+            addon: {
+              select: {
+                id: true,
+                name: true,
+                price: true,
+                isAvailable: true,
+              },
+            },
+          },
+          orderBy: [{ id: "asc" }],
+        },
       },
     });
   },
-  update: async (restaurantId, productId, data, variants) => {
+  update: async (
+    restaurantId,
+    productId,
+    data,
+    variants,
+    removableIngredients,
+    addons
+  ) => {
     const db = getRestaurantDb(restaurantId);
     const { categoryId, ...productData } = data;
     const existingVariants = variants?.filter((variant) => variant.id) ?? [];
@@ -328,8 +473,24 @@ const productRepository: ProductRepository = {
                 })),
                 create: productVariantService.createForExistingProduct(
                   restaurantId,
-                  newVariants,
+                  newVariants
                 ),
+              },
+            }
+          : {}),
+        ...(removableIngredients
+          ? {
+              removableIngredients: {
+                deleteMany: {},
+                create: [...removableIngredients],
+              },
+            }
+          : {}),
+        ...(addons
+          ? {
+              addons: {
+                deleteMany: {},
+                create: [...addons],
               },
             }
           : {}),
@@ -337,6 +498,23 @@ const productRepository: ProductRepository = {
       include: {
         category: { select: { id: true, name: true } },
         variants: { orderBy: [{ sortOrder: "asc" }, { id: "asc" }] },
+        removableIngredients: {
+          include: { ingredient: { select: { id: true, name: true } } },
+          orderBy: [{ id: "asc" }],
+        },
+        addons: {
+          include: {
+            addon: {
+              select: {
+                id: true,
+                name: true,
+                price: true,
+                isAvailable: true,
+              },
+            },
+          },
+          orderBy: [{ id: "asc" }],
+        },
       },
     });
   },
@@ -348,6 +526,23 @@ const productRepository: ProductRepository = {
       include: {
         category: { select: { id: true, name: true } },
         variants: { orderBy: [{ sortOrder: "asc" }, { id: "asc" }] },
+        removableIngredients: {
+          include: { ingredient: { select: { id: true, name: true } } },
+          orderBy: [{ id: "asc" }],
+        },
+        addons: {
+          include: {
+            addon: {
+              select: {
+                id: true,
+                name: true,
+                price: true,
+                isAvailable: true,
+              },
+            },
+          },
+          orderBy: [{ id: "asc" }],
+        },
       },
     });
   },
@@ -358,6 +553,23 @@ const productRepository: ProductRepository = {
       include: {
         category: { select: { id: true, name: true } },
         variants: { orderBy: [{ sortOrder: "asc" }, { id: "asc" }] },
+        removableIngredients: {
+          include: { ingredient: { select: { id: true, name: true } } },
+          orderBy: [{ id: "asc" }],
+        },
+        addons: {
+          include: {
+            addon: {
+              select: {
+                id: true,
+                name: true,
+                price: true,
+                isAvailable: true,
+              },
+            },
+          },
+          orderBy: [{ id: "asc" }],
+        },
       },
     });
   },
@@ -365,5 +577,5 @@ const productRepository: ProductRepository = {
 
 export const productService = new ProductService(
   productRepository,
-  productImageStorage,
+  productImageStorage
 );

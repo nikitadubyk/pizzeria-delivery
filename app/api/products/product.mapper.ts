@@ -16,6 +16,18 @@ export const toProductDto = (product: ProductWithCategory): ProductDto => ({
   isPublished: product.isPublished,
   isAvailable: product.isAvailable,
   variants: product.variants.map(toProductVariantDto),
+  removableIngredients: product.removableIngredients.map(
+    ({ id, ingredientId, ingredient }) => ({
+      id,
+      ingredientId,
+      ingredient,
+    })
+  ),
+  addons: product.addons.map(({ id, addonId, addon }) => ({
+    id,
+    addonId,
+    addon,
+  })),
   createdAt: product.createdAt.toISOString(),
   updatedAt: product.updatedAt.toISOString(),
 });

@@ -6,7 +6,7 @@ export async function getBearerToken(request: Request): Promise<string> {
   const { authorization } = await validateRequestData(
     { authorization: request.headers.get("authorization") },
     authorizationHeaderSchema,
-    HttpStatus.UNAUTHORIZED,
+    HttpStatus.UNAUTHORIZED
   );
   return authorization.slice("Bearer ".length);
 }

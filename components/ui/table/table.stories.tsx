@@ -65,7 +65,7 @@ const columns: TableColumn<Order>[] = [
     render: (order) => (
       <div className="grid min-w-0 gap-0.5 md:min-w-40">
         <span className="font-bold">{order.customer}</span>
-        <span className="text-xs text-muted">{order.phone}</span>
+        <span className="text-muted text-xs">{order.phone}</span>
       </div>
     ),
     width: 220,
@@ -287,7 +287,7 @@ export const TabletWithHorizontalScroll: Story = {
 export const CompactTable: Story = {
   args: {
     columns: columns.filter(
-      (column) => !["address", "createdAt"].includes(column.key),
+      (column) => !["address", "createdAt"].includes(column.key)
     ),
     minWidth: 720,
   },

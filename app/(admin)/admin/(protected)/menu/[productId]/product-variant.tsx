@@ -6,15 +6,15 @@ import type { ProductVariantProps } from "./types";
 
 export function ProductVariant({ variant }: ProductVariantProps) {
   return (
-    <li className="grid gap-md rounded-lg border border-border bg-surface p-md md:grid-cols-[minmax(0,1fr)_auto] md:items-start">
-      <dl className="m-0 grid gap-md sm:grid-cols-2">
+    <li className="gap-md border-border bg-surface p-md grid rounded-lg border md:grid-cols-[minmax(0,1fr)_auto] md:items-start">
+      <dl className="gap-md m-0 grid sm:grid-cols-2">
         <DetailField label="Название" value={variant.name} />
         <DetailField label="Вес" value={variant.weight} />
       </dl>
-      <div className="grid justify-items-start gap-sm md:justify-items-end">
-        <div className="grid gap-xs md:text-right">
-          <span className="text-sm text-muted">Цена</span>
-          <span className="text-lg font-extrabold text-text">
+      <div className="gap-sm grid justify-items-start md:justify-items-end">
+        <div className="gap-xs grid md:text-right">
+          <span className="text-muted text-sm">Цена</span>
+          <span className="text-text text-lg font-extrabold">
             {formatKopecks(variant.price)}
           </span>
         </div>

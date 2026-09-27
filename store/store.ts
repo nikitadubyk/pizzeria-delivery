@@ -16,7 +16,10 @@ export const makeStore = () =>
       [superAdminApi.reducerPath]: superAdminApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware().concat(superAdminApi.middleware, restaurantAuthApi.middleware),
+      getDefaultMiddleware().concat(
+        superAdminApi.middleware,
+        restaurantAuthApi.middleware
+      ),
   });
 
 export type AppStore = ReturnType<typeof makeStore>;

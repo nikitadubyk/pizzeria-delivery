@@ -16,7 +16,7 @@ import {
 } from "@/store/slices/restaurant-auth.slice";
 
 const RestaurantIdentityContext = createContext<RestaurantIdentity | null>(
-  null,
+  null
 );
 
 export function useRestaurantIdentity(): RestaurantIdentity {
@@ -86,7 +86,7 @@ export function RestaurantAuthGuard({
     (!storageError &&
       ((!token && !guest) ||
         Boolean(
-          token && (unauthorized || isUninitialized || (!user && !isError)),
+          token && (unauthorized || isUninitialized || (!user && !isError))
         ) ||
         Boolean(guest && token && user && !isError)));
 

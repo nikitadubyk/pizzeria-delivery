@@ -49,7 +49,7 @@ const restaurantColumns: readonly TableColumn<RestaurantDto>[] = [
     header: "Название",
     mobileLayout: "primary",
     render: (restaurant) => (
-      <span className="break-words font-extrabold md:whitespace-nowrap">
+      <span className="font-extrabold break-words md:whitespace-nowrap">
         {restaurant.name}
       </span>
     ),
@@ -60,7 +60,7 @@ const restaurantColumns: readonly TableColumn<RestaurantDto>[] = [
     header: "Slug",
     mobileFullWidth: true,
     render: (restaurant) => (
-      <code className="break-all rounded bg-surface-muted px-2 py-1 text-xs text-secondary md:whitespace-nowrap">
+      <code className="bg-surface-muted text-secondary rounded px-2 py-1 text-xs break-all md:whitespace-nowrap">
         {restaurant.slug}
       </code>
     ),
@@ -160,7 +160,7 @@ const SuperAdminRestaurantsPageContent = () => {
       mobileLayout: "full",
       render: (restaurant) => (
         <div
-          className="grid w-full grid-cols-1 gap-xs md:flex md:w-auto md:flex-nowrap md:justify-end"
+          className="gap-xs grid w-full grid-cols-1 md:flex md:w-auto md:flex-nowrap md:justify-end"
           onClick={(event) => event.stopPropagation()}
         >
           <Button
@@ -173,11 +173,11 @@ const SuperAdminRestaurantsPageContent = () => {
             Изменить
           </Button>
           <Button
-            className="w-full whitespace-nowrap !text-danger hover:!bg-danger-soft md:w-auto"
+            className="!text-danger hover:!bg-danger-soft w-full whitespace-nowrap md:w-auto"
             leftSection={<IconTrash aria-hidden="true" size={16} />}
             onClick={() => openDeleteDialog(restaurant)}
             size="xs"
-            variant="ghost"
+            variant="danger"
           >
             Удалить
           </Button>
@@ -190,7 +190,7 @@ const SuperAdminRestaurantsPageContent = () => {
   return (
     <>
       <AdminPageWrapper className="grid-rows-[auto_auto] md:grid-rows-[auto_minmax(0,1fr)]">
-        <div className="flex flex-wrap items-end justify-between gap-md">
+        <div className="gap-md flex flex-wrap items-end justify-between">
           <div>
             <Typography muted variant="eyebrow">
               Управление платформой
@@ -208,8 +208,8 @@ const SuperAdminRestaurantsPageContent = () => {
           </Button>
         </div>
 
-        <div className="flex min-h-0 min-w-0 flex-col gap-xs">
-          <div className="flex flex-col gap-xs sm:flex-row sm:items-center sm:justify-between">
+        <div className="gap-xs flex min-h-0 min-w-0 flex-col">
+          <div className="gap-xs flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <SearchInput
               className="sm:max-w-sm"
               placeholder="Найти ресторан..."
@@ -281,23 +281,23 @@ const SuperAdminRestaurantsPageContent = () => {
       >
         {restaurantDetails ? (
           <div>
-            <dl className="m-0 grid grid-cols-1 gap-x-lg gap-y-md sm:grid-cols-2">
+            <dl className="gap-x-lg gap-y-md m-0 grid grid-cols-1 sm:grid-cols-2">
               <div className="grid min-w-0 gap-1 sm:col-span-2">
-                <dt className="text-xs font-bold text-muted">Название</dt>
-                <dd className="m-0 break-words font-extrabold">
+                <dt className="text-muted text-xs font-bold">Название</dt>
+                <dd className="m-0 font-extrabold break-words">
                   {restaurantDetails.name}
                 </dd>
               </div>
               <div className="grid min-w-0 gap-1">
-                <dt className="text-xs font-bold text-muted">Slug</dt>
+                <dt className="text-muted text-xs font-bold">Slug</dt>
                 <dd className="m-0">
-                  <code className="break-all rounded bg-surface-muted px-2 py-1 text-xs text-secondary">
+                  <code className="bg-surface-muted text-secondary rounded px-2 py-1 text-xs break-all">
                     {restaurantDetails.slug}
                   </code>
                 </dd>
               </div>
               <div className="grid min-w-0 gap-1">
-                <dt className="text-xs font-bold text-muted">Статус</dt>
+                <dt className="text-muted text-xs font-bold">Статус</dt>
                 <dd className="m-0">
                   <Badge
                     tone={statusPresentation[restaurantDetails.status].tone}
@@ -307,15 +307,15 @@ const SuperAdminRestaurantsPageContent = () => {
                 </dd>
               </div>
               <div className="grid min-w-0 gap-1 sm:col-span-2">
-                <dt className="text-xs font-bold text-muted">ID ресторана</dt>
+                <dt className="text-muted text-xs font-bold">ID ресторана</dt>
                 <dd className="m-0">
-                  <code className="break-all text-xs text-secondary">
+                  <code className="text-secondary text-xs break-all">
                     {restaurantDetails.id}
                   </code>
                 </dd>
               </div>
               <div className="grid min-w-0 gap-1">
-                <dt className="text-xs font-bold text-muted">Создан</dt>
+                <dt className="text-muted text-xs font-bold">Создан</dt>
                 <dd className="m-0 font-semibold">
                   <time dateTime={restaurantDetails.createdAt}>
                     {formatDateTime(restaurantDetails.createdAt)}
@@ -323,7 +323,7 @@ const SuperAdminRestaurantsPageContent = () => {
                 </dd>
               </div>
               <div className="grid min-w-0 gap-1">
-                <dt className="text-xs font-bold text-muted">Обновлён</dt>
+                <dt className="text-muted text-xs font-bold">Обновлён</dt>
                 <dd className="m-0 font-semibold">
                   <time dateTime={restaurantDetails.updatedAt}>
                     {formatDateTime(restaurantDetails.updatedAt)}
@@ -346,10 +346,10 @@ const SuperAdminRestaurantsPageContent = () => {
               Отменить
             </Button>
             <Button
-              className="!bg-danger hover:!bg-danger-hover"
               leftSection={<IconTrash aria-hidden="true" size={18} />}
               loading={isDeleting}
               onClick={() => void handleDelete()}
+              variant="danger"
             >
               Удалить ресторан
             </Button>
@@ -367,9 +367,9 @@ const SuperAdminRestaurantsPageContent = () => {
         tone="danger"
       >
         {restaurantToDelete ? (
-          <div className="grid gap-xs rounded-lg bg-danger-soft p-md text-sm">
+          <div className="gap-xs bg-danger-soft p-md grid rounded-lg text-sm">
             <strong>{restaurantToDelete.name}</strong>
-            <code className="break-all text-danger-active">
+            <code className="text-danger-active break-all">
               {restaurantToDelete.slug}
             </code>
           </div>

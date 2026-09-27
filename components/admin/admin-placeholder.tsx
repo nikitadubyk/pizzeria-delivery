@@ -5,12 +5,17 @@ type AdminPlaceholderProps = {
   description: string;
 };
 
-export function AdminPlaceholder({ title, description }: AdminPlaceholderProps) {
+export function AdminPlaceholder({
+  title,
+  description,
+}: AdminPlaceholderProps) {
   return (
-    <section className="grid gap-sm rounded-2xl border border-border bg-background p-lg">
+    <section className="gap-sm border-border bg-background p-lg grid rounded-2xl border">
       <Typography variant="h1">{title}</Typography>
       <Typography muted>{description}</Typography>
-      <Typography variant="bodySm" muted>Раздел в разработке.</Typography>
+      <Typography variant="bodySm" muted>
+        Раздел в разработке.
+      </Typography>
     </section>
   );
 }

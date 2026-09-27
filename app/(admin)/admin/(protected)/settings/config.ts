@@ -11,13 +11,13 @@ import type { RestaurantSettingsFormValues } from "./types";
 const DELIVERY_PRICE_MAX_RUBLES = DELIVERY_PRICE_MAX / 100;
 
 export const getRestaurantSettingsFormInitialValues = (
-  settings?: RestaurantSettingsDto,
+  settings?: RestaurantSettingsDto
 ): RestaurantSettingsFormValues => ({
   deliveryPrice: (settings?.deliveryPrice ?? 0) / 100,
 });
 
 export const getRestaurantSettingsRequest = (
-  values: RestaurantSettingsFormValues,
+  values: RestaurantSettingsFormValues
 ): UpdateRestaurantSettingsRequest => ({
   deliveryPrice: Math.round(Number(values.deliveryPrice) * 100),
 });
@@ -30,7 +30,7 @@ export const restaurantSettingsFormValidationSchema: yup.ObjectSchema<Restaurant
       .min(0, "Цена доставки не должна быть отрицательной")
       .max(
         DELIVERY_PRICE_MAX_RUBLES,
-        `Цена доставки не должна превышать ${DELIVERY_PRICE_MAX_RUBLES} ₽`,
+        `Цена доставки не должна превышать ${DELIVERY_PRICE_MAX_RUBLES} ₽`
       )
       .required("Введите цену доставки"),
   });

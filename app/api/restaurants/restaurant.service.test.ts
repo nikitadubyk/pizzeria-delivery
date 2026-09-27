@@ -24,7 +24,7 @@ const createRestaurant = (overrides: Partial<Restaurant> = {}): Restaurant => ({
 });
 
 const createRepository = (
-  overrides: Partial<RestaurantRepository> = {},
+  overrides: Partial<RestaurantRepository> = {}
 ): RestaurantRepository => ({
   findPage: async () => ({ items: [], total: 0 }),
   findById: async () => null,
@@ -47,12 +47,12 @@ describe("RestaurantService", () => {
           assert.deepEqual(pagination, { page: 2, limit: 10 });
           return { items: restaurants, total: 11 };
         },
-      }),
+      })
     );
 
     assert.deepEqual(
       await service.getPage("super-admin-id", { page: 2, limit: 10 }),
-      { items: restaurants, total: 11 },
+      { items: restaurants, total: 11 }
     );
   });
 
@@ -67,7 +67,7 @@ describe("RestaurantService", () => {
           });
           return createRestaurant(data);
         },
-      }),
+      })
     );
 
     const restaurant = await service.create("super-admin-id", {
@@ -85,7 +85,7 @@ describe("RestaurantService", () => {
       service.getById("super-admin-id", "missing-id"),
       (error: unknown) =>
         error instanceof RestaurantServiceError &&
-        error.status === HttpStatus.NOT_FOUND,
+        error.status === HttpStatus.NOT_FOUND
     );
   });
 
@@ -98,7 +98,7 @@ describe("RestaurantService", () => {
           assert.deepEqual(data, { status: "SUSPENDED" });
           return createRestaurant(data);
         },
-      }),
+      })
     );
 
     const restaurant = await service.update("super-admin-id", "restaurant-id", {
@@ -125,12 +125,12 @@ describe("RestaurantService", () => {
         deleteMany: async (keys) => {
           deletedImageKeys.push([...keys]);
         },
-      } satisfies Pick<ProductImageStorage, "deleteMany">,
+      } satisfies Pick<ProductImageStorage, "deleteMany">
     );
 
     assert.equal(
       (await service.delete("super-admin-id", "restaurant-id")).id,
-      "restaurant-id",
+      "restaurant-id"
     );
     assert.deepEqual(deletedImageKeys, [["image-one", "image-two"]]);
   });

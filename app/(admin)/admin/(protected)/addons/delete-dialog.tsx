@@ -25,9 +25,17 @@ export function DeleteDialog({
     <Dialog
       actions={
         <>
-          <Button disabled={isDeleting} onClick={onClose} variant="secondary">Отменить</Button>
-          <Button leftSection={<IconTrash aria-hidden="true" size={18} />}
-            loading={isDeleting} onClick={onConfirm} variant="danger">Удалить добавку</Button>
+          <Button disabled={isDeleting} onClick={onClose} variant="secondary">
+            Отменить
+          </Button>
+          <Button
+            leftSection={<IconTrash aria-hidden="true" size={18} />}
+            loading={isDeleting}
+            onClick={onConfirm}
+            variant="danger"
+          >
+            Удалить добавку
+          </Button>
         </>
       }
       closeButtonProps={{ disabled: isDeleting }}
@@ -41,7 +49,11 @@ export function DeleteDialog({
       title="Вы точно хотите удалить эту добавку?"
       tone="danger"
     >
-      {addon ? <div className="rounded-lg bg-danger-soft p-md text-sm"><strong>{addon.name}</strong></div> : null}
+      {addon ? (
+        <div className="bg-danger-soft p-md rounded-lg text-sm">
+          <strong>{addon.name}</strong>
+        </div>
+      ) : null}
     </Dialog>
   );
 }

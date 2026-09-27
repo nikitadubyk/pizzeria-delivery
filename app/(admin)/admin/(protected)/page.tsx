@@ -7,12 +7,13 @@ export default function RestaurantAdminPage() {
   const user = useRestaurantIdentity();
 
   return (
-    <section className="grid gap-sm rounded-2xl border border-border bg-background p-lg">
+    <section className="gap-sm border-border bg-background p-lg grid rounded-2xl border">
       <Typography variant="h1">
         Добро пожаловать{user.name ? `, ${user.name}` : ""}!
       </Typography>
       <Typography muted>
-        Выберите раздел для управления рестораном. Разделы пока находятся в разработке.
+        Выберите раздел для управления рестораном. Разделы пока находятся в
+        разработке.
       </Typography>
     </section>
   );

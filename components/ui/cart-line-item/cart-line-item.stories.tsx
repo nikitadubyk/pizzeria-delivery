@@ -22,7 +22,7 @@ function StatefulCartLineItem({
   const [quantity, setQuantity] = useState(defaultQuantity);
   const price = useMemo(
     () => `${pricePerItem * quantity} ₽`,
-    [pricePerItem, quantity],
+    [pricePerItem, quantity]
   );
 
   return (

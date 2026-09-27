@@ -10,6 +10,8 @@ export const PRODUCT_VARIANT_NAME_MAX_LENGTH = 80;
 export const PRODUCT_VARIANT_WEIGHT_MAX_LENGTH = 80;
 export const PRODUCT_VARIANT_PRICE_MAX = 2_147_483_647;
 export const PRODUCT_VARIANTS_MAX_COUNT = 50;
+export const PRODUCT_INGREDIENTS_MAX_COUNT = 50;
+export const PRODUCT_ADDONS_MAX_COUNT = 50;
 export const PRODUCT_IMAGE_MIME_TYPES = [
   "image/jpeg",
   "image/png",
@@ -32,8 +34,27 @@ export type ProductDto = {
   isPublished: boolean;
   isAvailable: boolean;
   variants: ProductVariantDto[];
+  removableIngredients: ProductRemovableIngredientDto[];
+  addons: ProductAddonDto[];
   createdAt: string;
   updatedAt: string;
+};
+
+export type ProductRemovableIngredientDto = {
+  id: string;
+  ingredientId: string;
+  ingredient: { id: string; name: string };
+};
+
+export type ProductAddonDto = {
+  id: string;
+  addonId: string;
+  addon: {
+    id: string;
+    name: string;
+    price: number;
+    isAvailable: boolean;
+  };
 };
 
 export type ProductVariantDto = {
@@ -72,6 +93,8 @@ export type CreateProductRequest = {
   sortOrder?: number;
   isPublished?: boolean;
   variants: ProductVariantRequest[];
+  removableIngredientIds?: string[];
+  addonIds?: string[];
 };
 
 export type UpdateProductRequest = Partial<CreateProductRequest>;

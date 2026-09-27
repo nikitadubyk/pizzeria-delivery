@@ -51,7 +51,11 @@ const compactItems: PromoSliderItem[] = [
     title: "Пепперони Спайси",
   },
   {
-    badge: <Badge padding="compact" tone="success">-20%</Badge>,
+    badge: (
+      <Badge padding="compact" tone="success">
+        -20%
+      </Badge>
+    ),
     description: "Бургер, картофель и напиток для быстрого обеда.",
     id: "burger-lunch",
     price: "590 ₽",

@@ -25,8 +25,8 @@ export function Tabs({ items, defaultValue, ...props }: AppTabsProps) {
             value={item.value}
             leftSection={item.icon}
             className={cn(
-              "cursor-pointer rounded-full border border-border px-4 py-2 font-bold text-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-active hover:-translate-y-px hover:border-primary-hover hover:bg-primary-soft active:translate-y-0 active:border-primary-active data-[active]:border-primary data-[active]:bg-primary-soft data-[active]:text-primary-active",
-              interactiveMotionTransitionClassName,
+              "border-border text-text focus-visible:outline-primary-active hover:border-primary-hover hover:bg-primary-soft active:border-primary-active data-[active]:border-primary data-[active]:bg-primary-soft data-[active]:text-primary-active cursor-pointer rounded-full border px-4 py-2 font-bold hover:-translate-y-px focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:translate-y-0",
+              interactiveMotionTransitionClassName
             )}
           >
             {item.label}

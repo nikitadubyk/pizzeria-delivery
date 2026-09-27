@@ -3,21 +3,21 @@ import type {
   CategoryListResponse,
   CreateCategoryRequest,
   ResolvedSearchPaginationQuery,
-} from "@/api-contracts";
-import { createPaginationMeta } from "@/app/api/common/list-query";
-import { toCategoryDto } from "@/app/api/categories/category.mapper";
-import { categoryService } from "@/app/api/categories/category.service";
+} from '@/api-contracts';
+import { createPaginationMeta } from '@/app/api/common/list-query';
+import { toCategoryDto } from '@/app/api/categories/category.mapper';
+import { categoryService } from '@/app/api/categories/category.service';
 import {
   categoryListQuerySchema,
   createCategoryRequestSchema,
-} from "@/app/api/categories/category.validation";
-import { ApiResponse, HttpStatus } from "@/app/api/common/api-response";
+} from '@/app/api/categories/category.validation';
+import { ApiResponse, HttpStatus } from '@/app/api/common/api-response';
 import {
   validateRequestBody,
   validateRequestData,
-} from "@/app/api/common/validate-request";
-import { RESTAURANT_PERMISSION } from "@/lib/auth/restaurant-permissions";
-import { requireRestaurantPermission } from "../require-permission";
+} from '@/app/api/common/validate-request';
+import { RESTAURANT_PERMISSION } from '@/lib/auth/restaurant-permissions';
+import { requireRestaurantPermission } from '../require-permission';
 
 export const GET = async (request: Request) => {
   try {
@@ -25,13 +25,13 @@ export const GET = async (request: Request) => {
       requireRestaurantPermission(request, RESTAURANT_PERMISSION.MENU_READ),
       validateRequestData<ResolvedSearchPaginationQuery>(
         Object.fromEntries(new URL(request.url).searchParams),
-        categoryListQuerySchema,
+        categoryListQuerySchema
       ),
     ]);
     const { page, limit } = pagination;
     const { items, total } = await categoryService.getPage(
       identity.restaurant.id,
-      pagination,
+      pagination
     );
 
     return ApiResponse.success<CategoryListResponse>({
@@ -39,7 +39,7 @@ export const GET = async (request: Request) => {
       pagination: createPaginationMeta({ page, limit, total }),
     });
   } catch (error) {
-    return ApiResponse.fromError(error, "Не удалось получить категории");
+    return ApiResponse.fromError(error, 'Не удалось получить категории');
   }
 };
 
@@ -49,19 +49,19 @@ export const POST = async (request: Request) => {
       requireRestaurantPermission(request, RESTAURANT_PERMISSION.MENU_MANAGE),
       validateRequestBody<CreateCategoryRequest>(
         request,
-        createCategoryRequestSchema,
+        createCategoryRequestSchema
       ),
     ]);
     const category = await categoryService.create(
       identity.restaurant.id,
-      input,
+      input
     );
 
     return ApiResponse.success<CategoryDto>(
       toCategoryDto(category),
-      HttpStatus.CREATED,
+      HttpStatus.CREATED
     );
   } catch (error) {
-    return ApiResponse.fromError(error, "Не удалось создать категорию");
+    return ApiResponse.fromError(error, 'Не удалось создать категорию');
   }
 };

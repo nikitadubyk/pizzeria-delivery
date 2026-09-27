@@ -30,7 +30,7 @@ describe("product request validation", () => {
         restaurantId: "untrusted-restaurant-id",
         imageKey: "untrusted-key",
       },
-      { stripUnknown: true },
+      { stripUnknown: true }
     );
 
     assert.deepEqual(result, {
@@ -54,7 +54,7 @@ describe("product request validation", () => {
   it("applies list defaults and casts filters", async () => {
     assert.deepEqual(
       await productListQuerySchema.validate({ isPublished: "false" }),
-      { page: 1, limit: 20, isPublished: false },
+      { page: 1, limit: 20, isPublished: false }
     );
   });
 
@@ -63,7 +63,7 @@ describe("product request validation", () => {
       await updateProductRequestSchema.validate({
         description: null,
       }),
-      { description: null },
+      { description: null }
     );
   });
 
@@ -76,19 +76,17 @@ describe("product request validation", () => {
           price: 1,
           restaurantId: "other-restaurant",
         },
-        { stripUnknown: true },
+        { stripUnknown: true }
       ),
-      { isAvailable: false },
+      { isAvailable: false }
     );
-    await assert.rejects(
-      updateProductAvailabilityRequestSchema.validate({}),
-    );
+    await assert.rejects(updateProductAvailabilityRequestSchema.validate({}));
   });
 
   it("normalizes a list search", async () => {
     assert.deepEqual(
       await productListQuerySchema.validate({ search: "  сыр  " }),
-      { page: 1, limit: 20, search: "сыр" },
+      { page: 1, limit: 20, search: "сыр" }
     );
   });
 
@@ -100,7 +98,7 @@ describe("product request validation", () => {
         name: "Маргарита",
         sortOrder: -1,
         variants: [{ price: 57_900 }],
-      }),
+      })
     );
   });
 
@@ -115,14 +113,14 @@ describe("product request validation", () => {
         categoryId: "category-id",
         name: "Маргарита",
         variants: [],
-      },
+      }
     );
     await assert.rejects(
       createProductRequestSchema.validate({
         categoryId: "category-id",
         name: "Маргарита",
         variants: [{ price: 57_900.5 }],
-      }),
+      })
     );
   });
 
@@ -132,7 +130,42 @@ describe("product request validation", () => {
         categoryId: "category-id",
         name: "Маргарита",
         variants: [{ price: 49_900 }, { name: "30 см", price: 57_900 }],
-      }),
+      })
+    );
+  });
+
+  it("accepts unique removable ingredients and paid add-ons", async () => {
+    const result = await createProductRequestSchema.validate(
+      {
+        categoryId: "category-id",
+        name: "Маргарита",
+        variants: [],
+        removableIngredientIds: [" mozzarella "],
+        addonIds: [" extra-cheese "],
+      },
+      { stripUnknown: true }
+    );
+
+    assert.deepEqual(result.removableIngredientIds, ["mozzarella"]);
+    assert.deepEqual(result.addonIds, ["extra-cheese"]);
+  });
+
+  it("rejects duplicate removable ingredients and add-ons", async () => {
+    await assert.rejects(
+      createProductRequestSchema.validate({
+        categoryId: "category-id",
+        name: "Маргарита",
+        variants: [],
+        removableIngredientIds: ["cheese", "cheese"],
+      })
+    );
+    await assert.rejects(
+      createProductRequestSchema.validate({
+        categoryId: "category-id",
+        name: "Маргарита",
+        variants: [],
+        addonIds: ["extra-cheese", "extra-cheese"],
+      })
     );
   });
 });

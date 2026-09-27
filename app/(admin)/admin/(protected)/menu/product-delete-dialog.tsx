@@ -32,10 +32,10 @@ export function ProductDeleteDialog({
             Отменить
           </Button>
           <Button
-            className="!bg-danger hover:!bg-danger-hover"
             leftSection={<IconTrash aria-hidden="true" size={18} />}
             loading={isDeleting}
             onClick={onConfirm}
+            variant="danger"
           >
             Удалить продукт
           </Button>
@@ -53,7 +53,7 @@ export function ProductDeleteDialog({
       tone="danger"
     >
       {product ? (
-        <div className="grid gap-xs rounded-lg bg-danger-soft p-md text-sm">
+        <div className="gap-xs bg-danger-soft p-md grid rounded-lg text-sm">
           <strong>{product.name}</strong>
           <span className="text-danger-active">
             {categoryName ?? "Без категории"}

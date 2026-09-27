@@ -14,7 +14,7 @@ const nameSchema = yup
   .trim()
   .max(
     RESTAURANT_NAME_MAX_LENGTH,
-    `Название ресторана не должно превышать ${RESTAURANT_NAME_MAX_LENGTH} символов`,
+    `Название ресторана не должно превышать ${RESTAURANT_NAME_MAX_LENGTH} символов`
   )
   .required("Название ресторана обязательно");
 
@@ -24,11 +24,11 @@ const slugSchema = yup
   .lowercase()
   .max(
     RESTAURANT_SLUG_MAX_LENGTH,
-    `Slug ресторана не должен превышать ${RESTAURANT_SLUG_MAX_LENGTH} символов`,
+    `Slug ресторана не должен превышать ${RESTAURANT_SLUG_MAX_LENGTH} символов`
   )
   .matches(
     RESTAURANT_SLUG_PATTERN,
-    "Slug должен содержать только латинские строчные буквы, цифры и одиночные дефисы",
+    "Slug должен содержать только латинские строчные буквы, цифры и одиночные дефисы"
   )
   .required("Slug ресторана обязателен");
 
@@ -66,5 +66,5 @@ export const updateRestaurantRequestSchema = yup
     (value) =>
       value.name !== undefined ||
       value.slug !== undefined ||
-      value.status !== undefined,
+      value.status !== undefined
   );

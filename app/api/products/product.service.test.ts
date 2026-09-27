@@ -13,7 +13,7 @@ import {
 } from "./product.service";
 
 const createProduct = (
-  overrides: Partial<Product> = {},
+  overrides: Partial<Product> = {}
 ): ProductWithCategory => ({
   id: "product-id",
   restaurantId: "restaurant-id",
@@ -30,15 +30,19 @@ const createProduct = (
   updatedAt: new Date("2026-01-01T00:00:00.000Z"),
   category: { id: "category-id", name: "Пицца" },
   variants: [],
+  removableIngredients: [],
+  addons: [],
   ...overrides,
 });
 
 const createRepository = (
-  overrides: Partial<ProductRepository> = {},
+  overrides: Partial<ProductRepository> = {}
 ): ProductRepository => ({
   findPage: async () => ({ items: [], total: 0 }),
   findById: async () => createProduct(),
   categoryExists: async () => true,
+  ingredientsCount: async () => 0,
+  addonsCount: async () => 0,
   create: async (_restaurantId, data) => createProduct(data),
   update: async (_restaurantId, _productId, data) => createProduct(data),
   updateAvailability: async (_restaurantId, _productId, isAvailable) =>
@@ -48,7 +52,7 @@ const createRepository = (
 });
 
 const createImageStorage = (
-  overrides: Partial<ProductImageStorage> = {},
+  overrides: Partial<ProductImageStorage> = {}
 ): ProductImageStorage => ({
   delete: async () => undefined,
   deleteMany: async () => undefined,
@@ -59,7 +63,7 @@ describe("ProductService", () => {
   it("rejects a category outside the authenticated restaurant", async () => {
     const service = new ProductService(
       createRepository({ categoryExists: async () => false }),
-      createImageStorage(),
+      createImageStorage()
     );
 
     await assert.rejects(
@@ -70,7 +74,7 @@ describe("ProductService", () => {
       }),
       (error: unknown) =>
         error instanceof ProductServiceError &&
-        error.status === HttpStatus.BAD_REQUEST,
+        error.status === HttpStatus.BAD_REQUEST
     );
   });
 
@@ -80,12 +84,12 @@ describe("ProductService", () => {
       createRepository({
         create: async (restaurantId, data, variants) => {
           calls.push(
-            `create:${restaurantId}:${data.name}:${variants[0].price}:${variants[0].sortOrder}`,
+            `create:${restaurantId}:${data.name}:${variants[0].price}:${variants[0].sortOrder}`
           );
           return createProduct(data);
         },
       }),
-      createImageStorage(),
+      createImageStorage()
     );
 
     const product = await service.create("restaurant-id", {
@@ -98,6 +102,111 @@ describe("ProductService", () => {
     assert.deepEqual(calls, ["create:restaurant-id:Маргарита:57900:0"]);
   });
 
+  it("rejects ingredient ids outside the authenticated restaurant", async () => {
+    const service = new ProductService(
+      createRepository({ ingredientsCount: async () => 0 }),
+      createImageStorage()
+    );
+
+    await assert.rejects(
+      service.create("restaurant-id", {
+        categoryId: "category-id",
+        name: "Маргарита",
+        variants: [],
+        removableIngredientIds: ["other-restaurant-ingredient"],
+      }),
+      (error: unknown) =>
+        error instanceof ProductServiceError &&
+        error.status === HttpStatus.BAD_REQUEST
+    );
+  });
+
+  it("rejects add-on ids outside the authenticated restaurant", async () => {
+    const service = new ProductService(
+      createRepository({ addonsCount: async () => 0 }),
+      createImageStorage()
+    );
+
+    await assert.rejects(
+      service.create("restaurant-id", {
+        categoryId: "category-id",
+        name: "Маргарита",
+        variants: [],
+        addonIds: ["other-restaurant-addon"],
+      }),
+      (error: unknown) =>
+        error instanceof ProductServiceError &&
+        error.status === HttpStatus.BAD_REQUEST
+    );
+  });
+
+  it("prepares removable ingredients and add-ons for product creation", async () => {
+    const received: unknown[][] = [];
+    const service = new ProductService(
+      createRepository({
+        ingredientsCount: async () => 1,
+        addonsCount: async () => 1,
+        create: async (
+          _restaurantId,
+          data,
+          _variants,
+          removableIngredients,
+          addons
+        ) => {
+          received.push([[...removableIngredients], [...addons]]);
+          return createProduct(data);
+        },
+      }),
+      createImageStorage()
+    );
+
+    await service.create("restaurant-id", {
+      categoryId: "category-id",
+      name: "Маргарита",
+      variants: [],
+      removableIngredientIds: ["mozzarella"],
+      addonIds: ["extra-cheese"],
+    });
+
+    assert.deepEqual(received, [
+      [[{ ingredientId: "mozzarella" }], [{ addonId: "extra-cheese" }]],
+    ]);
+  });
+
+  it("updates removable ingredients and add-ons independently", async () => {
+    const received: unknown[][] = [];
+    const service = new ProductService(
+      createRepository({
+        ingredientsCount: async () => 1,
+        addonsCount: async () => 1,
+        update: async (
+          _restaurantId,
+          _productId,
+          data,
+          _variants,
+          removableIngredients,
+          addons
+        ) => {
+          received.push([data, removableIngredients, addons]);
+          return createProduct(data);
+        },
+      }),
+      createImageStorage()
+    );
+
+    await service.update("restaurant-id", "product-id", {
+      addonIds: ["extra-cheese"],
+    });
+    await service.update("restaurant-id", "product-id", {
+      removableIngredientIds: ["mozzarella"],
+    });
+
+    assert.deepEqual(received, [
+      [{}, undefined, [{ addonId: "extra-cheese" }]],
+      [{}, [{ ingredientId: "mozzarella" }], undefined],
+    ]);
+  });
+
   it("preserves variant ids and derives their order during update", async () => {
     const calls: string[] = [];
     const service = new ProductService(
@@ -107,14 +216,14 @@ describe("ProductService", () => {
             variants
               ?.map(
                 (variant) =>
-                  `${variant.id ?? "new"}:${variant.name}:${variant.sortOrder}`,
+                  `${variant.id ?? "new"}:${variant.name}:${variant.sortOrder}`
               )
-              .join(",") ?? "unchanged",
+              .join(",") ?? "unchanged"
           );
           return createProduct();
         },
       }),
-      createImageStorage(),
+      createImageStorage()
     );
 
     await service.update("restaurant-id", "product-id", {
@@ -136,7 +245,7 @@ describe("ProductService", () => {
           return createProduct();
         },
       }),
-      createImageStorage(),
+      createImageStorage()
     );
 
     await service.update("restaurant-id", "product-id", { variants: [] });
@@ -148,22 +257,18 @@ describe("ProductService", () => {
     const calls: unknown[][] = [];
     const service = new ProductService(
       createRepository({
-        updateAvailability: async (
-          restaurantId,
-          productId,
-          isAvailable,
-        ) => {
+        updateAvailability: async (restaurantId, productId, isAvailable) => {
           calls.push([restaurantId, productId, isAvailable]);
           return createProduct({ isAvailable });
         },
       }),
-      createImageStorage(),
+      createImageStorage()
     );
 
     const product = await service.updateAvailability(
       "restaurant-id",
       "product-id",
-      false,
+      false
     );
 
     assert.equal(product.isAvailable, false);
@@ -188,7 +293,7 @@ describe("ProductService", () => {
         delete: async (key) => {
           calls.push(`delete:${key}`);
         },
-      }),
+      })
     );
 
     const product = await service.attachUploadedImage(
@@ -197,7 +302,7 @@ describe("ProductService", () => {
       {
         key: "new-image-key",
         url: "https://ufs.sh/f/new-image-key",
-      },
+      }
     );
 
     assert.equal(product.imageKey, "new-image-key");
@@ -219,14 +324,14 @@ describe("ProductService", () => {
         delete: async (key) => {
           deletedKeys.push(key);
         },
-      }),
+      })
     );
 
     await assert.rejects(
       service.attachUploadedImage("restaurant-id", "product-id", {
         key: "new-image-key",
         url: "https://ufs.sh/f/new-image-key",
-      }),
+      })
     );
     assert.deepEqual(deletedKeys, ["new-image-key"]);
   });
@@ -239,7 +344,7 @@ describe("ProductService", () => {
         delete: async (key) => {
           deletedKeys.push(key);
         },
-      }),
+      })
     );
 
     await assert.rejects(
@@ -249,7 +354,7 @@ describe("ProductService", () => {
       }),
       (error: unknown) =>
         error instanceof ProductServiceError &&
-        error.status === HttpStatus.NOT_FOUND,
+        error.status === HttpStatus.NOT_FOUND
     );
     assert.deepEqual(deletedKeys, ["orphan-image-key"]);
   });
@@ -264,7 +369,7 @@ describe("ProductService", () => {
         delete: async (key) => {
           deletedKeys.push(key);
         },
-      }),
+      })
     );
 
     await service.delete("restaurant-id", "product-id");
@@ -282,7 +387,7 @@ describe("ProductService", () => {
           }),
         update: async (_restaurantId, _productId, data) => {
           calls.push(
-            `update:${String(data.imageUrl)}:${String(data.imageKey)}`,
+            `update:${String(data.imageUrl)}:${String(data.imageKey)}`
           );
           return createProduct(data);
         },
@@ -291,7 +396,7 @@ describe("ProductService", () => {
         delete: async (key) => {
           calls.push(`delete:${key}`);
         },
-      }),
+      })
     );
 
     const product = await service.removeImage("restaurant-id", "product-id");

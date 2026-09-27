@@ -23,7 +23,7 @@ const createCategory = (overrides: Partial<Category> = {}): Category => ({
 });
 
 const createRepository = (
-  overrides: Partial<CategoryRepository> = {},
+  overrides: Partial<CategoryRepository> = {}
 ): CategoryRepository => ({
   findPage: async () => ({ items: [], total: 0 }),
   findOptions: async () => [],
@@ -51,7 +51,7 @@ describe("CategoryService", () => {
           assert.equal(restaurantId, "restaurant-id");
           return categories;
         },
-      }),
+      })
     );
 
     assert.deepEqual(await service.getOptions("restaurant-id"), categories);
@@ -66,12 +66,12 @@ describe("CategoryService", () => {
           assert.deepEqual(pagination, { page: 2, limit: 10 });
           return { items: categories, total: 11 };
         },
-      }),
+      })
     );
 
     assert.deepEqual(
       await service.getPage("restaurant-id", { page: 2, limit: 10 }),
-      { items: categories, total: 11 },
+      { items: categories, total: 11 }
     );
   });
 
@@ -87,7 +87,7 @@ describe("CategoryService", () => {
           });
           return createCategory(data);
         },
-      }),
+      })
     );
 
     const category = await service.create("restaurant-id", {
@@ -107,7 +107,7 @@ describe("CategoryService", () => {
       service.getById("restaurant-id", "other-restaurant-category"),
       (error: unknown) =>
         error instanceof CategoryServiceError &&
-        error.status === HttpStatus.NOT_FOUND,
+        error.status === HttpStatus.NOT_FOUND
     );
   });
 
@@ -123,7 +123,7 @@ describe("CategoryService", () => {
           calls.push(`delete:${restaurantId}:${categoryId}`);
           return createCategory();
         },
-      }),
+      })
     );
 
     const updated = await service.update("restaurant-id", "category-id", {
@@ -143,21 +143,17 @@ describe("CategoryService", () => {
     const calls: unknown[][] = [];
     const service = new CategoryService(
       createRepository({
-        updateVisibility: async (
-          restaurantId,
-          categoryId,
-          isPublished,
-        ) => {
+        updateVisibility: async (restaurantId, categoryId, isPublished) => {
           calls.push([restaurantId, categoryId, isPublished]);
           return createCategory({ isPublished });
         },
-      }),
+      })
     );
 
     const category = await service.updateVisibility(
       "restaurant-id",
       "category-id",
-      true,
+      true
     );
 
     assert.equal(category.isPublished, true);
@@ -176,7 +172,7 @@ describe("CategoryService", () => {
         delete: async () => {
           throw prismaError("P2025");
         },
-      }),
+      })
     );
 
     for (const operation of [
@@ -188,7 +184,7 @@ describe("CategoryService", () => {
         operation(),
         (error: unknown) =>
           error instanceof CategoryServiceError &&
-          error.status === HttpStatus.NOT_FOUND,
+          error.status === HttpStatus.NOT_FOUND
       );
     }
   });
@@ -199,14 +195,14 @@ describe("CategoryService", () => {
         delete: async () => {
           throw prismaError("P2003");
         },
-      }),
+      })
     );
 
     await assert.rejects(
       service.delete("restaurant-id", "category-id"),
       (error: unknown) =>
         error instanceof CategoryServiceError &&
-        error.status === HttpStatus.CONFLICT,
+        error.status === HttpStatus.CONFLICT
     );
   });
 });

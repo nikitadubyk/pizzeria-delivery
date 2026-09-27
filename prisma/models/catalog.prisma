@@ -32,11 +32,61 @@ model Product {
   restaurant Restaurant       @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
   category   Category         @relation(fields: [restaurantId, categoryId], references: [restaurantId, id], onDelete: Restrict)
   variants   ProductVariant[]
+  removableIngredients ProductRemovableIngredient[]
+  addons                ProductAddon[]
 
   @@unique([restaurantId, id])
   @@index([restaurantId, categoryId, sortOrder, id])
   @@index([restaurantId, isPublished, sortOrder, id])
   @@index([restaurantId, isAvailable, sortOrder, id])
+}
+
+model Ingredient {
+  id           String   @id @default(cuid())
+  restaurantId String
+  name         String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  restaurant         Restaurant          @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  removableFrom ProductRemovableIngredient[]
+
+  @@unique([restaurantId, id])
+  @@index([restaurantId, name, id])
+}
+
+model ProductRemovableIngredient {
+  id           String                @id @default(cuid())
+  restaurantId String
+  productId    String
+  ingredientId String
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
+
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  product    Product    @relation(fields: [restaurantId, productId], references: [restaurantId, id], onDelete: Cascade)
+  ingredient Ingredient @relation(fields: [restaurantId, ingredientId], references: [restaurantId, id], onDelete: Restrict)
+
+  @@unique([restaurantId, productId, ingredientId])
+  @@index([restaurantId, productId, id])
+  @@index([restaurantId, ingredientId, id])
+}
+
+model ProductAddon {
+  id           String   @id @default(cuid())
+  restaurantId String
+  productId    String
+  addonId      String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  product    Product    @relation(fields: [restaurantId, productId], references: [restaurantId, id], onDelete: Cascade)
+  addon      Addon      @relation(fields: [restaurantId, addonId], references: [restaurantId, id], onDelete: Restrict)
+
+  @@unique([restaurantId, productId, addonId])
+  @@index([restaurantId, productId, id])
+  @@index([restaurantId, addonId, id])
 }
 
 model ProductVariant {

@@ -35,7 +35,7 @@ export const RestaurantFormDialog = ({
 
   const handleSubmit = async (
     values: RestaurantFormValues,
-    { resetForm }: FormikHelpers<RestaurantFormValues>,
+    { resetForm }: FormikHelpers<RestaurantFormValues>
   ) => {
     try {
       if (restaurant) {
@@ -114,7 +114,7 @@ export const RestaurantFormDialog = ({
             preventInitialFocus
             title={isEditing ? "Редактировать ресторан" : "Новый ресторан"}
           >
-            <Form className="grid gap-md" id={RESTAURANT_FORM_ID} noValidate>
+            <Form className="gap-md grid" id={RESTAURANT_FORM_ID} noValidate>
               <InputField
                 autoComplete="organization"
                 label="Название"

@@ -52,8 +52,8 @@ export function EmptyState({
     <Box
       alt={imageAlt}
       className={cn(
-        "block rounded-full border border-border bg-surface object-cover",
-        mediaSizeClassNames[size],
+        "border-border bg-surface block rounded-full border object-cover",
+        mediaSizeClassNames[size]
       )}
       component="img"
       src={imageSrc}
@@ -62,8 +62,8 @@ export function EmptyState({
     <div
       aria-hidden="true"
       className={cn(
-        "grid place-items-center rounded-full border border-border bg-primary-soft text-primary-active",
-        mediaSizeClassNames[size],
+        "border-border bg-primary-soft text-primary-active grid place-items-center rounded-full border",
+        mediaSizeClassNames[size]
       )}
     >
       {icon}
@@ -73,9 +73,9 @@ export function EmptyState({
   return (
     <section
       className={cn(
-        "grid min-w-0 justify-items-center rounded-lg border border-dashed border-border bg-surface text-center text-text",
+        "border-border bg-surface text-text grid min-w-0 justify-items-center rounded-lg border border-dashed text-center",
         rootSizeClassNames[size],
-        className,
+        className
       )}
       {...props}
     >
@@ -84,14 +84,14 @@ export function EmptyState({
       <div className="grid w-[min(100%,32rem)] gap-1">
         <h2
           className={cn(
-            "m-0 font-extrabold leading-snug text-text",
-            titleSizeClassNames[size],
+            "text-text m-0 leading-snug font-extrabold",
+            titleSizeClassNames[size]
           )}
         >
           {title}
         </h2>
         {description ? (
-          <p className="m-0 text-sm leading-snug text-muted">{description}</p>
+          <p className="text-muted m-0 text-sm leading-snug">{description}</p>
         ) : null}
       </div>
 

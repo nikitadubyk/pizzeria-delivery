@@ -59,7 +59,7 @@ describe("product RTK Query API", () => {
             page: 1,
             limit: 20,
             search: "маргарита",
-          }),
+          })
         )
         .unwrap();
 
@@ -72,7 +72,7 @@ describe("product RTK Query API", () => {
       });
       assert.equal(
         calls[0].headers.get("Authorization"),
-        "Bearer restaurant-token",
+        "Bearer restaurant-token"
       );
     } finally {
       store.dispatch(restaurantAuthApi.util.resetApiState());
@@ -95,11 +95,11 @@ describe("product RTK Query API", () => {
             categoryId: "category-id",
             name: "Маргарита",
             variants: [{ price: 57_900 }],
-          }),
+          })
         )
         .unwrap();
       const productRequest = store.dispatch(
-        productsApi.endpoints.getProduct.initiate({ productId: "product-id" }),
+        productsApi.endpoints.getProduct.initiate({ productId: "product-id" })
       );
       await productRequest.unwrap();
       productRequest.unsubscribe();
@@ -108,7 +108,7 @@ describe("product RTK Query API", () => {
           productsApi.endpoints.updateProduct.initiate({
             productId: "product-id",
             data: { isPublished: true },
-          }),
+          })
         )
         .unwrap();
       await store
@@ -116,21 +116,21 @@ describe("product RTK Query API", () => {
           productsApi.endpoints.updateProductAvailability.initiate({
             productId: "product-id",
             data: { isAvailable: false },
-          }),
+          })
         )
         .unwrap();
       await store
         .dispatch(
           productsApi.endpoints.removeProductImage.initiate({
             productId: "product-id",
-          }),
+          })
         )
         .unwrap();
       await store
         .dispatch(
           productsApi.endpoints.deleteProduct.initiate({
             productId: "product-id",
-          }),
+          })
         )
         .unwrap();
 
@@ -143,7 +143,7 @@ describe("product RTK Query API", () => {
           ["patch", "/admin/products/product-id/availability"],
           ["delete", "/admin/products/product-id/image"],
           ["delete", "/admin/products/product-id"],
-        ],
+        ]
       );
     } finally {
       store.dispatch(restaurantAuthApi.util.resetApiState());

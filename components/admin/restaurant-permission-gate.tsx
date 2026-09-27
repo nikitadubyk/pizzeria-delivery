@@ -14,22 +14,30 @@ type RestaurantPermissionGateProps = {
 };
 
 export function RestaurantPermissionGate({
-  permission, children, fallback = null,
+  permission,
+  children,
+  fallback = null,
 }: RestaurantPermissionGateProps) {
   return useRestaurantPermission(permission) ? children : fallback;
 }
 
 export function RestaurantPermissionPage({
-  permission, children,
+  permission,
+  children,
 }: Omit<RestaurantPermissionGateProps, "fallback">) {
   return (
     <RestaurantPermissionGate
       permission={permission}
       fallback={
-        <section className="grid gap-md rounded-2xl border border-border bg-background p-lg">
+        <section className="gap-md border-border bg-background p-lg grid rounded-2xl border">
           <Typography variant="h1">Нет доступа</Typography>
-          <Typography muted>У вашей учётной записи нет прав на этот раздел.</Typography>
-          <Link className="text-primary underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary" href={ROUTES.ADMIN.ROOT}>
+          <Typography muted>
+            У вашей учётной записи нет прав на этот раздел.
+          </Typography>
+          <Link
+            className="text-primary focus-visible:outline-primary underline focus-visible:outline focus-visible:outline-2"
+            href={ROUTES.ADMIN.ROOT}
+          >
             На главную админки
           </Link>
         </section>

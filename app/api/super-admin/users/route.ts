@@ -22,13 +22,14 @@ export const GET = async (request: Request) => {
   try {
     const superAdminId = await getSuperAdminId(request);
     const searchParams = Object.fromEntries(new URL(request.url).searchParams);
-    const query = await validateRequestData<
-      ResolvedSearchPaginationQuery
-    >(searchParams, restaurantUserListQuerySchema);
+    const query = await validateRequestData<ResolvedSearchPaginationQuery>(
+      searchParams,
+      restaurantUserListQuerySchema
+    );
     const { page, limit } = query;
     const { items, total } = await userService.getRestaurantUserPage(
       superAdminId,
-      query,
+      query
     );
 
     return ApiResponse.success<RestaurantUserListResponse>({
@@ -45,13 +46,13 @@ export const POST = async (request: Request) => {
     const superAdminId = await getSuperAdminId(request);
     const input = await validateRequestBody<CreateRestaurantUserRequest>(
       request,
-      createRestaurantUserRequestSchema,
+      createRestaurantUserRequestSchema
     );
     const user = await userService.createRestaurantUser(superAdminId, input);
 
     return ApiResponse.success<RestaurantUserDto>(
       toRestaurantUserDto(user),
-      HttpStatus.CREATED,
+      HttpStatus.CREATED
     );
   } catch (error) {
     return ApiResponse.fromError(error, "Не удалось создать пользователя");

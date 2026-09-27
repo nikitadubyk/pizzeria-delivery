@@ -18,23 +18,23 @@ export type RestaurantDeletion = {
 export interface RestaurantRepository {
   findPage(
     superAdminId: string,
-    pagination: ResolvedSearchPaginationQuery,
+    pagination: ResolvedSearchPaginationQuery
   ): Promise<RestaurantPage>;
   findById(
     superAdminId: string,
-    restaurantId: string,
+    restaurantId: string
   ): Promise<Restaurant | null>;
   create(
     superAdminId: string,
-    data: CreateRestaurantRequest,
+    data: CreateRestaurantRequest
   ): Promise<Restaurant>;
   update(
     superAdminId: string,
     restaurantId: string,
-    data: UpdateRestaurantRequest,
+    data: UpdateRestaurantRequest
   ): Promise<Restaurant>;
   delete(
     superAdminId: string,
-    restaurantId: string,
+    restaurantId: string
   ): Promise<RestaurantDeletion>;
 }

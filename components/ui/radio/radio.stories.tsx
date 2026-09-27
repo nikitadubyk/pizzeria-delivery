@@ -35,11 +35,7 @@ export const Disabled: Story = {
 
 export const Group: Story = {
   render: () => (
-    <RadioGroup
-      label="Размер"
-      defaultValue="medium"
-      options={sizeOptions}
-    />
+    <RadioGroup label="Размер" defaultValue="medium" options={sizeOptions} />
   ),
 };
 

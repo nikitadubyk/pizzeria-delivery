@@ -16,7 +16,7 @@ function ControlledPagination({
   return (
     <div className="grid gap-3">
       <Pagination onChange={setPage} total={total} value={page} withEdges />
-      <span className="text-sm text-muted">Текущая страница: {page}</span>
+      <span className="text-muted text-sm">Текущая страница: {page}</span>
     </div>
   );
 }

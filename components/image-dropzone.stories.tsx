@@ -1,10 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { useState } from "react";
 
-import {
-  ImageDropzone,
-  type ImageDropzoneProps,
-} from "./image-dropzone";
+import { ImageDropzone, type ImageDropzoneProps } from "./image-dropzone";
 
 function ControlledImageDropzone(args: ImageDropzoneProps) {
   const [file, setFile] = useState<File | null>(null);

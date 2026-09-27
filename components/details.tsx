@@ -37,19 +37,26 @@ export function Details({
       {pending ? (
         <Loader className="absolute inset-0 min-h-0" label={loadingLabel} />
       ) : isError ? (
-        <div className="grid h-full flex-1 place-items-center overflow-auto" role="alert">
+        <div
+          className="grid h-full flex-1 place-items-center overflow-auto"
+          role="alert"
+        >
           <EmptyState
             title={errorMessage}
             description="Проверьте соединение и попробуйте ещё раз."
-            action={onRetry && (
-              <Button
-                type="button"
-                leftSection={<IconRefresh aria-hidden="true" size={18} />}
-                onClick={() => { onRetry(); }}
-              >
-                Повторить
-              </Button>
-            )}
+            action={
+              onRetry && (
+                <Button
+                  type="button"
+                  leftSection={<IconRefresh aria-hidden="true" size={18} />}
+                  onClick={() => {
+                    onRetry();
+                  }}
+                >
+                  Повторить
+                </Button>
+              )
+            }
           />
         </div>
       ) : (
@@ -59,7 +66,7 @@ export function Details({
           </div>
           {isFetching && (
             <Loader
-              className="absolute inset-0 z-10 min-h-0 bg-background/80"
+              className="bg-background/80 absolute inset-0 z-10 min-h-0"
               label="Обновление данных…"
             />
           )}

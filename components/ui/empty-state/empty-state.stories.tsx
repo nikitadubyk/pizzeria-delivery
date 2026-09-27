@@ -55,7 +55,9 @@ export const Sizes: Story = {
         <EmptyState
           key={size}
           description="Здесь появятся данные, когда они будут доступны."
-          icon={<IconClipboardList size={size === "lg" ? 40 : 28} stroke={1.8} />}
+          icon={
+            <IconClipboardList size={size === "lg" ? 40 : 28} stroke={1.8} />
+          }
           size={size}
           title={`Пустое состояние ${size}`}
         />

@@ -32,7 +32,7 @@ export function CategoryFormDialog({
 
   const handleSubmit = async (
     values: CategoryFormValues,
-    { resetForm }: FormikHelpers<CategoryFormValues>,
+    { resetForm }: FormikHelpers<CategoryFormValues>
   ) => {
     try {
       const data = {
@@ -115,7 +115,7 @@ export function CategoryFormDialog({
             preventInitialFocus
             title={isEditing ? "Редактировать категорию" : "Новая категория"}
           >
-            <Form className="grid gap-md" id={CATEGORY_FORM_ID} noValidate>
+            <Form className="gap-md grid" id={CATEGORY_FORM_ID} noValidate>
               <InputField
                 autoComplete="off"
                 label="Название"

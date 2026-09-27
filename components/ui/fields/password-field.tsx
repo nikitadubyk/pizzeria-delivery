@@ -11,7 +11,12 @@ export type PasswordFieldProps = Omit<
   name: string;
 };
 
-export function PasswordField({ name, onBlur, onChange, ...props }: PasswordFieldProps) {
+export function PasswordField({
+  name,
+  onBlur,
+  onChange,
+  ...props
+}: PasswordFieldProps) {
   const [field, meta] = useField<string>(name);
 
   return (
@@ -19,11 +24,11 @@ export function PasswordField({ name, onBlur, onChange, ...props }: PasswordFiel
       {...props}
       {...field}
       error={controlError(meta)}
-      onBlur={event => {
+      onBlur={(event) => {
         field.onBlur(event);
         onBlur?.(event);
       }}
-      onChange={event => {
+      onChange={(event) => {
         field.onChange(event);
         onChange?.(event);
       }}

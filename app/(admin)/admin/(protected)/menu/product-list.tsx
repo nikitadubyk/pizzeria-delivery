@@ -46,22 +46,20 @@ export function ProductList() {
   const search = useSearchQueryValue();
   const [page, setPage] = useSearchPagination(search);
   const [productToDelete, setProductToDelete] = useState<ProductDto | null>(
-    null,
+    null
   );
   const [deleteDialogOpened, setDeleteDialogOpened] = useState(false);
   const canManage = useRestaurantPermission(P.MENU_MANAGE);
   const canManageStopList = useRestaurantPermission(P.STOP_LIST_MANAGE);
   const [deleteProduct, { isLoading: isDeleting }] = useDeleteProductMutation();
-  const [
-    updateProductAvailability,
-    { isLoading: isUpdatingAvailability },
-  ] = useUpdateProductAvailabilityMutation();
+  const [updateProductAvailability, { isLoading: isUpdatingAvailability }] =
+    useUpdateProductAvailabilityMutation();
   const { data, isError, isFetching, isLoading, refetch } = useGetProductsQuery(
     {
       page,
       limit: PRODUCTS_PER_PAGE,
       search: search || undefined,
-    },
+    }
   );
   const products = data?.items ?? [];
   const total = data?.pagination.total ?? 0;
@@ -92,7 +90,7 @@ export function ProductList() {
 
   const handleAvailabilityChange = async (
     product: ProductDto,
-    isAvailable: boolean,
+    isAvailable: boolean
   ) => {
     try {
       await updateProductAvailability({
@@ -125,9 +123,9 @@ export function ProductList() {
       mobileLayout: "primary",
       render: (product) => (
         <div className="grid min-w-0 gap-1">
-          <span className="break-words font-extrabold">{product.name}</span>
+          <span className="font-extrabold break-words">{product.name}</span>
           {product.baseComposition ? (
-            <span className="line-clamp-2 text-xs text-muted">
+            <span className="text-muted line-clamp-2 text-xs">
               {product.baseComposition}
             </span>
           ) : null}
@@ -156,7 +154,7 @@ export function ProductList() {
         const isAvailable = product.isAvailable;
 
         return canManageStopList ? (
-          <div className="flex items-center gap-xs">
+          <div className="gap-xs flex items-center">
             <Toggle
               aria-label={`${product.name}: доступен для заказа`}
               checked={isAvailable}
@@ -164,12 +162,12 @@ export function ProductList() {
               onChange={(event) =>
                 void handleAvailabilityChange(
                   product,
-                  event.currentTarget.checked,
+                  event.currentTarget.checked
                 )
               }
               size="sm"
             />
-            <span className="whitespace-nowrap text-xs text-muted">
+            <span className="text-muted text-xs whitespace-nowrap">
               {isAvailable ? "В продаже" : "Стоп-лист"}
             </span>
           </div>
@@ -196,7 +194,10 @@ export function ProductList() {
       header: "Обновлён",
       mobileFullWidth: true,
       render: (product) => (
-        <time className="block text-xs leading-tight" dateTime={product.updatedAt}>
+        <time
+          className="block text-xs leading-tight"
+          dateTime={product.updatedAt}
+        >
           {formatDateTime(product.updatedAt)}
         </time>
       ),
@@ -210,7 +211,7 @@ export function ProductList() {
             align: "right" as const,
             mobileLayout: "full" as const,
             render: (product: ProductDto) => (
-              <div className="grid w-full grid-cols-1 gap-xs md:flex md:w-auto md:flex-nowrap md:justify-end">
+              <div className="gap-xs grid w-full grid-cols-1 md:flex md:w-auto md:flex-nowrap md:justify-end">
                 <Button
                   aria-label={`Изменить ${product.name}`}
                   className="w-full whitespace-nowrap md:!size-8 md:!min-w-8 md:!p-0 2xl:!h-8 2xl:!w-auto 2xl:!px-3"
@@ -226,10 +227,10 @@ export function ProductList() {
                 </Button>
                 <Button
                   aria-label={`Удалить ${product.name}`}
-                  className="w-full whitespace-nowrap !text-danger hover:!bg-danger-soft md:!size-8 md:!min-w-8 md:!p-0 2xl:!h-8 2xl:!w-auto 2xl:!px-3"
+                  className="w-full whitespace-nowrap md:!size-8 md:!min-w-8 md:!p-0 2xl:!h-8 2xl:!w-auto 2xl:!px-3"
                   onClick={() => openDeleteDialog(product)}
                   size="xs"
-                  variant="ghost"
+                  variant="danger"
                 >
                   <IconTrash aria-hidden="true" size={16} />
                   <span className="ml-1 md:sr-only 2xl:not-sr-only">
@@ -247,8 +248,8 @@ export function ProductList() {
   return (
     <RestaurantPermissionPage permission={P.MENU_READ}>
       <>
-        <section className="grid min-h-full grid-rows-[auto_auto] gap-lg md:h-full md:min-h-0 md:grid-rows-[auto_minmax(0,1fr)]">
-          <div className="flex flex-wrap items-end justify-between gap-md">
+        <section className="gap-lg grid min-h-full grid-rows-[auto_auto] md:h-full md:min-h-0 md:grid-rows-[auto_minmax(0,1fr)]">
+          <div className="gap-md flex flex-wrap items-end justify-between">
             <div>
               <Typography muted variant="eyebrow">
                 Управление меню
@@ -269,8 +270,8 @@ export function ProductList() {
             </RestaurantPermissionGate>
           </div>
 
-          <div className="flex min-h-0 min-w-0 flex-col gap-xs">
-            <div className="flex flex-col gap-xs sm:flex-row sm:items-center sm:justify-between">
+          <div className="gap-xs flex min-h-0 min-w-0 flex-col">
+            <div className="gap-xs flex flex-col sm:flex-row sm:items-center sm:justify-between">
               <SearchInput
                 className="sm:max-w-md"
                 placeholder="Найти продукт..."
@@ -298,9 +299,13 @@ export function ProductList() {
                       : "Продукты пока не добавлены"
                   }
                   getRowKey={(product) => product.id}
-                  getRowAriaLabel={(product) => `Открыть детали продукта ${product.name}`}
+                  getRowAriaLabel={(product) =>
+                    `Открыть детали продукта ${product.name}`
+                  }
                   minWidth={canManage ? 1000 : 900}
-                  onRowClick={(product) => router.push(ROUTES.ADMIN.menuProduct(product.id))}
+                  onRowClick={(product) =>
+                    router.push(ROUTES.ADMIN.menuProduct(product.id))
+                  }
                   pagination={{
                     ariaLabel: "Страницы списка продуктов",
                     onChange: setPage,

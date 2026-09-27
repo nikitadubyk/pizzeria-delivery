@@ -32,8 +32,8 @@ export function Pagination({
     <nav
       aria-label={ariaLabel}
       className={cn(
-        "w-full min-w-0 max-w-full [&_.mantine-Group-root]:justify-center md:[&_.mantine-Group-root]:justify-end",
-        className,
+        "w-full max-w-full min-w-0 [&_.mantine-Group-root]:justify-center md:[&_.mantine-Group-root]:justify-end",
+        className
       )}
     >
       <MantinePagination

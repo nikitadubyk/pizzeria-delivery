@@ -14,7 +14,7 @@ export enum HttpStatus {
 export class ApiError extends Error {
   constructor(
     message: string,
-    public readonly status: HttpStatus,
+    public readonly status: HttpStatus
   ) {
     super(message);
     this.name = "ApiError";
@@ -38,7 +38,7 @@ export class ApiResponse {
     if (error instanceof SyntaxError) {
       return ApiResponse.error(
         "Некорректное тело запроса",
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 

@@ -2,7 +2,7 @@ import type { ProductVariantDto } from "@/api-contracts";
 import type { ProductVariant } from "@/app/generated/prisma/client";
 
 export const toProductVariantDto = (
-  variant: ProductVariant,
+  variant: ProductVariant
 ): ProductVariantDto => ({
   id: variant.id,
   name: variant.name,

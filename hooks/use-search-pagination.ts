@@ -11,7 +11,7 @@ type SearchPaginationState = {
 };
 
 export function useSearchPagination(
-  search: string,
+  search: string
 ): readonly [number, Dispatch<SetStateAction<number>>] {
   const [pagination, setPagination] = useState<SearchPaginationState>({
     page: 1,
@@ -30,14 +30,12 @@ export function useSearchPagination(
 
         return {
           page:
-            typeof nextPage === "function"
-              ? nextPage(currentPage)
-              : nextPage,
+            typeof nextPage === "function" ? nextPage(currentPage) : nextPage,
           search,
         };
       });
     },
-    [search],
+    [search]
   );
 
   return [page, setPage] as const;

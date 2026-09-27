@@ -1,6 +1,7 @@
 export * from "./pagination";
 export * from "./categories";
 export * from "./addons";
+export * from "./ingredients";
 export * from "./products";
 export * from "./restaurants";
 export * from "./super-admin";

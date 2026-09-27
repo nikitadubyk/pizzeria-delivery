@@ -73,7 +73,7 @@ describe("category RTK Query API", () => {
           categoriesApi.endpoints.getCategories.initiate({
             page: 2,
             limit: 10,
-          }),
+          })
         )
         .unwrap();
 
@@ -83,7 +83,7 @@ describe("category RTK Query API", () => {
       assert.deepEqual(calls[0].params, { page: 2, limit: 10 });
       assert.equal(
         calls[0].headers.get("Authorization"),
-        "Bearer restaurant-token",
+        "Bearer restaurant-token"
       );
     } finally {
       store.dispatch(restaurantAuthApi.util.resetApiState());
@@ -106,13 +106,13 @@ describe("category RTK Query API", () => {
             name: "Пицца",
             sortOrder: 0,
             isPublished: false,
-          }),
+          })
         )
         .unwrap();
       const categoryRequest = store.dispatch(
         categoriesApi.endpoints.getCategory.initiate({
           categoryId: "category-id",
-        }),
+        })
       );
       await categoryRequest.unwrap();
       categoryRequest.unsubscribe();
@@ -121,7 +121,7 @@ describe("category RTK Query API", () => {
           categoriesApi.endpoints.updateCategory.initiate({
             categoryId: "category-id",
             data: { isPublished: true },
-          }),
+          })
         )
         .unwrap();
       await store
@@ -129,14 +129,14 @@ describe("category RTK Query API", () => {
           categoriesApi.endpoints.updateCategoryVisibility.initiate({
             categoryId: "category-id",
             data: { isPublished: false },
-          }),
+          })
         )
         .unwrap();
       await store
         .dispatch(
           categoriesApi.endpoints.deleteCategory.initiate({
             categoryId: "category-id",
-          }),
+          })
         )
         .unwrap();
 
@@ -148,7 +148,7 @@ describe("category RTK Query API", () => {
           ["patch", "/admin/categories/category-id"],
           ["patch", "/admin/categories/category-id/visibility"],
           ["delete", "/admin/categories/category-id"],
-        ],
+        ]
       );
       assert.deepEqual(JSON.parse(calls[0].data as string), {
         name: "Пицца",

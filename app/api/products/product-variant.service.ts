@@ -1,10 +1,11 @@
 import type { ProductVariantRequest } from "@/api-contracts";
+import type { Prisma } from "@/app/generated/prisma/client";
 
 import type { ProductVariantWrite } from "./types";
 
 export class ProductVariantService {
   prepareForCreate(
-    variants: readonly ProductVariantRequest[],
+    variants: readonly ProductVariantRequest[]
   ): ProductVariantWrite[] {
     return variants.map((variant, sortOrder) => ({
       name: variant.name ?? null,
@@ -16,7 +17,7 @@ export class ProductVariantService {
   }
 
   prepareForUpdate(
-    variants: readonly ProductVariantRequest[],
+    variants: readonly ProductVariantRequest[]
   ): ProductVariantWrite[] {
     return variants.map((variant, sortOrder) => ({
       id: variant.id,
@@ -29,11 +30,9 @@ export class ProductVariantService {
   }
 
   createForNewProduct(
-    restaurantId: string,
-    variants: readonly ProductVariantWrite[],
-  ) {
+    variants: readonly ProductVariantWrite[]
+  ): Prisma.ProductVariantUncheckedCreateWithoutProductInput[] {
     return variants.map((variant) => ({
-      restaurantId,
       name: variant.name,
       price: variant.price,
       weight: variant.weight,
@@ -44,8 +43,8 @@ export class ProductVariantService {
 
   createForExistingProduct(
     restaurantId: string,
-    variants: readonly ProductVariantWrite[],
-  ) {
+    variants: readonly ProductVariantWrite[]
+  ): Prisma.ProductVariantCreateWithoutProductInput[] {
     return variants.map((variant) => ({
       restaurant: { connect: { id: restaurantId } },
       name: variant.name,

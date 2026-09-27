@@ -8,7 +8,7 @@ export const POST = async (request: Request) => {
   try {
     const input = await validateRequestBody<SuperAdminRefreshRequest>(
       request,
-      superAdminRefreshRequestSchema,
+      superAdminRefreshRequestSchema
     );
     const result = await userService.refresh(input);
 

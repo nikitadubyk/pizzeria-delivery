@@ -22,20 +22,20 @@ type ProductRouteContext = {
   params: Promise<ProductPathParams>;
 };
 
-export const GET = async (request: Request, { params }: ProductRouteContext) => {
+export const GET = async (
+  request: Request,
+  { params }: ProductRouteContext
+) => {
   try {
     const [identity, { productId }] = await Promise.all([
       requireRestaurantPermission(request, RESTAURANT_PERMISSION.MENU_READ),
       params.then((value) =>
-        validateRouteParams<ProductPathParams>(
-          value,
-          productPathParamsSchema,
-        ),
+        validateRouteParams<ProductPathParams>(value, productPathParamsSchema)
       ),
     ]);
     const product = await productService.getById(
       identity.restaurant.id,
-      productId,
+      productId
     );
 
     return ApiResponse.success<ProductDto>(toProductDto(product));
@@ -46,26 +46,23 @@ export const GET = async (request: Request, { params }: ProductRouteContext) => 
 
 export const PATCH = async (
   request: Request,
-  { params }: ProductRouteContext,
+  { params }: ProductRouteContext
 ) => {
   try {
     const [identity, { productId }, input] = await Promise.all([
       requireRestaurantPermission(request, RESTAURANT_PERMISSION.MENU_MANAGE),
       params.then((value) =>
-        validateRouteParams<ProductPathParams>(
-          value,
-          productPathParamsSchema,
-        ),
+        validateRouteParams<ProductPathParams>(value, productPathParamsSchema)
       ),
       validateRequestBody<UpdateProductRequest>(
         request,
-        updateProductRequestSchema,
+        updateProductRequestSchema
       ),
     ]);
     const product = await productService.update(
       identity.restaurant.id,
       productId,
-      input,
+      input
     );
 
     return ApiResponse.success<ProductDto>(toProductDto(product));
@@ -76,21 +73,18 @@ export const PATCH = async (
 
 export const DELETE = async (
   request: Request,
-  { params }: ProductRouteContext,
+  { params }: ProductRouteContext
 ) => {
   try {
     const [identity, { productId }] = await Promise.all([
       requireRestaurantPermission(request, RESTAURANT_PERMISSION.MENU_MANAGE),
       params.then((value) =>
-        validateRouteParams<ProductPathParams>(
-          value,
-          productPathParamsSchema,
-        ),
+        validateRouteParams<ProductPathParams>(value, productPathParamsSchema)
       ),
     ]);
     const product = await productService.delete(
       identity.restaurant.id,
-      productId,
+      productId
     );
 
     return ApiResponse.success<ProductDto>(toProductDto(product));

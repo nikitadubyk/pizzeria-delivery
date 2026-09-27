@@ -195,7 +195,11 @@ function rgbToHex({ r, g, b }: RgbColor): string {
     .join("")}`;
 }
 
-function mixColors(source: RgbColor, target: RgbColor, weight: number): RgbColor {
+function mixColors(
+  source: RgbColor,
+  target: RgbColor,
+  weight: number
+): RgbColor {
   return {
     r: source.r + (target.r - source.r) * weight,
     g: source.g + (target.g - source.g) * weight,
@@ -248,7 +252,7 @@ function createPaletteFromColor(color: string): MantineColorsTuple {
 }
 
 function resolveBrandColor(
-  primaryColor?: PizzeriaBrandColor,
+  primaryColor?: PizzeriaBrandColor
 ): ResolvedPizzeriaBrandColor {
   if (!primaryColor) {
     return {

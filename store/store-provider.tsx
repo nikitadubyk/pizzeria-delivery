@@ -22,7 +22,8 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
     const unsubscribe = setupListeners(store.dispatch);
     syncRestaurantSession(store);
     const onStorage = (event: StorageEvent) => {
-      if (event.key === RESTAURANT_TOKEN_KEY || event.key === null) syncRestaurantSession(store);
+      if (event.key === RESTAURANT_TOKEN_KEY || event.key === null)
+        syncRestaurantSession(store);
     };
     window.addEventListener("storage", onStorage);
     return () => {

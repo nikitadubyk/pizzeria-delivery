@@ -47,27 +47,27 @@ export function CartLineItem({
   return (
     <article
       className={cn(
-        "grid min-w-0 gap-4 rounded-lg border border-border bg-background p-4 text-text shadow-sm sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center",
+        "border-border bg-background text-text grid min-w-0 gap-4 rounded-lg border p-4 shadow-sm sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center",
         disabled && "opacity-60",
         interactiveTransitionClassName,
-        className,
+        className
       )}
       {...props}
     >
       <div className="grid min-w-0 gap-2">
-        <h3 className="m-0 truncate text-md font-extrabold leading-snug text-text">
+        <h3 className="text-md text-text m-0 truncate leading-snug font-extrabold">
           {title}
         </h3>
 
         {options?.length ? (
-          <dl className="m-0 flex min-w-0 flex-wrap gap-x-3 gap-y-1 text-sm leading-snug text-muted">
+          <dl className="text-muted m-0 flex min-w-0 flex-wrap gap-x-3 gap-y-1 text-sm leading-snug">
             {options.map((option, index) => (
               <div key={index} className="flex min-w-0 gap-1">
-                <dt className="shrink-0 font-semibold text-muted">
+                <dt className="text-muted shrink-0 font-semibold">
                   {option.label}
                 </dt>
                 {option.value ? (
-                  <dd className="m-0 min-w-0 truncate text-muted">
+                  <dd className="text-muted m-0 min-w-0 truncate">
                     {option.value}
                   </dd>
                 ) : null}
@@ -87,7 +87,7 @@ export function CartLineItem({
           value={quantity}
         />
 
-        <span className="justify-self-end whitespace-nowrap text-lg font-black leading-tight text-text">
+        <span className="text-text justify-self-end text-lg leading-tight font-black whitespace-nowrap">
           {price}
         </span>
 
@@ -95,8 +95,8 @@ export function CartLineItem({
           <button
             aria-label={removeLabel}
             className={cn(
-              "grid size-9 shrink-0 place-items-center rounded-full border border-border text-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-active enabled:cursor-pointer enabled:hover:border-danger-hover enabled:hover:bg-danger-soft enabled:hover:text-danger-active enabled:active:border-danger-active disabled:cursor-not-allowed disabled:opacity-60",
-              interactiveMotionTransitionClassName,
+              "border-border text-muted focus-visible:outline-primary-active enabled:hover:border-danger-hover enabled:hover:bg-danger-soft enabled:hover:text-danger-active enabled:active:border-danger-active grid size-9 shrink-0 place-items-center rounded-full border focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 enabled:cursor-pointer disabled:cursor-not-allowed disabled:opacity-60",
+              interactiveMotionTransitionClassName
             )}
             disabled={disabled}
             onClick={onRemove}

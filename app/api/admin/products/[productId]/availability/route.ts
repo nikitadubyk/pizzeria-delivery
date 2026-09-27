@@ -24,33 +24,33 @@ type ProductAvailabilityRouteContext = {
 
 export const PATCH = async (
   request: Request,
-  { params }: ProductAvailabilityRouteContext,
+  { params }: ProductAvailabilityRouteContext
 ) => {
   try {
     const [identity, { productId }, input] = await Promise.all([
       requireRestaurantPermission(
         request,
-        RESTAURANT_PERMISSION.STOP_LIST_MANAGE,
+        RESTAURANT_PERMISSION.STOP_LIST_MANAGE
       ),
       params.then((value) =>
-        validateRouteParams<ProductPathParams>(
-          value,
-          productPathParamsSchema,
-        ),
+        validateRouteParams<ProductPathParams>(value, productPathParamsSchema)
       ),
       validateRequestBody<UpdateProductAvailabilityRequest>(
         request,
-        updateProductAvailabilityRequestSchema,
+        updateProductAvailabilityRequestSchema
       ),
     ]);
     const product = await productService.updateAvailability(
       identity.restaurant.id,
       productId,
-      input.isAvailable,
+      input.isAvailable
     );
 
     return ApiResponse.success<ProductDto>(toProductDto(product));
   } catch (error) {
-    return ApiResponse.fromError(error, "Не удалось изменить доступность продукта");
+    return ApiResponse.fromError(
+      error,
+      "Не удалось изменить доступность продукта"
+    );
   }
 };

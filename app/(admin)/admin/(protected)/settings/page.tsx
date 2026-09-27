@@ -37,11 +37,11 @@ export default function SettingsPage() {
 
   const handleSubmit = async (
     values: RestaurantSettingsFormValues,
-    helpers: FormikHelpers<RestaurantSettingsFormValues>,
+    helpers: FormikHelpers<RestaurantSettingsFormValues>
   ) => {
     try {
       const updatedSettings = await updateSettings(
-        getRestaurantSettingsRequest(values),
+        getRestaurantSettingsRequest(values)
       ).unwrap();
 
       helpers.resetForm({
@@ -52,7 +52,7 @@ export default function SettingsPage() {
       showErrorNotification({
         message: getApiErrorMessage(
           error,
-          "Не удалось сохранить цену доставки",
+          "Не удалось сохранить цену доставки"
         ),
       });
     } finally {
@@ -62,7 +62,7 @@ export default function SettingsPage() {
 
   return (
     <RestaurantPermissionPage permission={P.SETTINGS_MANAGE}>
-      <section className="grid w-full content-start gap-lg">
+      <section className="gap-lg grid w-full content-start">
         <div>
           <Typography muted variant="eyebrow">
             Управление рестораном
@@ -92,14 +92,14 @@ export default function SettingsPage() {
 
                 return (
                   <Form
-                    className="grid w-full gap-lg rounded-xl border border-border bg-background p-md sm:p-lg"
+                    className="gap-lg border-border bg-background p-md sm:p-lg grid w-full rounded-xl border"
                     noValidate
                   >
-                    <div className="flex items-start gap-md">
-                      <div className="grid size-11 shrink-0 place-items-center rounded-xl bg-primary-soft text-primary-active">
+                    <div className="gap-md flex items-start">
+                      <div className="bg-primary-soft text-primary-active grid size-11 shrink-0 place-items-center rounded-xl">
                         <IconTruckDelivery aria-hidden="true" size={24} />
                       </div>
-                      <div className="grid gap-xs">
+                      <div className="gap-xs grid">
                         <Typography variant="h3">Доставка</Typography>
                         <Typography muted variant="bodySm">
                           Укажите фиксированную стоимость доставки. Значение 0 ₽
@@ -116,7 +116,7 @@ export default function SettingsPage() {
                       placeholder="Например, 300"
                     />
 
-                    <div className="flex justify-end border-t border-border pt-md">
+                    <div className="border-border pt-md flex justify-end border-t">
                       <Button
                         disabled={!dirty || pending}
                         leftSection={

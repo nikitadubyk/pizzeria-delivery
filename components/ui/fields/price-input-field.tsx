@@ -7,10 +7,20 @@ import { controlError } from "./control-error";
 
 export type PriceInputFieldProps = Omit<
   AppInputProps,
-  "name" | "error" | "value" | "defaultValue" | "type" | "inputMode" | "onChange"
+  | "name"
+  | "error"
+  | "value"
+  | "defaultValue"
+  | "type"
+  | "inputMode"
+  | "onChange"
 > & { name: string };
 
-export function PriceInputField({ name, onBlur, ...props }: PriceInputFieldProps) {
+export function PriceInputField({
+  name,
+  onBlur,
+  ...props
+}: PriceInputFieldProps) {
   const [field, meta, helpers] = useField<string | number>(name);
 
   return (

@@ -31,14 +31,14 @@ const mapRepositoryError = (error: unknown): never => {
     if (error.code === "P2002") {
       throw new RestaurantServiceError(
         "Ресторан с таким slug уже существует",
-        HttpStatus.CONFLICT,
+        HttpStatus.CONFLICT
       );
     }
 
     if (error.code === "P2025") {
       throw new RestaurantServiceError(
         "Ресторан не найден",
-        HttpStatus.NOT_FOUND,
+        HttpStatus.NOT_FOUND
       );
     }
   }
@@ -52,29 +52,29 @@ export class RestaurantService {
     private readonly imageStorage: Pick<
       ProductImageStorage,
       "deleteMany"
-    > = productImageStorage,
+    > = productImageStorage
   ) {}
 
   getPage(
     superAdminId: string,
-    pagination: ResolvedSearchPaginationQuery,
+    pagination: ResolvedSearchPaginationQuery
   ): Promise<RestaurantPage> {
     return this.repository.findPage(superAdminId, pagination);
   }
 
   async getById(
     superAdminId: string,
-    restaurantId: string,
+    restaurantId: string
   ): Promise<Restaurant> {
     const restaurant = await this.repository.findById(
       superAdminId,
-      restaurantId,
+      restaurantId
     );
 
     if (!restaurant) {
       throw new RestaurantServiceError(
         "Ресторан не найден",
-        HttpStatus.NOT_FOUND,
+        HttpStatus.NOT_FOUND
       );
     }
 
@@ -83,7 +83,7 @@ export class RestaurantService {
 
   async create(
     superAdminId: string,
-    input: CreateRestaurantRequest,
+    input: CreateRestaurantRequest
   ): Promise<Restaurant> {
     try {
       return await this.repository.create(superAdminId, input);
@@ -95,7 +95,7 @@ export class RestaurantService {
   async update(
     superAdminId: string,
     restaurantId: string,
-    input: UpdateRestaurantRequest,
+    input: UpdateRestaurantRequest
   ): Promise<Restaurant> {
     try {
       return await this.repository.update(superAdminId, restaurantId, input);
@@ -106,12 +106,12 @@ export class RestaurantService {
 
   async delete(
     superAdminId: string,
-    restaurantId: string,
+    restaurantId: string
   ): Promise<Restaurant> {
     try {
       const { restaurant, productImageKeys } = await this.repository.delete(
         superAdminId,
-        restaurantId,
+        restaurantId
       );
       await this.imageStorage.deleteMany(productImageKeys);
       return restaurant;
@@ -172,7 +172,7 @@ const restaurantRepository: RestaurantRepository = {
       return {
         restaurant,
         productImageKeys: products.flatMap(({ imageKey }) =>
-          imageKey ? [imageKey] : [],
+          imageKey ? [imageKey] : []
         ),
       };
     });

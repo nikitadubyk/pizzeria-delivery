@@ -20,13 +20,13 @@ describe("category request validation", () => {
   it("casts valid category list query strings to numbers", async () => {
     assert.deepEqual(
       await categoryListQuerySchema.validate({ page: "2", limit: "25" }),
-      { page: 2, limit: 25 },
+      { page: 2, limit: 25 }
     );
   });
 
   it("rejects invalid category list pagination", async () => {
     await assert.rejects(
-      categoryListQuerySchema.validate({ page: "0", limit: "101" }),
+      categoryListQuerySchema.validate({ page: "0", limit: "101" })
     );
   });
 
@@ -38,7 +38,7 @@ describe("category request validation", () => {
         isPublished: true,
         restaurantId: "untrusted-restaurant-id",
       },
-      { stripUnknown: true },
+      { stripUnknown: true }
     );
 
     assert.deepEqual(result, {
@@ -51,7 +51,7 @@ describe("category request validation", () => {
   it("rejects a negative or fractional sort order", async () => {
     for (const sortOrder of [-1, 1.5]) {
       await assert.rejects(
-        createCategoryRequestSchema.validate({ name: "Пицца", sortOrder }),
+        createCategoryRequestSchema.validate({ name: "Пицца", sortOrder })
       );
     }
   });
@@ -63,7 +63,7 @@ describe("category request validation", () => {
   it("accepts a publication update", async () => {
     assert.deepEqual(
       await updateCategoryRequestSchema.validate({ isPublished: false }),
-      { isPublished: false },
+      { isPublished: false }
     );
   });
 
@@ -75,18 +75,16 @@ describe("category request validation", () => {
           name: "Подменённое название",
           restaurantId: "other-restaurant",
         },
-        { stripUnknown: true },
+        { stripUnknown: true }
       ),
-      { isPublished: false },
+      { isPublished: false }
     );
-    await assert.rejects(
-      updateCategoryVisibilityRequestSchema.validate({}),
-    );
+    await assert.rejects(updateCategoryVisibilityRequestSchema.validate({}));
   });
 
   it("requires a category id in route params", async () => {
     await assert.rejects(
-      categoryPathParamsSchema.validate({ categoryId: " " }),
+      categoryPathParamsSchema.validate({ categoryId: " " })
     );
   });
 });

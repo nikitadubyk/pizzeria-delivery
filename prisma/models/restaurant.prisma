@@ -18,4 +18,7 @@ model Restaurant {
   products        Product[]
   productVariants ProductVariant[]
   addons          Addon[]
+  ingredients     Ingredient[]
+  productRemovableIngredients ProductRemovableIngredient[]
+  productAddons              ProductAddon[]
 }

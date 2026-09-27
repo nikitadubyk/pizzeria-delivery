@@ -1,6 +1,7 @@
 import * as yup from "yup";
 
 import {
+  PRODUCT_ADDONS_MAX_COUNT,
   PRODUCT_BASE_COMPOSITION_MAX_LENGTH,
   PRODUCT_DESCRIPTION_MAX_LENGTH,
   PRODUCT_NAME_MAX_LENGTH,
@@ -29,12 +30,13 @@ export const createEmptyProductVariant = (): ProductVariantFormValues => ({
 
 export const getProductFormInitialValues = (
   product: ProductDto | null,
-  defaultCategoryId = "",
+  defaultCategoryId = ""
 ): ProductFormValues => ({
   categoryId: product?.categoryId ?? defaultCategoryId,
   name: product?.name ?? "",
   description: product?.description ?? "",
   baseComposition: product?.baseComposition ?? "",
+  addonIds: product?.addons.map(({ addonId }) => addonId) ?? [],
   sortOrder: product?.sortOrder ?? 0,
   isPublished: product?.isPublished ?? false,
   image: null,
@@ -50,12 +52,13 @@ export const getProductFormInitialValues = (
 });
 
 export const getProductRequestData = (
-  values: ProductFormValues,
+  values: ProductFormValues
 ): CreateProductRequest => ({
   categoryId: values.categoryId,
   name: values.name.trim(),
   description: values.description.trim() || null,
   baseComposition: values.baseComposition.trim() || null,
+  addonIds: values.addonIds,
   sortOrder: Number(values.sortOrder),
   isPublished: values.isPublished,
   variants: values.variants.map((variant) => ({
@@ -75,7 +78,7 @@ export const productFormValidationSchema: yup.ObjectSchema<ProductFormValues> =
       .trim()
       .max(
         PRODUCT_NAME_MAX_LENGTH,
-        `Название не должно превышать ${PRODUCT_NAME_MAX_LENGTH} символов`,
+        `Название не должно превышать ${PRODUCT_NAME_MAX_LENGTH} символов`
       )
       .required("Введите название продукта"),
     description: yup
@@ -83,7 +86,7 @@ export const productFormValidationSchema: yup.ObjectSchema<ProductFormValues> =
       .trim()
       .max(
         PRODUCT_DESCRIPTION_MAX_LENGTH,
-        `Описание не должно превышать ${PRODUCT_DESCRIPTION_MAX_LENGTH} символов`,
+        `Описание не должно превышать ${PRODUCT_DESCRIPTION_MAX_LENGTH} символов`
       )
       .ensure(),
     baseComposition: yup
@@ -91,9 +94,22 @@ export const productFormValidationSchema: yup.ObjectSchema<ProductFormValues> =
       .trim()
       .max(
         PRODUCT_BASE_COMPOSITION_MAX_LENGTH,
-        `Состав не должен превышать ${PRODUCT_BASE_COMPOSITION_MAX_LENGTH} символов`,
+        `Состав не должен превышать ${PRODUCT_BASE_COMPOSITION_MAX_LENGTH} символов`
       )
       .ensure(),
+    addonIds: yup
+      .array()
+      .of(yup.string().trim().required("Некорректная добавка"))
+      .max(
+        PRODUCT_ADDONS_MAX_COUNT,
+        `Нельзя выбрать больше ${PRODUCT_ADDONS_MAX_COUNT} добавок`
+      )
+      .test(
+        "unique-addons",
+        "Добавки не должны повторяться",
+        (addonIds) => !addonIds || new Set(addonIds).size === addonIds.length
+      )
+      .required("Укажите доступные добавки"),
     sortOrder: yup
       .number()
       .typeError("Введите целое число")
@@ -101,7 +117,7 @@ export const productFormValidationSchema: yup.ObjectSchema<ProductFormValues> =
       .min(0, "Порядок не должен быть отрицательным")
       .max(
         PRODUCT_SORT_ORDER_MAX,
-        `Порядок не должен превышать ${PRODUCT_SORT_ORDER_MAX}`,
+        `Порядок не должен превышать ${PRODUCT_SORT_ORDER_MAX}`
       )
       .required("Введите порядок продукта"),
     isPublished: yup.boolean().required("Укажите статус публикации"),
@@ -122,7 +138,7 @@ export const productFormValidationSchema: yup.ObjectSchema<ProductFormValues> =
             .trim()
             .max(
               PRODUCT_VARIANT_NAME_MAX_LENGTH,
-              `Название не должно превышать ${PRODUCT_VARIANT_NAME_MAX_LENGTH} символов`,
+              `Название не должно превышать ${PRODUCT_VARIANT_NAME_MAX_LENGTH} символов`
             )
             .ensure(),
           price: yup
@@ -131,7 +147,7 @@ export const productFormValidationSchema: yup.ObjectSchema<ProductFormValues> =
             .min(0, "Цена не должна быть отрицательной")
             .max(
               PRODUCT_VARIANT_PRICE_MAX_RUBLES,
-              `Цена не должна превышать ${PRODUCT_VARIANT_PRICE_MAX_RUBLES} ₽`,
+              `Цена не должна превышать ${PRODUCT_VARIANT_PRICE_MAX_RUBLES} ₽`
             )
             .required("Введите цену"),
           weight: yup
@@ -139,15 +155,15 @@ export const productFormValidationSchema: yup.ObjectSchema<ProductFormValues> =
             .trim()
             .max(
               PRODUCT_VARIANT_WEIGHT_MAX_LENGTH,
-              `Вес или объём не должен превышать ${PRODUCT_VARIANT_WEIGHT_MAX_LENGTH} символов`,
+              `Вес или объём не должен превышать ${PRODUCT_VARIANT_WEIGHT_MAX_LENGTH} символов`
             )
             .ensure(),
           isAvailable: yup.boolean().required("Укажите доступность варианта"),
-        }),
+        })
       )
       .max(
         PRODUCT_VARIANTS_MAX_COUNT,
-        `Нельзя добавить больше ${PRODUCT_VARIANTS_MAX_COUNT} вариантов`,
+        `Нельзя добавить больше ${PRODUCT_VARIANTS_MAX_COUNT} вариантов`
       )
       .test(
         "named-multiple-variants",
@@ -155,7 +171,7 @@ export const productFormValidationSchema: yup.ObjectSchema<ProductFormValues> =
         (variants) =>
           !variants ||
           variants.length <= 1 ||
-          variants.every((variant) => Boolean(variant.name.trim())),
+          variants.every((variant) => Boolean(variant.name.trim()))
       )
       .required("Укажите варианты продукта"),
   });

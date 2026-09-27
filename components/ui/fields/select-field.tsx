@@ -29,7 +29,7 @@ export const SelectField = ({
 
   const handleChange: NonNullable<AppSelectProps["onChange"]> = (
     value,
-    option,
+    option
   ) => {
     void helpers.setValue(value);
     onChange?.(value, option);

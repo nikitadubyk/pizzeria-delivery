@@ -12,7 +12,7 @@ const nameSchema = yup
   .trim()
   .max(
     CATEGORY_NAME_MAX_LENGTH,
-    `Название категории не должно превышать ${CATEGORY_NAME_MAX_LENGTH} символов`,
+    `Название категории не должно превышать ${CATEGORY_NAME_MAX_LENGTH} символов`
   )
   .required("Название категории обязательно");
 
@@ -22,7 +22,7 @@ const sortOrderSchema = yup
   .min(0, "Порядок категории не должен быть отрицательным")
   .max(
     CATEGORY_SORT_ORDER_MAX,
-    `Порядок категории не должен превышать ${CATEGORY_SORT_ORDER_MAX}`,
+    `Порядок категории не должен превышать ${CATEGORY_SORT_ORDER_MAX}`
   );
 
 const isPublishedSchema = yup.boolean();
@@ -61,5 +61,5 @@ export const updateCategoryRequestSchema = yup
     (value) =>
       value.name !== undefined ||
       value.sortOrder !== undefined ||
-      value.isPublished !== undefined,
+      value.isPublished !== undefined
   );

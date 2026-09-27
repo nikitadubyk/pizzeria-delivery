@@ -16,7 +16,7 @@ const nameSchema = yup
   .trim()
   .max(
     USER_NAME_MAX_LENGTH,
-    `Имя не должно превышать ${USER_NAME_MAX_LENGTH} символов`,
+    `Имя не должно превышать ${USER_NAME_MAX_LENGTH} символов`
   )
   .required("Имя пользователя обязательно");
 
@@ -24,11 +24,11 @@ const passwordSchema = yup
   .string()
   .min(
     MIN_PASSWORD_LENGTH,
-    `Пароль должен содержать не менее ${MIN_PASSWORD_LENGTH} символов`,
+    `Пароль должен содержать не менее ${MIN_PASSWORD_LENGTH} символов`
   )
   .max(
     MAX_PASSWORD_LENGTH,
-    `Пароль не должен превышать ${MAX_PASSWORD_LENGTH} символов`,
+    `Пароль не должен превышать ${MAX_PASSWORD_LENGTH} символов`
   )
   .required("Пароль обязателен");
 
@@ -43,7 +43,7 @@ export const superAdminLoginRequestSchema = yup.object({
     .string()
     .min(
       MIN_PASSWORD_LENGTH,
-      `Пароль должен содержать не менее ${MIN_PASSWORD_LENGTH} символов`,
+      `Пароль должен содержать не менее ${MIN_PASSWORD_LENGTH} символов`
     )
     .required("Введите пароль"),
 });
@@ -86,7 +86,7 @@ const optionalEmailSchema = yup
   .email("Введите корректный email")
   .max(
     USER_EMAIL_MAX_LENGTH,
-    `Email не должен превышать ${USER_EMAIL_MAX_LENGTH} символов`,
+    `Email не должен превышать ${USER_EMAIL_MAX_LENGTH} символов`
   )
   .optional();
 
@@ -125,5 +125,5 @@ export const updateRestaurantUserRequestSchema = yup
       value.email !== undefined ||
       value.password !== undefined ||
       value.role !== undefined ||
-      value.isActive !== undefined,
+      value.isActive !== undefined
   );

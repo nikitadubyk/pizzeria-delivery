@@ -25,7 +25,7 @@ export const userRoleOptions: {
 ];
 
 export const getUserFormValidationSchema = (
-  isEditing: boolean,
+  isEditing: boolean
 ): yup.ObjectSchema<UserFormValues> =>
   yup.object({
     restaurantId: yup.string().trim().required("Выберите ресторан"),
@@ -34,7 +34,7 @@ export const getUserFormValidationSchema = (
       .trim()
       .max(
         USER_NAME_MAX_LENGTH,
-        `Имя не должно превышать ${USER_NAME_MAX_LENGTH} символов`,
+        `Имя не должно превышать ${USER_NAME_MAX_LENGTH} символов`
       )
       .required("Введите имя пользователя"),
     phone: yup
@@ -48,14 +48,14 @@ export const getUserFormValidationSchema = (
       .email("Введите корректный email")
       .max(
         USER_EMAIL_MAX_LENGTH,
-        `Email не должен превышать ${USER_EMAIL_MAX_LENGTH} символов`,
+        `Email не должен превышать ${USER_EMAIL_MAX_LENGTH} символов`
       )
       .ensure(),
     password: yup
       .string()
       .max(
         MAX_PASSWORD_LENGTH,
-        `Пароль не должен превышать ${MAX_PASSWORD_LENGTH} символов`,
+        `Пароль не должен превышать ${MAX_PASSWORD_LENGTH} символов`
       )
       .test(
         "password-required-or-long-enough",
@@ -63,7 +63,7 @@ export const getUserFormValidationSchema = (
         (value) =>
           isEditing
             ? !value || value.length >= MIN_PASSWORD_LENGTH
-            : Boolean(value && value.length >= MIN_PASSWORD_LENGTH),
+            : Boolean(value && value.length >= MIN_PASSWORD_LENGTH)
       )
       .ensure(),
     role: yup
@@ -75,7 +75,7 @@ export const getUserFormValidationSchema = (
 
 export const getUserFormInitialValues = (
   user: RestaurantUserDto | null,
-  restaurants: readonly RestaurantDto[],
+  restaurants: readonly RestaurantDto[]
 ): UserFormValues => ({
   restaurantId: user?.restaurantId ?? restaurants[0]?.id ?? "",
   name: user?.name ?? "",
@@ -88,7 +88,7 @@ export const getUserFormInitialValues = (
 
 export const getRestaurantOptions = (
   user: RestaurantUserDto | null,
-  restaurants: readonly RestaurantDto[],
+  restaurants: readonly RestaurantDto[]
 ) => [
   ...restaurants.map((restaurant) => ({
     label: restaurant.name,

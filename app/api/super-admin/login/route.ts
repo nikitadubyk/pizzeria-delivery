@@ -8,7 +8,7 @@ export const POST = async (request: Request) => {
   try {
     const input = await validateRequestBody<SuperAdminLoginRequest>(
       request,
-      superAdminLoginRequestSchema,
+      superAdminLoginRequestSchema
     );
     const result = await userService.login(input);
 

@@ -3,7 +3,10 @@
 import type { ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { IconBuildingStore, IconUsers } from "@tabler/icons-react";
-import { AdminShell as SharedAdminShell, type AdminMenuItem } from "@/components/admin/admin-shell";
+import {
+  AdminShell as SharedAdminShell,
+  type AdminMenuItem,
+} from "@/components/admin/admin-shell";
 import { showSuccessNotification } from "@/components/ui/notification";
 import { ROUTES } from "@/config/routes";
 import { advanceAuthSessionRevision } from "@/store/api/axios";
@@ -12,7 +15,11 @@ import { useAppDispatch } from "@/store/hooks";
 import { clearAuthUser } from "@/store/slices/auth.slice";
 
 const menuItems: AdminMenuItem[] = [
-  { href: ROUTES.SUPER_ADMIN.RESTAURANTS, icon: IconBuildingStore, label: "Рестораны" },
+  {
+    href: ROUTES.SUPER_ADMIN.RESTAURANTS,
+    icon: IconBuildingStore,
+    label: "Рестораны",
+  },
   { href: ROUTES.SUPER_ADMIN.USERS, icon: IconUsers, label: "Пользователи" },
 ];
 

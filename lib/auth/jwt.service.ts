@@ -11,7 +11,11 @@ type TokenOptions = {
 export class JwtService {
   constructor(private readonly options: TokenOptions) {}
 
-  sign(subject: string, claims: JWTPayload, expiresIn: string): Promise<string> {
+  sign(
+    subject: string,
+    claims: JWTPayload,
+    expiresIn: string
+  ): Promise<string> {
     const token = new SignJWT(claims)
       .setProtectedHeader({ alg: "HS256" })
       .setSubject(subject)
@@ -25,11 +29,15 @@ export class JwtService {
   }
 
   async verify(token: string): Promise<JWTPayload> {
-    const { payload } = await jwtVerify(token, getTokenSecret(this.options.secret), {
-      algorithms: ["HS256"],
-      issuer: this.options.issuer,
-      audience: this.options.audience,
-    });
+    const { payload } = await jwtVerify(
+      token,
+      getTokenSecret(this.options.secret),
+      {
+        algorithms: ["HS256"],
+        issuer: this.options.issuer,
+        audience: this.options.audience,
+      }
+    );
     return payload;
   }
 }

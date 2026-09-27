@@ -44,9 +44,9 @@ export function ProductDetailsPage({ productId }: ProductDetailsPageProps) {
   };
 
   return (
-    <section className="grid content-start gap-lg pb-lg">
-      <div className="flex flex-wrap items-end justify-between gap-md">
-        <div className="grid gap-xs">
+    <section className="gap-lg pb-lg grid content-start">
+      <div className="gap-md flex flex-wrap items-end justify-between">
+        <div className="gap-xs grid">
           <Typography muted variant="eyebrow">
             Управление меню
           </Typography>
@@ -62,7 +62,7 @@ export function ProductDetailsPage({ productId }: ProductDetailsPageProps) {
             </Typography>
           ) : null}
         </div>
-        <div className="flex w-full flex-wrap gap-sm sm:w-auto">
+        <div className="gap-sm flex w-full flex-wrap sm:w-auto">
           <Button
             component={Link}
             href={ROUTES.ADMIN.MENU}

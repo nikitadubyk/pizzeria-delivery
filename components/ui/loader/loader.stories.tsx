@@ -9,8 +9,8 @@ const meta = {
     visible: true,
   },
   render: (args) => (
-    <div className="relative h-48 overflow-hidden rounded-xl border border-border bg-surface p-6">
-      <p className="m-0 text-text">Содержимое загружается...</p>
+    <div className="border-border bg-surface relative h-48 overflow-hidden rounded-xl border p-6">
+      <p className="text-text m-0">Содержимое загружается...</p>
       <Loader {...args} fullscreen={false} />
     </div>
   ),

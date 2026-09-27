@@ -26,7 +26,7 @@ function ControlledPhoneInputExample() {
         onChange={setPhone}
         value={phone}
       />
-      <p className="text-sm leading-snug text-muted">
+      <p className="text-muted text-sm leading-snug">
         Текущее значение: {phone ?? "не указано"}
       </p>
     </div>

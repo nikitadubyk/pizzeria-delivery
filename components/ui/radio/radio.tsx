@@ -10,28 +10,28 @@ import type { ReactNode } from "react";
 
 const radioRootClassName = cn(
   "group/radio cursor-pointer hover:text-primary-active hover:[&_.mantine-Radio-description]:!text-primary-active hover:[&_.mantine-Radio-label]:!text-primary-active hover:[&_.mantine-Radio-radio]:!border-primary-hover hover:[&_.mantine-Radio-radio]:!bg-primary-soft [&:hover:has(input:checked:not(:disabled))_.mantine-Radio-radio]:!border-primary [&:hover:has(input:checked:not(:disabled))_.mantine-Radio-radio]:!bg-primary has-[input:disabled]:cursor-not-allowed has-[input:disabled]:hover:text-text has-[input:disabled]:hover:[&_.mantine-Radio-description]:!text-muted has-[input:disabled]:hover:[&_.mantine-Radio-label]:!text-text has-[input:disabled]:hover:[&_.mantine-Radio-radio]:!border-[var(--mantine-color-disabled-border)] has-[input:disabled]:hover:[&_.mantine-Radio-radio]:!bg-[var(--mantine-color-disabled)]",
-  interactiveTransitionClassName,
+  interactiveTransitionClassName
 );
 const radioSlotClassNames = {
   body: "!cursor-pointer group-has-[input:disabled]/radio:!cursor-not-allowed",
   description: cn(
     "!cursor-pointer select-none !text-muted group-hover/radio:!text-primary-active group-has-[input:disabled]/radio:!cursor-not-allowed group-has-[input:disabled]/radio:!text-muted group-has-[input:disabled]/radio:group-hover/radio:!text-muted",
-    interactiveTransitionClassName,
+    interactiveTransitionClassName
   ),
   label: cn(
     "!cursor-pointer select-none group-hover/radio:!text-primary-active group-has-[input:disabled]/radio:!cursor-not-allowed group-has-[input:disabled]/radio:group-hover/radio:!text-text",
-    interactiveTransitionClassName,
+    interactiveTransitionClassName
   ),
   labelWrapper:
     "!cursor-pointer group-has-[input:disabled]/radio:!cursor-not-allowed",
   radio: cn(
     "!cursor-pointer hover:!border-primary-hover hover:!bg-primary-soft checked:hover:!border-primary checked:hover:!bg-primary [&:checked:hover:not(:disabled)]:!border-primary [&:checked:hover:not(:disabled)]:!bg-primary disabled:!cursor-not-allowed disabled:hover:!border-[var(--mantine-color-disabled-border)] disabled:hover:!bg-[var(--mantine-color-disabled)] disabled:checked:hover:!border-[var(--mantine-color-disabled-border)] disabled:checked:hover:!bg-[var(--mantine-color-disabled)]",
-    interactiveTransitionClassName,
+    interactiveTransitionClassName
   ),
 };
 const radioCardClassName = cn(
   "group/card relative flex w-full cursor-pointer items-center rounded-[14px] border !border-border !bg-background text-left text-text !shadow-[0_1px_3px_rgb(36_25_17_/_10%)] hover:!border-primary-hover hover:!bg-primary-soft hover:!text-primary-active active:!border-primary-active focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-active data-[checked]:!border-primary data-[checked]:!bg-primary-soft data-[checked]:!text-primary-active aria-[checked=true]:!border-primary aria-[checked=true]:!bg-primary-soft aria-[checked=true]:!text-primary-active [&:has(input:checked)]:!border-primary [&:has(input:checked)]:!bg-primary-soft [&:has(input:checked)]:!text-primary-active disabled:!cursor-not-allowed disabled:opacity-60 disabled:hover:!border-border disabled:hover:!bg-background disabled:hover:!text-text disabled:[&_*]:!cursor-not-allowed data-[disabled]:!cursor-not-allowed data-[disabled]:opacity-60 data-[disabled]:hover:!border-border data-[disabled]:hover:!bg-background data-[disabled]:hover:!text-text data-[disabled]:[&_*]:!cursor-not-allowed aria-disabled:!cursor-not-allowed aria-disabled:opacity-60 aria-disabled:hover:!border-border aria-disabled:hover:!bg-background aria-disabled:hover:!text-text aria-disabled:[&_*]:!cursor-not-allowed",
-  interactiveTransitionClassName,
+  interactiveTransitionClassName
 );
 const radioCardPaddingClassNames = {
   compact: "!min-h-[44px] !px-4 !py-2",
@@ -48,12 +48,12 @@ export function Radio({ className, classNames, ...props }: RadioProps) {
           body: cn(radioSlotClassNames.body, classNames?.body),
           description: cn(
             radioSlotClassNames.description,
-            classNames?.description,
+            classNames?.description
           ),
           label: cn(radioSlotClassNames.label, classNames?.label),
           labelWrapper: cn(
             radioSlotClassNames.labelWrapper,
-            classNames?.labelWrapper,
+            classNames?.labelWrapper
           ),
           radio: cn(radioSlotClassNames.radio, classNames?.radio),
         };
@@ -101,21 +101,21 @@ export function RadioGroup({
               withBorder={false}
               className={cn(
                 radioCardClassName,
-                radioCardPaddingClassNames[cardPadding],
+                radioCardPaddingClassNames[cardPadding]
               )}
             >
-              <span className="flex w-full min-w-0 items-center gap-sm">
+              <span className="gap-sm flex w-full min-w-0 items-center">
                 <MantineRadio.Indicator
                   className={cn(
-                    "shrink-0 group-hover/card:[&:not([data-checked])]:!border-primary-hover group-hover/card:[&:not([data-checked])]:!bg-primary-soft group-data-[disabled]/card:[&:not([data-checked])]:!border-[var(--mantine-color-disabled-border)] group-data-[disabled]/card:[&:not([data-checked])]:!bg-[var(--mantine-color-disabled)] group-data-[disabled]/card:group-hover/card:[&:not([data-checked])]:!border-[var(--mantine-color-disabled-border)] group-data-[disabled]/card:group-hover/card:[&:not([data-checked])]:!bg-[var(--mantine-color-disabled)]",
-                    interactiveTransitionClassName,
+                    "group-hover/card:[&:not([data-checked])]:!border-primary-hover group-hover/card:[&:not([data-checked])]:!bg-primary-soft shrink-0 group-data-[disabled]/card:[&:not([data-checked])]:!border-[var(--mantine-color-disabled-border)] group-data-[disabled]/card:[&:not([data-checked])]:!bg-[var(--mantine-color-disabled)] group-data-[disabled]/card:group-hover/card:[&:not([data-checked])]:!border-[var(--mantine-color-disabled-border)] group-data-[disabled]/card:group-hover/card:[&:not([data-checked])]:!bg-[var(--mantine-color-disabled)]",
+                    interactiveTransitionClassName
                   )}
                 />
                 <span className="grid min-w-0 gap-0.5">
                   <span
                     className={cn(
-                      "select-none font-extrabold group-hover/card:text-primary-active group-disabled/card:group-hover/card:text-text",
-                      interactiveTransitionClassName,
+                      "group-hover/card:text-primary-active group-disabled/card:group-hover/card:text-text font-extrabold select-none",
+                      interactiveTransitionClassName
                     )}
                   >
                     {option.label}
@@ -123,8 +123,8 @@ export function RadioGroup({
                   {option.description ? (
                     <span
                       className={cn(
-                        "select-none text-sm text-muted group-hover/card:text-primary-active group-disabled/card:group-hover/card:text-muted",
-                        interactiveTransitionClassName,
+                        "text-muted group-hover/card:text-primary-active group-disabled/card:group-hover/card:text-muted text-sm select-none",
+                        interactiveTransitionClassName
                       )}
                     >
                       {option.description}

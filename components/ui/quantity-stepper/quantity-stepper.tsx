@@ -79,19 +79,19 @@ export function QuantityStepper({
   return (
     <div
       className={cn(
-        "inline-grid w-max shrink-0 grid-cols-[auto_auto_auto] items-center overflow-hidden rounded-full border border-border bg-background text-text shadow-sm",
+        "border-border bg-background text-text inline-grid w-max shrink-0 grid-cols-[auto_auto_auto] items-center overflow-hidden rounded-full border shadow-sm",
         rootSizeClassNames[size],
         disabled && "opacity-60",
-        className,
+        className
       )}
       {...props}
     >
       <button
         aria-label={decrementLabel}
         className={cn(
-          "grid place-items-center border-r border-border text-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary-active enabled:cursor-pointer enabled:hover:bg-primary-soft enabled:hover:text-primary-active enabled:active:bg-primary enabled:active:text-primary-contrast disabled:cursor-not-allowed",
+          "border-border text-muted focus-visible:outline-primary-active enabled:hover:bg-primary-soft enabled:hover:text-primary-active enabled:active:bg-primary enabled:active:text-primary-contrast grid place-items-center border-r focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] enabled:cursor-pointer disabled:cursor-not-allowed",
           buttonSizeClassNames[size],
-          interactiveMotionTransitionClassName,
+          interactiveMotionTransitionClassName
         )}
         disabled={!canDecrement}
         onClick={() => handleChange(normalizedValue - normalizedStep)}
@@ -103,8 +103,8 @@ export function QuantityStepper({
       <output
         aria-live="polite"
         className={cn(
-          "select-none text-center font-extrabold tabular-nums leading-none",
-          valueSizeClassNames[size],
+          "text-center leading-none font-extrabold tabular-nums select-none",
+          valueSizeClassNames[size]
         )}
       >
         {normalizedValue}
@@ -113,9 +113,9 @@ export function QuantityStepper({
       <button
         aria-label={incrementLabel}
         className={cn(
-          "grid place-items-center border-l border-border text-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary-active enabled:cursor-pointer enabled:hover:bg-primary-soft enabled:hover:text-primary-active enabled:active:bg-primary enabled:active:text-primary-contrast disabled:cursor-not-allowed",
+          "border-border text-muted focus-visible:outline-primary-active enabled:hover:bg-primary-soft enabled:hover:text-primary-active enabled:active:bg-primary enabled:active:text-primary-contrast grid place-items-center border-l focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] enabled:cursor-pointer disabled:cursor-not-allowed",
           buttonSizeClassNames[size],
-          interactiveMotionTransitionClassName,
+          interactiveMotionTransitionClassName
         )}
         disabled={!canIncrement}
         onClick={() => handleChange(normalizedValue + normalizedStep)}

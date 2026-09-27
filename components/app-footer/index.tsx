@@ -57,7 +57,7 @@ function Brand({
   return (
     <Link
       aria-label={`${name} — на главную`}
-      className="group inline-flex items-center gap-3 rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-4 focus-visible:ring-offset-secondary-active"
+      className="group focus-visible:ring-primary focus-visible:ring-offset-secondary-active inline-flex items-center gap-3 rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-offset-4"
       href="/"
     >
       <span
@@ -65,7 +65,7 @@ function Brand({
           "flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-[1.25rem] transition-transform duration-200 group-hover:scale-105 motion-reduce:transition-none",
           imageSrc
             ? "bg-transparent"
-            : "bg-primary text-primary-contrast shadow-[0_10px_30px_rgba(255,101,15,0.22)]",
+            : "bg-primary text-primary-contrast shadow-[0_10px_30px_rgba(255,101,15,0.22)]"
         )}
       >
         {imageSrc ? (
@@ -80,10 +80,10 @@ function Brand({
         )}
       </span>
       <span className="leading-none">
-        <span className="block text-xl font-extrabold uppercase tracking-[-0.04em] text-white">
+        <span className="block text-xl font-extrabold tracking-[-0.04em] text-white uppercase">
           {name}
         </span>
-        <span className="mt-1.5 block text-[11px] font-bold uppercase tracking-[0.14em] text-white/50">
+        <span className="mt-1.5 block text-[11px] font-bold tracking-[0.14em] text-white/50 uppercase">
           {caption}
         </span>
       </span>
@@ -93,7 +93,7 @@ function Brand({
 
 const footerLinkClassName = cn(
   "w-fit rounded-md text-sm font-bold leading-snug text-white/68 outline-none hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-4 focus-visible:ring-offset-secondary-active",
-  interactiveTransitionClassName,
+  interactiveTransitionClassName
 );
 
 function LinkColumn({ links }: { links: FooterLink[] }) {
@@ -121,10 +121,10 @@ function SalesPoint({ point }: { point: FooterSalesPoint }) {
         <IconMapPin aria-hidden="true" className="text-primary" size={18} />
         {point.name}
       </p>
-      <p className="mb-0 mt-2 text-sm font-bold text-white/70">
+      <p className="mt-2 mb-0 text-sm font-bold text-white/70">
         {point.address}
       </p>
-      <p className="mb-0 mt-2 flex items-center gap-2 text-xs font-medium text-white/48">
+      <p className="mt-2 mb-0 flex items-center gap-2 text-xs font-medium text-white/48">
         <IconClock aria-hidden="true" size={15} />
         {point.hours}
       </p>
@@ -133,7 +133,7 @@ function SalesPoint({ point }: { point: FooterSalesPoint }) {
           aria-label={`Позвонить в точку ${point.name}: ${point.phone}`}
           className={cn(
             footerLinkClassName,
-            "mt-2 inline-flex items-center gap-2 text-xs",
+            "mt-2 inline-flex items-center gap-2 text-xs"
           )}
           href={phoneHref}
         >
@@ -166,14 +166,14 @@ export function AppFooter({
   return (
     <footer
       className={cn(
-        "relative overflow-hidden bg-secondary-active text-white",
-        className,
+        "bg-secondary-active relative overflow-hidden text-white",
+        className
       )}
       {...props}
     >
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -right-32 -top-44 h-96 w-96 rounded-full bg-primary/10 blur-3xl"
+        className="bg-primary/10 pointer-events-none absolute -top-44 -right-32 h-96 w-96 rounded-full blur-3xl"
       />
       <PageContainer className="relative py-12 sm:py-14 lg:py-16">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-12 lg:gap-8">
@@ -184,7 +184,7 @@ export function AppFooter({
               imageSrc={brandImageSrc}
               name={brandName}
             />
-            <p className="mb-0 mt-5 max-w-[18rem] text-sm font-medium leading-relaxed text-white/58">
+            <p className="mt-5 mb-0 max-w-[18rem] text-sm leading-relaxed font-medium text-white/58">
               {description}
             </p>
           </section>
@@ -194,13 +194,13 @@ export function AppFooter({
             className="grid grid-cols-2 gap-6 sm:gap-8 lg:col-span-4"
           >
             <div>
-              <h2 className="mb-4 mt-0 text-xs font-extrabold uppercase tracking-[0.14em] text-white/38">
+              <h2 className="mt-0 mb-4 text-xs font-extrabold tracking-[0.14em] text-white/38 uppercase">
                 Навигация
               </h2>
               <LinkColumn links={primaryLinks} />
             </div>
             <div>
-              <h2 className="mb-4 mt-0 text-xs font-extrabold uppercase tracking-[0.14em] text-white/38">
+              <h2 className="mt-0 mb-4 text-xs font-extrabold tracking-[0.14em] text-white/38 uppercase">
                 Документы
               </h2>
               <LinkColumn links={legalLinks} />
@@ -213,11 +213,11 @@ export function AppFooter({
           >
             <div className="mb-4 flex items-end justify-between gap-4">
               <div>
-                <p className="m-0 text-xs font-extrabold uppercase tracking-[0.14em] text-primary">
+                <p className="text-primary m-0 text-xs font-extrabold tracking-[0.14em] uppercase">
                   Всегда рядом
                 </p>
                 <h2
-                  className="mb-0 mt-1 text-xl font-extrabold text-white"
+                  className="mt-1 mb-0 text-xl font-extrabold text-white"
                   id="sales-points-title"
                 >
                   Точки продаж
@@ -244,8 +244,8 @@ export function AppFooter({
           </p>
           <a
             className={cn(
-              "group inline-flex w-fit items-center gap-2 rounded-full border border-dashed border-white/18 px-3 py-2 text-white/52 outline-none hover:border-primary/50 hover:text-white focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-4 focus-visible:ring-offset-secondary-active",
-              interactiveTransitionClassName,
+              "group hover:border-primary/50 focus-visible:ring-primary focus-visible:ring-offset-secondary-active inline-flex w-fit items-center gap-2 rounded-full border border-dashed border-white/18 px-3 py-2 text-white/52 outline-none hover:text-white focus-visible:ring-2 focus-visible:ring-offset-4",
+              interactiveTransitionClassName
             )}
             href={developerHref}
             rel="noreferrer"

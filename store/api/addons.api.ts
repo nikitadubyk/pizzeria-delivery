@@ -1,6 +1,7 @@
 import type {
   AddonDto,
   AddonListResponse,
+  AddonOptionDto,
   AddonPathParams,
   CreateAddonRequest,
   ResolvedSearchPaginationQuery,
@@ -15,11 +16,25 @@ const ADDON_TAG = "Addon" as const;
 export const addonsApi = restaurantAuthApi.injectEndpoints({
   endpoints: (builder) => ({
     getAddons: builder.query<AddonListResponse, ResolvedSearchPaginationQuery>({
-      query: (params) => ({ url: URL.RESTAURANT_ADDONS, method: "GET", params }),
+      query: (params) => ({
+        url: URL.RESTAURANT_ADDONS,
+        method: "GET",
+        params,
+      }),
+      providesTags: [ADDON_TAG],
+    }),
+    getAddonOptions: builder.query<AddonOptionDto[], void>({
+      query: () => ({
+        url: URL.RESTAURANT_ADDON_OPTIONS,
+        method: "GET",
+      }),
       providesTags: [ADDON_TAG],
     }),
     getAddon: builder.query<AddonDto, AddonPathParams>({
-      query: ({ addonId }) => ({ url: API_ROUTES.restaurantAddon(addonId), method: "GET" }),
+      query: ({ addonId }) => ({
+        url: API_ROUTES.restaurantAddon(addonId),
+        method: "GET",
+      }),
       providesTags: [ADDON_TAG],
     }),
     createAddon: builder.mutation<AddonDto, CreateAddonRequest>({
@@ -27,15 +42,29 @@ export const addonsApi = restaurantAuthApi.injectEndpoints({
       invalidatesTags: [ADDON_TAG],
     }),
     updateAddon: builder.mutation<AddonDto, UpdateAddonApiRequest>({
-      query: ({ addonId, data }) => ({ url: API_ROUTES.restaurantAddon(addonId), method: "PATCH", data }),
+      query: ({ addonId, data }) => ({
+        url: API_ROUTES.restaurantAddon(addonId),
+        method: "PATCH",
+        data,
+      }),
       invalidatesTags: [ADDON_TAG],
     }),
-    updateAddonAvailability: builder.mutation<AddonDto, UpdateAddonAvailabilityApiRequest>({
-      query: ({ addonId, data }) => ({ url: API_ROUTES.restaurantAddonAvailability(addonId), method: "PATCH", data }),
+    updateAddonAvailability: builder.mutation<
+      AddonDto,
+      UpdateAddonAvailabilityApiRequest
+    >({
+      query: ({ addonId, data }) => ({
+        url: API_ROUTES.restaurantAddonAvailability(addonId),
+        method: "PATCH",
+        data,
+      }),
       invalidatesTags: [ADDON_TAG],
     }),
     deleteAddon: builder.mutation<AddonDto, AddonPathParams>({
-      query: ({ addonId }) => ({ url: API_ROUTES.restaurantAddon(addonId), method: "DELETE" }),
+      query: ({ addonId }) => ({
+        url: API_ROUTES.restaurantAddon(addonId),
+        method: "DELETE",
+      }),
       invalidatesTags: [ADDON_TAG],
     }),
   }),
@@ -43,6 +72,7 @@ export const addonsApi = restaurantAuthApi.injectEndpoints({
 
 export const {
   useGetAddonsQuery,
+  useGetAddonOptionsQuery,
   useGetAddonQuery,
   useCreateAddonMutation,
   useUpdateAddonMutation,

@@ -30,7 +30,7 @@ const localStorageMock: Storage = {
 const originalWindow = Object.getOwnPropertyDescriptor(globalThis, "window");
 const originalLocalStorage = Object.getOwnPropertyDescriptor(
   globalThis,
-  "localStorage",
+  "localStorage"
 );
 
 describe("auth request session isolation", () => {
@@ -81,8 +81,8 @@ describe("auth request session isolation", () => {
                   headers: {},
                   status: 401,
                   statusText: "Unauthorized",
-                },
-              ),
+                }
+              )
             );
         }),
     });

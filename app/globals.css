@@ -1,8 +1,8 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
-  --app-font-sans: "Roboto Variable", Arial, Helvetica, sans-serif;
-  --app-font-mono: "Roboto Variable", Arial, Helvetica, sans-serif;
+  --app-font-sans: 'Roboto Variable', Arial, Helvetica, sans-serif;
+  --app-font-mono: 'Roboto Variable', Arial, Helvetica, sans-serif;
   --app-text-xs: 0.75rem;
   --app-text-sm: 0.875rem;
   --app-text-md: 1rem;

@@ -14,7 +14,7 @@ describe("ApiResponse", () => {
   it("uses the status and message from ApiError", async () => {
     const response = ApiResponse.fromError(
       new ApiError("Доступ запрещён", HttpStatus.FORBIDDEN),
-      "Неизвестная ошибка",
+      "Неизвестная ошибка"
     );
 
     assert.equal(response.status, HttpStatus.FORBIDDEN);
@@ -24,7 +24,7 @@ describe("ApiResponse", () => {
   it("returns a bad request for invalid JSON", async () => {
     const response = ApiResponse.fromError(
       new SyntaxError("Invalid JSON"),
-      "Неизвестная ошибка",
+      "Неизвестная ошибка"
     );
 
     assert.equal(response.status, HttpStatus.BAD_REQUEST);

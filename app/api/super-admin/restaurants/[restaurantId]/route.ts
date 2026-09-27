@@ -22,7 +22,7 @@ type RestaurantRouteContext = {
 
 export const GET = async (
   request: Request,
-  { params }: RestaurantRouteContext,
+  { params }: RestaurantRouteContext
 ) => {
   try {
     const [superAdminId, { restaurantId }] = await Promise.all([
@@ -30,13 +30,13 @@ export const GET = async (
       params.then((value) =>
         validateRouteParams<RestaurantPathParams>(
           value,
-          restaurantPathParamsSchema,
-        ),
+          restaurantPathParamsSchema
+        )
       ),
     ]);
     const restaurant = await restaurantService.getById(
       superAdminId,
-      restaurantId,
+      restaurantId
     );
 
     return ApiResponse.success<RestaurantDto>(toRestaurantDto(restaurant));
@@ -47,7 +47,7 @@ export const GET = async (
 
 export const PATCH = async (
   request: Request,
-  { params }: RestaurantRouteContext,
+  { params }: RestaurantRouteContext
 ) => {
   try {
     const [superAdminId, { restaurantId }, input] = await Promise.all([
@@ -55,18 +55,18 @@ export const PATCH = async (
       params.then((value) =>
         validateRouteParams<RestaurantPathParams>(
           value,
-          restaurantPathParamsSchema,
-        ),
+          restaurantPathParamsSchema
+        )
       ),
       validateRequestBody<UpdateRestaurantRequest>(
         request,
-        updateRestaurantRequestSchema,
+        updateRestaurantRequestSchema
       ),
     ]);
     const restaurant = await restaurantService.update(
       superAdminId,
       restaurantId,
-      input,
+      input
     );
 
     return ApiResponse.success<RestaurantDto>(toRestaurantDto(restaurant));
@@ -77,7 +77,7 @@ export const PATCH = async (
 
 export const DELETE = async (
   request: Request,
-  { params }: RestaurantRouteContext,
+  { params }: RestaurantRouteContext
 ) => {
   try {
     const [superAdminId, { restaurantId }] = await Promise.all([
@@ -85,13 +85,13 @@ export const DELETE = async (
       params.then((value) =>
         validateRouteParams<RestaurantPathParams>(
           value,
-          restaurantPathParamsSchema,
-        ),
+          restaurantPathParamsSchema
+        )
       ),
     ]);
     const restaurant = await restaurantService.delete(
       superAdminId,
-      restaurantId,
+      restaurantId
     );
 
     return ApiResponse.success<RestaurantDto>(toRestaurantDto(restaurant));

@@ -15,6 +15,11 @@ export type AddonDto = {
   updatedAt: string;
 };
 
+export type AddonOptionDto = Pick<
+  AddonDto,
+  "id" | "name" | "price" | "isAvailable"
+>;
+
 export type AddonPathParams = { addonId: string };
 export type AddonListQuery = SearchPaginationQuery;
 export type AddonListResponse = PaginatedResponse<AddonDto>;

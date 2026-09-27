@@ -14,25 +14,25 @@ type ProductImageRouteContext = {
 
 export const DELETE = async (
   request: Request,
-  { params }: ProductImageRouteContext,
+  { params }: ProductImageRouteContext
 ) => {
   try {
     const [identity, { productId }] = await Promise.all([
       requireRestaurantPermission(request, RESTAURANT_PERMISSION.MENU_MANAGE),
       params.then((value) =>
-        validateRouteParams<ProductPathParams>(value, productPathParamsSchema),
+        validateRouteParams<ProductPathParams>(value, productPathParamsSchema)
       ),
     ]);
     const product = await productService.removeImage(
       identity.restaurant.id,
-      productId,
+      productId
     );
 
     return ApiResponse.success<ProductDto>(toProductDto(product));
   } catch (error) {
     return ApiResponse.fromError(
       error,
-      "Не удалось удалить изображение продукта",
+      "Не удалось удалить изображение продукта"
     );
   }
 };

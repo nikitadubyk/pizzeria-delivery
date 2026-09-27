@@ -68,7 +68,7 @@ export const categoriesApi = restaurantAuthApi.injectEndpoints({
       }),
       onQueryStarted: async (
         { categoryId, data },
-        { dispatch, getState, queryFulfilled },
+        { dispatch, getState, queryFulfilled }
       ) => {
         const listPatches = categoriesApi.util
           .selectCachedArgsForQuery(getState(), "getCategories")
@@ -79,12 +79,12 @@ export const categoriesApi = restaurantAuthApi.injectEndpoints({
                 query,
                 (draft) => {
                   const category = draft.items.find(
-                    (item) => item.id === categoryId,
+                    (item) => item.id === categoryId
                   );
                   if (category) category.isPublished = data.isPublished;
-                },
-              ),
-            ),
+                }
+              )
+            )
           );
         const categoryPatch = dispatch(
           categoriesApi.util.updateQueryData(
@@ -92,8 +92,8 @@ export const categoriesApi = restaurantAuthApi.injectEndpoints({
             { categoryId },
             (draft) => {
               draft.isPublished = data.isPublished;
-            },
-          ),
+            }
+          )
         );
 
         try {

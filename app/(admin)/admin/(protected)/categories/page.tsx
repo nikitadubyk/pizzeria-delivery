@@ -49,24 +49,22 @@ function CategoriesPage() {
   const [page, setPage] = useSearchPagination(search);
   const [formOpened, setFormOpened] = useState(false);
   const [editingCategory, setEditingCategory] = useState<CategoryDto | null>(
-    null,
+    null
   );
   const [detailsCategoryId, setDetailsCategoryId] = useState<string | null>(
-    null,
+    null
   );
   const [detailsOpened, setDetailsOpened] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState<CategoryDto | null>(
-    null,
+    null
   );
   const [deleteDialogOpened, setDeleteDialogOpened] = useState(false);
   const [deleteCategory, { isLoading: isDeleting }] =
     useDeleteCategoryMutation();
   const canManage = useRestaurantPermission(P.MENU_MANAGE);
   const canManageVisibility = useRestaurantPermission(P.STOP_LIST_MANAGE);
-  const [
-    updateCategoryVisibility,
-    { isLoading: isUpdatingVisibility },
-  ] = useUpdateCategoryVisibilityMutation();
+  const [updateCategoryVisibility, { isLoading: isUpdatingVisibility }] =
+    useUpdateCategoryVisibilityMutation();
   const { data, isError, isFetching, isLoading, refetch } =
     useGetCategoriesQuery({
       page,
@@ -81,7 +79,7 @@ function CategoriesPage() {
     refetch: refetchDetails,
   } = useGetCategoryQuery(
     { categoryId: detailsCategoryId ?? "" },
-    { skip: detailsCategoryId === null },
+    { skip: detailsCategoryId === null }
   );
   const categories = data?.items ?? [];
   const total = data?.pagination.total ?? 0;
@@ -128,7 +126,7 @@ function CategoriesPage() {
   };
   const handleVisibilityChange = async (
     category: CategoryDto,
-    isPublished: boolean,
+    isPublished: boolean
   ) => {
     try {
       await updateCategoryVisibility({
@@ -150,7 +148,7 @@ function CategoriesPage() {
       header: "Название",
       mobileLayout: "primary",
       render: (category) => (
-        <span className="break-words font-extrabold">{category.name}</span>
+        <span className="font-extrabold break-words">{category.name}</span>
       ),
       width: 260,
     },
@@ -167,7 +165,7 @@ function CategoriesPage() {
       render: (category) =>
         canManageVisibility ? (
           <div
-            className="flex items-center gap-xs"
+            className="gap-xs flex items-center"
             onClick={(event) => event.stopPropagation()}
           >
             <Toggle
@@ -177,12 +175,12 @@ function CategoriesPage() {
               onChange={(event) =>
                 void handleVisibilityChange(
                   category,
-                  event.currentTarget.checked,
+                  event.currentTarget.checked
                 )
               }
               size="sm"
             />
-            <span className="whitespace-nowrap text-xs text-muted">
+            <span className="text-muted text-xs whitespace-nowrap">
               {category.isPublished ? "В меню" : "Скрыта"}
             </span>
           </div>
@@ -213,7 +211,7 @@ function CategoriesPage() {
             mobileLayout: "full" as const,
             render: (category: CategoryDto) => (
               <div
-                className="grid w-full grid-cols-1 gap-xs md:flex md:w-auto md:justify-end"
+                className="gap-xs grid w-full grid-cols-1 md:flex md:w-auto md:justify-end"
                 onClick={(event) => event.stopPropagation()}
               >
                 <Button
@@ -226,11 +224,11 @@ function CategoriesPage() {
                   Изменить
                 </Button>
                 <Button
-                  className="w-full whitespace-nowrap !text-danger hover:!bg-danger-soft md:w-auto"
+                  className="w-full whitespace-nowrap md:w-auto"
                   leftSection={<IconTrash aria-hidden="true" size={16} />}
                   onClick={() => openDeleteDialog(category)}
                   size="xs"
-                  variant="ghost"
+                  variant="danger"
                 >
                   Удалить
                 </Button>
@@ -245,8 +243,8 @@ function CategoriesPage() {
   return (
     <RestaurantPermissionPage permission={P.MENU_READ}>
       <>
-        <section className="grid min-h-full grid-rows-[auto_auto] gap-lg md:h-full md:min-h-0 md:grid-rows-[auto_minmax(0,1fr)]">
-          <div className="flex flex-wrap items-end justify-between gap-md">
+        <section className="gap-lg grid min-h-full grid-rows-[auto_auto] md:h-full md:min-h-0 md:grid-rows-[auto_minmax(0,1fr)]">
+          <div className="gap-md flex flex-wrap items-end justify-between">
             <div>
               <Typography muted variant="eyebrow">
                 Управление меню
@@ -267,8 +265,8 @@ function CategoriesPage() {
             </RestaurantPermissionGate>
           </div>
 
-          <div className="flex min-h-0 min-w-0 flex-col gap-xs">
-            <div className="flex flex-col gap-xs sm:flex-row sm:items-center sm:justify-between">
+          <div className="gap-xs flex min-h-0 min-w-0 flex-col">
+            <div className="gap-xs flex flex-col sm:flex-row sm:items-center sm:justify-between">
               <SearchInput
                 className="sm:max-w-sm"
                 placeholder="Найти категорию..."
@@ -363,21 +361,21 @@ function CategoriesPage() {
             onRetry={refetchDetails}
           >
             {categoryDetails ? (
-              <dl className="m-0 grid grid-cols-1 gap-x-lg gap-y-md sm:grid-cols-2">
+              <dl className="gap-x-lg gap-y-md m-0 grid grid-cols-1 sm:grid-cols-2">
                 <div className="grid min-w-0 gap-1 sm:col-span-2">
-                  <dt className="text-xs font-bold text-muted">Название</dt>
-                  <dd className="m-0 break-words font-extrabold">
+                  <dt className="text-muted text-xs font-bold">Название</dt>
+                  <dd className="m-0 font-extrabold break-words">
                     {categoryDetails.name}
                   </dd>
                 </div>
                 <div className="grid min-w-0 gap-1">
-                  <dt className="text-xs font-bold text-muted">Порядок</dt>
+                  <dt className="text-muted text-xs font-bold">Порядок</dt>
                   <dd className="m-0 font-semibold">
                     {categoryDetails.sortOrder}
                   </dd>
                 </div>
                 <div className="grid min-w-0 gap-1">
-                  <dt className="text-xs font-bold text-muted">Публикация</dt>
+                  <dt className="text-muted text-xs font-bold">Публикация</dt>
                   <dd className="m-0">
                     <Badge
                       tone={categoryDetails.isPublished ? "success" : "neutral"}
@@ -387,15 +385,15 @@ function CategoriesPage() {
                   </dd>
                 </div>
                 <div className="grid min-w-0 gap-1 sm:col-span-2">
-                  <dt className="text-xs font-bold text-muted">ID категории</dt>
+                  <dt className="text-muted text-xs font-bold">ID категории</dt>
                   <dd className="m-0">
-                    <code className="break-all text-xs text-secondary">
+                    <code className="text-secondary text-xs break-all">
                       {categoryDetails.id}
                     </code>
                   </dd>
                 </div>
                 <div className="grid min-w-0 gap-1">
-                  <dt className="text-xs font-bold text-muted">Создана</dt>
+                  <dt className="text-muted text-xs font-bold">Создана</dt>
                   <dd className="m-0 font-semibold">
                     <time dateTime={categoryDetails.createdAt}>
                       {formatDateTime(categoryDetails.createdAt)}
@@ -403,7 +401,7 @@ function CategoriesPage() {
                   </dd>
                 </div>
                 <div className="grid min-w-0 gap-1">
-                  <dt className="text-xs font-bold text-muted">Обновлена</dt>
+                  <dt className="text-muted text-xs font-bold">Обновлена</dt>
                   <dd className="m-0 font-semibold">
                     <time dateTime={categoryDetails.updatedAt}>
                       {formatDateTime(categoryDetails.updatedAt)}
@@ -426,10 +424,10 @@ function CategoriesPage() {
                 Отменить
               </Button>
               <Button
-                className="!bg-danger hover:!bg-danger-hover"
                 leftSection={<IconTrash aria-hidden="true" size={18} />}
                 loading={isDeleting}
                 onClick={() => void handleDelete()}
+                variant="danger"
               >
                 Удалить категорию
               </Button>
@@ -447,7 +445,7 @@ function CategoriesPage() {
           tone="danger"
         >
           {categoryToDelete ? (
-            <div className="rounded-lg bg-danger-soft p-md text-sm">
+            <div className="bg-danger-soft p-md rounded-lg text-sm">
               <strong>{categoryToDelete.name}</strong>
             </div>
           ) : null}

@@ -47,10 +47,10 @@ export function SearchInput({
       window.history.replaceState(
         null,
         "",
-        createSearchUrl(pathname, serializedSearchParams, nextValue),
+        createSearchUrl(pathname, serializedSearchParams, nextValue)
       );
     },
-    [pathname, serializedSearchParams],
+    [pathname, serializedSearchParams]
   );
 
   useEffect(() => {
@@ -80,8 +80,8 @@ export function SearchInput({
   return (
     <div
       className={cn(
-        "flex w-full min-w-0 items-center gap-sm sm:min-w-80",
-        className,
+        "gap-sm flex w-full min-w-0 items-center sm:min-w-80",
+        className
       )}
     >
       <Input
@@ -100,7 +100,7 @@ export function SearchInput({
       {value ? (
         <button
           aria-label="Очистить поиск"
-          className={`grid size-11 shrink-0 cursor-pointer place-items-center rounded-xl border border-border bg-background text-muted hover:border-primary-hover hover:bg-primary-soft hover:text-primary-active focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-active active:scale-95 ${interactiveMotionTransitionClassName}`}
+          className={`border-border bg-background text-muted hover:border-primary-hover hover:bg-primary-soft hover:text-primary-active focus-visible:outline-primary-active grid size-11 shrink-0 cursor-pointer place-items-center rounded-xl border focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:scale-95 ${interactiveMotionTransitionClassName}`}
           onClick={() => {
             setDraft({ observedSearch: search, value: "" });
             updateUrl("");

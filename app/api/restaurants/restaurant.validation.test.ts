@@ -26,7 +26,7 @@ describe("restaurant request validation", () => {
 
   it("rejects invalid restaurant list pagination", async () => {
     await assert.rejects(
-      restaurantListQuerySchema.validate({ page: "0", limit: "101" }),
+      restaurantListQuerySchema.validate({ page: "0", limit: "101" })
     );
   });
 
@@ -46,7 +46,7 @@ describe("restaurant request validation", () => {
       createRestaurantRequestSchema.validate({
         name: "Pizza Place",
         slug: "pizza place",
-      }),
+      })
     );
   });
 
@@ -64,7 +64,7 @@ describe("restaurant request validation", () => {
 
   it("requires a restaurant id in route params", async () => {
     await assert.rejects(
-      restaurantPathParamsSchema.validate({ restaurantId: " " }),
+      restaurantPathParamsSchema.validate({ restaurantId: " " })
     );
   });
 });

@@ -30,13 +30,13 @@ export const GET = async (request: Request) => {
           Pick<ProductListQuery, "categoryId" | "isPublished">
       >(
         Object.fromEntries(new URL(request.url).searchParams),
-        productListQuerySchema,
+        productListQuerySchema
       ),
     ]);
     const { page, limit } = query;
     const { items, total } = await productService.getPage(
       identity.restaurant.id,
-      query,
+      query
     );
 
     return ApiResponse.success<ProductListResponse>({
@@ -54,14 +54,14 @@ export const POST = async (request: Request) => {
       requireRestaurantPermission(request, RESTAURANT_PERMISSION.MENU_MANAGE),
       validateRequestBody<CreateProductRequest>(
         request,
-        createProductRequestSchema,
+        createProductRequestSchema
       ),
     ]);
     const product = await productService.create(identity.restaurant.id, input);
 
     return ApiResponse.success<ProductDto>(
       toProductDto(product),
-      HttpStatus.CREATED,
+      HttpStatus.CREATED
     );
   } catch (error) {
     return ApiResponse.fromError(error, "Не удалось создать продукт");

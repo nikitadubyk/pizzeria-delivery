@@ -11,7 +11,10 @@ export type LoaderProps = {
 export function Loader({ className, label = "Загрузка…" }: LoaderProps) {
   return (
     <div
-      className={cn("relative grid h-full min-h-40 w-full flex-1 place-items-center", className)}
+      className={cn(
+        "relative grid h-full min-h-40 w-full flex-1 place-items-center",
+        className
+      )}
       role="status"
       aria-label={label}
     >

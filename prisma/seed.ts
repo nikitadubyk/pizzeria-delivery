@@ -6,7 +6,7 @@ import { PrismaClient } from "../app/generated/prisma/client";
 const BCRYPT_ROUNDS = 12;
 
 function requireEnv(
-  name: "DATABASE_URL" | "SUPER_ADMIN_EMAIL" | "SUPER_ADMIN_PASSWORD",
+  name: "DATABASE_URL" | "SUPER_ADMIN_EMAIL" | "SUPER_ADMIN_PASSWORD"
 ) {
   const value = process.env[name]?.trim();
 

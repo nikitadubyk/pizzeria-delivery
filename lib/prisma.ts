@@ -46,7 +46,7 @@ function assertRestaurantId(restaurantId: string): void {
 function withWhere(
   args: QueryArgs,
   key: "id" | "restaurantId",
-  value: string,
+  value: string
 ): QueryArgs {
   return {
     ...args,
@@ -59,7 +59,7 @@ function withWhere(
 
 function scopedCreateData(
   data: QueryInput | QueryInput[],
-  restaurantId: string,
+  restaurantId: string
 ): QueryInput | QueryInput[] {
   const items = Array.isArray(data) ? data : [data];
   const scoped = items.map((item) => {
@@ -73,7 +73,7 @@ function scopedCreateData(
 
     if ("restaurant" in item) {
       throw new Error(
-        "Use restaurantId from getRestaurantDb; nested restaurant writes are forbidden",
+        "Use restaurantId from getRestaurantDb; nested restaurant writes are forbidden"
       );
     }
 
@@ -104,14 +104,14 @@ function isSuperAdminRole(value: unknown): boolean {
 
 function assertTenantUserRole(
   model: string,
-  data: QueryInput | QueryInput[] | undefined,
+  data: QueryInput | QueryInput[] | undefined
 ): void {
   if (model !== "User" || !data) return;
 
   const items = Array.isArray(data) ? data : [data];
   if (items.some((item) => isSuperAdminRole(item.role))) {
     throw new Error(
-      "SUPER_ADMIN is a global role and cannot be managed through a restaurant-scoped client",
+      "SUPER_ADMIN is a global role and cannot be managed through a restaurant-scoped client"
     );
   }
 }
@@ -124,14 +124,14 @@ function hasNonEmptyPhone(value: unknown): boolean {
     value !== null &&
     "set" in value &&
     typeof (value as { set?: unknown }).set === "string" &&
-    ((value as { set: string }).set.trim().length > 0)
+    (value as { set: string }).set.trim().length > 0
   );
 }
 
 function assertTenantUserPhone(
   model: string,
   data: QueryInput | QueryInput[] | undefined,
-  required: boolean,
+  required: boolean
 ): void {
   if (model !== "User" || !data) return;
 
@@ -151,7 +151,7 @@ function scopeTenantOperation(
   model: string,
   operation: string,
   rawArgs: unknown,
-  restaurantId: string,
+  restaurantId: string
 ): QueryArgs {
   const args = rawArgs as QueryArgs;
 
@@ -195,7 +195,7 @@ function scopeTenantOperation(
       };
     default:
       throw new Error(
-        `Prisma operation ${operation} is not allowed until tenant scoping is defined`,
+        `Prisma operation ${operation} is not allowed until tenant scoping is defined`
       );
   }
 }
@@ -203,7 +203,7 @@ function scopeTenantOperation(
 function scopeRestaurantOperation(
   operation: string,
   rawArgs: unknown,
-  restaurantId: string,
+  restaurantId: string
 ): QueryArgs {
   const args = rawArgs as QueryArgs;
 
@@ -231,11 +231,11 @@ function scopeRestaurantOperation(
     case "createManyAndReturn":
     case "upsert":
       throw new Error(
-        "Restaurants must be provisioned through the trusted system database",
+        "Restaurants must be provisioned through the trusted system database"
       );
     default:
       throw new Error(
-        `Prisma operation ${operation} is not allowed until tenant scoping is defined`,
+        `Prisma operation ${operation} is not allowed until tenant scoping is defined`
       );
   }
 }

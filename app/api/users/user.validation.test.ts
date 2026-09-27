@@ -26,7 +26,7 @@ describe("user request validation", () => {
       superAdminLoginRequestSchema.validate({
         email: "not-an-email",
         password: "strong-password",
-      }),
+      })
     );
   });
 
@@ -35,13 +35,13 @@ describe("user request validation", () => {
       superAdminLoginRequestSchema.validate({
         email: "admin@example.com",
         password: "short",
-      }),
+      })
     );
   });
 
   it("requires a refresh token", async () => {
     await assert.rejects(
-      superAdminRefreshRequestSchema.validate({ refreshToken: " " }),
+      superAdminRefreshRequestSchema.validate({ refreshToken: " " })
     );
   });
 
@@ -55,7 +55,7 @@ describe("user request validation", () => {
 
   it("rejects an invalid authorization header", async () => {
     await assert.rejects(
-      authorizationHeaderSchema.validate({ authorization: "access-token" }),
+      authorizationHeaderSchema.validate({ authorization: "access-token" })
     );
   });
 
@@ -104,7 +104,7 @@ describe("user request validation", () => {
         phone: "+79991234567",
         password: "strong-password",
         role: "SUPER_ADMIN",
-      }),
+      })
     );
   });
 
@@ -121,7 +121,7 @@ describe("user request validation", () => {
 
   it("requires a restaurant user id in route params", async () => {
     await assert.rejects(
-      restaurantUserPathParamsSchema.validate({ userId: " " }),
+      restaurantUserPathParamsSchema.validate({ userId: " " })
     );
   });
 });

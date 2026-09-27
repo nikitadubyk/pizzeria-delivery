@@ -91,7 +91,7 @@ function DialogWithTrigger() {
 export const Playground: Story = {
   args: {
     children: (
-      <div className="grid gap-2 text-sm leading-snug text-text">
+      <div className="text-text grid gap-2 text-sm leading-snug">
         <div className="flex justify-between gap-3">
           <span className="text-muted">Адрес</span>
           <strong className="text-right">ул. Садовая, 12</strong>
@@ -146,7 +146,7 @@ export const Tones: Story = {
           tone={tone}
         />
       ))}
-      <p className="m-0 text-sm text-muted">
+      <p className="text-muted m-0 text-sm">
         Измените свойство opened в controls, чтобы посмотреть другой тон.
       </p>
     </div>

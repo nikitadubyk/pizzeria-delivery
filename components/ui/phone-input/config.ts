@@ -5,7 +5,7 @@ import { PhoneInputValue } from "./types";
 
 export const phoneInputRootClassName = cn(
   "h-11 w-full min-w-0 rounded-xl border border-border bg-background px-3 text-md text-text outline-none placeholder:text-muted hover:border-primary-hover hover:bg-primary-soft focus:border-primary-active focus:shadow-[0_0_0_2px_var(--app-color-primary-soft)] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:border-border disabled:hover:bg-background",
-  interactiveMotionTransitionClassName,
+  interactiveMotionTransitionClassName
 );
 
 export const wrapperClassNames = {
@@ -27,7 +27,7 @@ export const parseRussianPhone = templateParser(
     }
 
     return digit;
-  },
+  }
 );
 
 export function getRussianNationalNumber(value?: PhoneInputValue | string) {

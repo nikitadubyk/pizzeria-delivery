@@ -1,7 +1,4 @@
-import {
-  LIST_SEARCH_MAX_LENGTH,
-  type PaginationMeta,
-} from "@/api-contracts";
+import { LIST_SEARCH_MAX_LENGTH, type PaginationMeta } from "@/api-contracts";
 import * as yup from "yup";
 
 export const createSearchPaginationSchema = ({
@@ -21,17 +18,14 @@ export const createSearchPaginationSchema = ({
       .number()
       .integer("Размер страницы должен быть целым числом")
       .min(1, "Размер страницы должен быть не меньше 1")
-      .max(
-        maxLimit,
-        `Размер страницы не должен превышать ${maxLimit}`,
-      )
+      .max(maxLimit, `Размер страницы не должен превышать ${maxLimit}`)
       .default(defaultLimit),
     search: yup
       .string()
       .trim()
       .max(
         LIST_SEARCH_MAX_LENGTH,
-        `Поисковый запрос не должен превышать ${LIST_SEARCH_MAX_LENGTH} символов`,
+        `Поисковый запрос не должен превышать ${LIST_SEARCH_MAX_LENGTH} символов`
       )
       .transform((value) => (value === "" ? undefined : value))
       .optional(),

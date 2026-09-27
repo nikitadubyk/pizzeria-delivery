@@ -29,9 +29,11 @@ describe("list query helpers", () => {
   });
 
   it("creates pagination response metadata", () => {
-    assert.deepEqual(
-      createPaginationMeta({ page: 2, limit: 20, total: 41 }),
-      { page: 2, limit: 20, total: 41, totalPages: 3 },
-    );
+    assert.deepEqual(createPaginationMeta({ page: 2, limit: 20, total: 41 }), {
+      page: 2,
+      limit: 20,
+      total: 41,
+      totalPages: 3,
+    });
   });
 });

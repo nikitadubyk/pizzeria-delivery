@@ -61,7 +61,7 @@ export const productsApi = restaurantAuthApi.injectEndpoints({
       }),
       onQueryStarted: async (
         { productId, data },
-        { dispatch, getState, queryFulfilled },
+        { dispatch, getState, queryFulfilled }
       ) => {
         const listPatches = productsApi.util
           .selectCachedArgsForQuery(getState(), "getProducts")
@@ -72,12 +72,12 @@ export const productsApi = restaurantAuthApi.injectEndpoints({
                 query,
                 (draft) => {
                   const product = draft.items.find(
-                    (item) => item.id === productId,
+                    (item) => item.id === productId
                   );
                   if (product) product.isAvailable = data.isAvailable;
-                },
-              ),
-            ),
+                }
+              )
+            )
           );
         const productPatch = dispatch(
           productsApi.util.updateQueryData(
@@ -85,8 +85,8 @@ export const productsApi = restaurantAuthApi.injectEndpoints({
             { productId },
             (draft) => {
               draft.isAvailable = data.isAvailable;
-            },
-          ),
+            }
+          )
         );
 
         try {

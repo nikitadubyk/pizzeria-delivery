@@ -60,10 +60,10 @@ export function Typography({
   return (
     <Component
       className={cn(
-        "m-0 font-sans tracking-normal text-text",
+        "text-text m-0 font-sans tracking-normal",
         variantClassNames[variant],
         muted && "text-muted",
-        className,
+        className
       )}
       {...props}
     >

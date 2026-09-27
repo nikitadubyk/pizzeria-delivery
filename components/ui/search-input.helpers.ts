@@ -7,7 +7,7 @@ export const normalizeSearchQuery = (value: string | null | undefined) =>
 export function createSearchUrl(
   pathname: string,
   serializedSearchParams: string,
-  value: string,
+  value: string
 ) {
   const search = normalizeSearchQuery(value);
   const searchParams = new URLSearchParams(serializedSearchParams);

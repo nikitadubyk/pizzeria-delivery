@@ -37,14 +37,14 @@ const mapRepositoryError = (error: unknown): never => {
     if (error.code === "P2002") {
       throw new UserServiceError(
         "Пользователь с таким email или телефоном уже существует",
-        HttpStatus.CONFLICT,
+        HttpStatus.CONFLICT
       );
     }
 
     if (error.code === "P2025") {
       throw new UserServiceError(
         "Пользователь не найден",
-        HttpStatus.NOT_FOUND,
+        HttpStatus.NOT_FOUND
       );
     }
 
@@ -57,8 +57,12 @@ const mapRepositoryError = (error: unknown): never => {
 };
 
 class JwtTokenService implements TokenService {
-  private readonly access = new JwtService({ secret: TokenSecret.ACCESS_TOKEN });
-  private readonly refresh = new JwtService({ secret: TokenSecret.REFRESH_TOKEN });
+  private readonly access = new JwtService({
+    secret: TokenSecret.ACCESS_TOKEN,
+  });
+  private readonly refresh = new JwtService({
+    secret: TokenSecret.REFRESH_TOKEN,
+  });
 
   createAccessToken(user: User) {
     return this.access.sign(user.id, { role: user.role, type: "access" }, "1h");
@@ -84,7 +88,7 @@ class JwtTokenService implements TokenService {
     } catch {
       throw new UserServiceError(
         "Access token недействителен или истёк",
-        HttpStatus.UNAUTHORIZED,
+        HttpStatus.UNAUTHORIZED
       );
     }
   }
@@ -101,7 +105,7 @@ class JwtTokenService implements TokenService {
     } catch {
       throw new UserServiceError(
         "Refresh token недействителен или истёк",
-        HttpStatus.UNAUTHORIZED,
+        HttpStatus.UNAUTHORIZED
       );
     }
   }
@@ -110,7 +114,7 @@ class JwtTokenService implements TokenService {
 export class UserService {
   constructor(
     private readonly repository: UserRepository,
-    private readonly tokenService: TokenService,
+    private readonly tokenService: TokenService
   ) {}
 
   async hashPassword(password: string): Promise<string> {
@@ -127,7 +131,7 @@ export class UserService {
     if (!user || !(await this.verifyPassword(input.password, user.password))) {
       throw new UserServiceError(
         "Неверный email или пароль",
-        HttpStatus.UNAUTHORIZED,
+        HttpStatus.UNAUTHORIZED
       );
     }
 
@@ -144,17 +148,17 @@ export class UserService {
   }
 
   async refresh(
-    input: SuperAdminRefreshRequest,
+    input: SuperAdminRefreshRequest
   ): Promise<SuperAdminRefreshResponse> {
     const userId = await this.tokenService.verifyRefreshToken(
-      input.refreshToken,
+      input.refreshToken
     );
     const user = await this.repository.findSuperAdminById(userId);
 
     if (!user) {
       throw new UserServiceError(
         "Super admin не найден или заблокирован",
-        HttpStatus.UNAUTHORIZED,
+        HttpStatus.UNAUTHORIZED
       );
     }
 
@@ -173,7 +177,7 @@ export class UserService {
     if (!user) {
       throw new UserServiceError(
         "Super admin не найден или заблокирован",
-        HttpStatus.UNAUTHORIZED,
+        HttpStatus.UNAUTHORIZED
       );
     }
 
@@ -182,24 +186,24 @@ export class UserService {
 
   getRestaurantUserPage(
     superAdminId: string,
-    pagination: ResolvedSearchPaginationQuery,
+    pagination: ResolvedSearchPaginationQuery
   ) {
     return this.repository.findRestaurantUserPage(superAdminId, pagination);
   }
 
   async getRestaurantUserById(
     superAdminId: string,
-    userId: string,
+    userId: string
   ): Promise<RestaurantUser> {
     const user = await this.repository.findRestaurantUserById(
       superAdminId,
-      userId,
+      userId
     );
 
     if (!user) {
       throw new UserServiceError(
         "Пользователь не найден",
-        HttpStatus.NOT_FOUND,
+        HttpStatus.NOT_FOUND
       );
     }
 
@@ -208,12 +212,12 @@ export class UserService {
 
   async createRestaurantUser(
     superAdminId: string,
-    input: CreateRestaurantUserRequest,
+    input: CreateRestaurantUserRequest
   ): Promise<RestaurantUser> {
     if (
       !(await this.repository.restaurantExists(
         superAdminId,
-        input.restaurantId,
+        input.restaurantId
       ))
     ) {
       throw new UserServiceError("Ресторан не найден", HttpStatus.NOT_FOUND);
@@ -232,7 +236,7 @@ export class UserService {
   async updateRestaurantUser(
     superAdminId: string,
     userId: string,
-    input: UpdateRestaurantUserRequest,
+    input: UpdateRestaurantUserRequest
   ): Promise<RestaurantUser> {
     const user = await this.getRestaurantUserById(superAdminId, userId);
 
@@ -241,7 +245,7 @@ export class UserService {
       input.restaurantId !== user.restaurantId &&
       !(await this.repository.restaurantExists(
         superAdminId,
-        input.restaurantId,
+        input.restaurantId
       ))
     ) {
       throw new UserServiceError("Ресторан не найден", HttpStatus.NOT_FOUND);
@@ -258,7 +262,7 @@ export class UserService {
       return await this.repository.updateRestaurantUser(
         superAdminId,
         userId,
-        data,
+        data
       );
     } catch (error) {
       return mapRepositoryError(error);
@@ -267,7 +271,7 @@ export class UserService {
 
   async deleteRestaurantUser(
     superAdminId: string,
-    userId: string,
+    userId: string
   ): Promise<RestaurantUser> {
     await this.getRestaurantUserById(superAdminId, userId);
 
@@ -348,7 +352,7 @@ const userRepository: UserRepository = {
       await db.restaurant.findUnique({
         where: { id: restaurantId },
         select: { id: true },
-      }),
+      })
     );
   },
   createRestaurantUser: async (superAdminId, data) => {
@@ -385,5 +389,5 @@ const userRepository: UserRepository = {
 
 export const userService = new UserService(
   userRepository,
-  new JwtTokenService(),
+  new JwtTokenService()
 );

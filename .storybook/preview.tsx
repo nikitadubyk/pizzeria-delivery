@@ -11,7 +11,7 @@ const preview: Preview = {
   decorators: [
     (Story) => (
       <AppProvider>
-        <div className="box-border flex min-h-screen flex-col bg-background p-6 font-sans text-text">
+        <div className="bg-background text-text box-border flex min-h-screen flex-col p-6 font-sans">
           <Story />
         </div>
       </AppProvider>

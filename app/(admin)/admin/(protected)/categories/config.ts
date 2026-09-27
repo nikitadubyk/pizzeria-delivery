@@ -11,7 +11,7 @@ import type { CategoryFormValues } from "./types";
 export const CATEGORY_FORM_ID = "category-form";
 
 export const getCategoryFormInitialValues = (
-  category: CategoryDto | null,
+  category: CategoryDto | null
 ): CategoryFormValues => ({
   name: category?.name ?? "",
   sortOrder: category?.sortOrder ?? 0,
@@ -25,7 +25,7 @@ export const categoryFormValidationSchema: yup.ObjectSchema<CategoryFormValues> 
       .trim()
       .max(
         CATEGORY_NAME_MAX_LENGTH,
-        `Название не должно превышать ${CATEGORY_NAME_MAX_LENGTH} символов`,
+        `Название не должно превышать ${CATEGORY_NAME_MAX_LENGTH} символов`
       )
       .required("Введите название категории"),
     sortOrder: yup
@@ -35,7 +35,7 @@ export const categoryFormValidationSchema: yup.ObjectSchema<CategoryFormValues> 
       .min(0, "Порядок не должен быть отрицательным")
       .max(
         CATEGORY_SORT_ORDER_MAX,
-        `Порядок не должен превышать ${CATEGORY_SORT_ORDER_MAX}`,
+        `Порядок не должен превышать ${CATEGORY_SORT_ORDER_MAX}`
       )
       .required("Введите порядок категории"),
     isPublished: yup.boolean().required("Укажите статус публикации"),

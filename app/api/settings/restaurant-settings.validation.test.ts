@@ -13,9 +13,9 @@ describe("restaurant settings request validation", () => {
           deliveryPrice: 30_000,
           restaurantId: "untrusted-restaurant-id",
         },
-        { stripUnknown: true },
+        { stripUnknown: true }
       ),
-      { deliveryPrice: 30_000 },
+      { deliveryPrice: 30_000 }
     );
   });
 
@@ -24,7 +24,7 @@ describe("restaurant settings request validation", () => {
       await updateRestaurantSettingsRequestSchema.validate({
         deliveryPrice: 0,
       }),
-      { deliveryPrice: 0 },
+      { deliveryPrice: 0 }
     );
   });
 
@@ -33,7 +33,7 @@ describe("restaurant settings request validation", () => {
       await assert.rejects(
         updateRestaurantSettingsRequestSchema.validate({
           deliveryPrice: value,
-        }),
+        })
       );
     }
   });

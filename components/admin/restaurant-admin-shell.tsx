@@ -91,12 +91,12 @@ export function RestaurantAdminShell({ children }: { children: ReactNode }) {
       subtitle="Панель ресторана"
       navigationLabel="Разделы админки ресторана"
       menuItems={menuItems.filter((item) =>
-        hasRestaurantPermission(user.role, item.permission),
+        hasRestaurantPermission(user.role, item.permission)
       )}
       onLogout={handleLogout}
     >
-      <main className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-md md:p-xl">
-        <div className="mx-auto flex min-h-full w-full max-w-7xl flex-col gap-lg md:h-full md:min-h-0">
+      <main className="p-md md:p-xl min-h-0 flex-1 overflow-y-auto overscroll-contain">
+        <div className="gap-lg mx-auto flex min-h-full w-full max-w-7xl flex-col md:h-full md:min-h-0">
           {logoutError && (
             <Alert color="red" role="alert">
               {logoutError}

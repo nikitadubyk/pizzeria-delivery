@@ -14,26 +14,39 @@ export const RESTAURANT_PERMISSION = {
 } as const;
 
 export type RestaurantPermission =
-  typeof RESTAURANT_PERMISSION[keyof typeof RESTAURANT_PERMISSION];
+  (typeof RESTAURANT_PERMISSION)[keyof typeof RESTAURANT_PERMISSION];
 
 const P = RESTAURANT_PERMISSION;
 
 // New permissions require an explicit role assignment; no wildcard access.
-const permissionsByRole: Record<RestaurantUserRole, readonly RestaurantPermission[]> = {
+const permissionsByRole: Record<
+  RestaurantUserRole,
+  readonly RestaurantPermission[]
+> = {
   OWNER: [
-    P.ADMIN_ACCESS, P.MENU_READ, P.MENU_MANAGE, P.STOP_LIST_MANAGE,
-    P.ORDERS_READ, P.ORDERS_MANAGE, P.SETTINGS_MANAGE,
-    P.EMPLOYEES_READ, P.EMPLOYEES_DISABLE, P.EMPLOYEES_RECOVER,
+    P.ADMIN_ACCESS,
+    P.MENU_READ,
+    P.MENU_MANAGE,
+    P.STOP_LIST_MANAGE,
+    P.ORDERS_READ,
+    P.ORDERS_MANAGE,
+    P.SETTINGS_MANAGE,
+    P.EMPLOYEES_READ,
+    P.EMPLOYEES_DISABLE,
+    P.EMPLOYEES_RECOVER,
   ],
   EMPLOYEE: [
-    P.ADMIN_ACCESS, P.MENU_READ, P.STOP_LIST_MANAGE,
-    P.ORDERS_READ, P.ORDERS_MANAGE,
+    P.ADMIN_ACCESS,
+    P.MENU_READ,
+    P.STOP_LIST_MANAGE,
+    P.ORDERS_READ,
+    P.ORDERS_MANAGE,
   ],
 };
 
 export function hasRestaurantPermission(
   role: string,
-  permission: RestaurantPermission,
+  permission: RestaurantPermission
 ): boolean {
   if (role !== "OWNER" && role !== "EMPLOYEE") return false;
   return permissionsByRole[role].includes(permission);

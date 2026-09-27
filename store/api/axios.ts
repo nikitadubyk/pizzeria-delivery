@@ -95,7 +95,7 @@ const refreshTokens = () => {
       },
       () => {
         if (refreshPromise === pendingRefresh) refreshPromise = null;
-      },
+      }
     );
   }
 
@@ -124,7 +124,7 @@ let activeDispatch: AppDispatch | null = null;
 
 const handleResponseError = async (
   instance: AxiosInstance,
-  error: AxiosError,
+  error: AxiosError
 ) => {
   const request = error.config as RetriableRequestConfig | undefined;
   const belongsToCurrentSession =
@@ -166,7 +166,7 @@ const handleResponseError = async (
 
 apiClient.interceptors.response.use(
   (response) => response,
-  (error: AxiosError) => handleResponseError(apiClient, error),
+  (error: AxiosError) => handleResponseError(apiClient, error)
 );
 
 apiLoaderClient.interceptors.request.use(
@@ -177,7 +177,7 @@ apiLoaderClient.interceptors.request.use(
   (error) => {
     activeDispatch?.(stopLoading());
     return Promise.reject(error);
-  },
+  }
 );
 
 apiLoaderClient.interceptors.response.use(
@@ -188,7 +188,7 @@ apiLoaderClient.interceptors.response.use(
   (error: AxiosError) => {
     activeDispatch?.(stopLoading());
     return handleResponseError(apiLoaderClient, error);
-  },
+  }
 );
 
 export const setupAxiosInterceptors = (dispatch: AppDispatch) => {
@@ -203,11 +203,18 @@ export const setupAxiosInterceptors = (dispatch: AppDispatch) => {
 
 export const createAxiosBaseQuery =
   (
-    instance: AxiosInstance,
+    instance: AxiosInstance
   ): BaseQueryFn<AxiosBaseQueryArgs, unknown, AxiosBaseQueryError> =>
   async ({ url, method, data, params, headers }, { signal }) => {
     try {
-      const response = await instance({ url, method, data, params, headers, signal });
+      const response = await instance({
+        url,
+        method,
+        data,
+        params,
+        headers,
+        signal,
+      });
       return { data: response.data };
     } catch (error) {
       const axiosError = error as AxiosError;

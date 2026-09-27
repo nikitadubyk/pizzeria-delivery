@@ -9,13 +9,14 @@ import { Form, Formik, type FormikHelpers } from "formik";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-import type { ProductDto } from "@/api-contracts";
+import { PRODUCT_ADDONS_MAX_COUNT, type ProductDto } from "@/api-contracts";
 import { Details } from "@/components/details";
 import { ImageDropzone } from "@/components/image-dropzone";
 import {
   Button,
   EmptyState,
   InputField,
+  MultiSelectField,
   SelectField,
   TextareaField,
   ToggleField,
@@ -27,6 +28,8 @@ import {
 } from "@/components/ui/notification";
 import { ROUTES } from "@/config/routes";
 import { useProductImageSave } from "@/hooks/use-product-image-save";
+import { formatKopecks } from "@/lib/price";
+import { useGetAddonOptionsQuery } from "@/store/api/addons.api";
 import { useGetCategoryOptionsQuery } from "@/store/api/categories.api";
 import {
   useCreateProductMutation,
@@ -60,7 +63,7 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
     refetch: refetchProduct,
   } = useGetProductQuery(
     { productId: productId ?? "" },
-    { skip: productId === undefined },
+    { skip: productId === undefined }
   );
   const {
     data: categoriesData,
@@ -69,19 +72,38 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
     isLoading: isCategoriesLoading,
     refetch: refetchCategories,
   } = useGetCategoryOptionsQuery();
+  const {
+    data: addonsData,
+    isError: isAddonsError,
+    isFetching: isAddonsFetching,
+    isLoading: isAddonsLoading,
+    refetch: refetchAddons,
+  } = useGetAddonOptionsQuery();
   const categories = categoriesData ?? [];
+  const addons = addonsData ?? [];
   const categoryOptions = categories.map((category) => ({
     label: category.name,
     value: category.id,
   }));
-  const isLoading = isCategoriesLoading || (isEditing && isProductLoading);
-  const isFetching = isCategoriesFetching || (isEditing && isProductFetching);
-  const isError = isCategoriesError || (isEditing && isProductError);
+  const addonOptions = addons.map((addon) => ({
+    label: `${addon.name} · ${formatKopecks(addon.price)}${
+      addon.isAvailable ? "" : " · в стоп-листе"
+    }`,
+    value: addon.id,
+  }));
+  const isLoading =
+    isCategoriesLoading || isAddonsLoading || (isEditing && isProductLoading);
+  const isFetching =
+    isCategoriesFetching ||
+    isAddonsFetching ||
+    (isEditing && isProductFetching);
+  const isError =
+    isCategoriesError || isAddonsError || (isEditing && isProductError);
   const isSaving = isCreating || isUpdating || isSavingImage;
 
   const handleSubmit = async (
     values: ProductFormValues,
-    helpers: FormikHelpers<ProductFormValues>,
+    helpers: FormikHelpers<ProductFormValues>
   ) => {
     let savedProduct: ProductDto | null = null;
     const data = getProductRequestData(values);
@@ -124,12 +146,13 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
 
   const retry = () => {
     if (isCategoriesError) void refetchCategories();
+    if (isAddonsError) void refetchAddons();
     if (isEditing && isProductError) void refetchProduct();
   };
 
   return (
-    <section className="grid content-start gap-lg">
-      <div className="flex flex-wrap items-end justify-between gap-md">
+    <section className="gap-lg grid content-start">
+      <div className="gap-md flex flex-wrap items-end justify-between">
         <div>
           <Typography muted variant="eyebrow">
             Управление меню
@@ -173,7 +196,7 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
             enableReinitialize
             initialValues={getProductFormInitialValues(
               product ?? null,
-              categories[0]?.id,
+              categories[0]?.id
             )}
             onSubmit={handleSubmit}
             validationSchema={productFormValidationSchema}
@@ -183,11 +206,11 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
 
               return (
                 <Form
-                  className="grid gap-lg rounded-xl border border-border bg-background p-md sm:p-lg"
+                  className="gap-lg border-border bg-background p-md sm:p-lg grid rounded-xl border"
                   noValidate
                 >
-                  <div className="grid gap-xl xl:grid-cols-[minmax(0,1fr)_minmax(20rem,26rem)]">
-                    <div className="grid content-start gap-md">
+                  <div className="gap-xl grid xl:grid-cols-[minmax(0,1fr)_minmax(20rem,26rem)]">
+                    <div className="gap-md grid content-start">
                       <InputField
                         autoComplete="off"
                         disabled={pending}
@@ -222,6 +245,22 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
                         name="baseComposition"
                         placeholder="Например, тесто, томатный соус, моцарелла"
                       />
+                      <MultiSelectField
+                        clearable
+                        data={addonOptions}
+                        description="Клиент сможет выбрать каждую добавку не более одного раза"
+                        disabled={pending || addons.length === 0}
+                        hidePickedOptions
+                        label="Доступные добавки"
+                        maxValues={PRODUCT_ADDONS_MAX_COUNT}
+                        name="addonIds"
+                        placeholder={
+                          addons.length > 0
+                            ? "Выберите добавки"
+                            : "Сначала создайте добавки"
+                        }
+                        searchable
+                      />
                       <InputField
                         description="Продукты с меньшим значением отображаются выше"
                         disabled={pending}
@@ -240,7 +279,7 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
                       />
                     </div>
 
-                    <div className="grid content-start gap-sm">
+                    <div className="gap-sm grid content-start">
                       <ImageDropzone
                         currentImageUrl={
                           values.removeImage ? null : product?.imageUrl
@@ -276,7 +315,7 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
 
                   <ProductVariantFields disabled={pending} />
 
-                  <div className="flex flex-col-reverse gap-sm border-t border-border pt-md sm:flex-row sm:justify-end">
+                  <div className="gap-sm border-border pt-md flex flex-col-reverse border-t sm:flex-row sm:justify-end">
                     <Button
                       disabled={pending}
                       onClick={() => router.push(ROUTES.ADMIN.MENU)}

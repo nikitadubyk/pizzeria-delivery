@@ -12,7 +12,7 @@ const getUploadThingClient = (): UTApi => {
   if (!token) {
     throw new ApiError(
       "Загрузка изображений не настроена: отсутствует UPLOADTHING_TOKEN",
-      HttpStatus.INTERNAL_SERVER_ERROR,
+      HttpStatus.INTERNAL_SERVER_ERROR
     );
   }
 
@@ -26,7 +26,7 @@ const deleteProductImages = async (keys: readonly string[]): Promise<void> => {
   const result = await getUploadThingClient().deleteFiles([...keys]);
   if (!result.success) {
     throw new Error(
-      `UploadThing did not delete ${keys.length} product image file(s)`,
+      `UploadThing did not delete ${keys.length} product image file(s)`
     );
   }
 };

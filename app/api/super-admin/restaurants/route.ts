@@ -22,9 +22,10 @@ export const GET = async (request: Request) => {
   try {
     const superAdminId = await getSuperAdminId(request);
     const searchParams = Object.fromEntries(new URL(request.url).searchParams);
-    const query = await validateRequestData<
-      ResolvedSearchPaginationQuery
-    >(searchParams, restaurantListQuerySchema);
+    const query = await validateRequestData<ResolvedSearchPaginationQuery>(
+      searchParams,
+      restaurantListQuerySchema
+    );
     const { page, limit } = query;
     const { items, total } = await restaurantService.getPage(superAdminId, {
       ...query,
@@ -44,13 +45,13 @@ export const POST = async (request: Request) => {
     const superAdminId = await getSuperAdminId(request);
     const input = await validateRequestBody<CreateRestaurantRequest>(
       request,
-      createRestaurantRequestSchema,
+      createRestaurantRequestSchema
     );
     const restaurant = await restaurantService.create(superAdminId, input);
 
     return ApiResponse.success<RestaurantDto>(
       toRestaurantDto(restaurant),
-      HttpStatus.CREATED,
+      HttpStatus.CREATED
     );
   } catch (error) {
     return ApiResponse.fromError(error, "Не удалось создать ресторан");

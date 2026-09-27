@@ -44,10 +44,10 @@ const SuperAdminLoginPage = () => {
   };
 
   return (
-    <main className="grid min-h-screen w-full place-items-center p-md sm:p-xl">
-      <section className="w-full max-w-[440px] rounded-2xl border border-border bg-background p-lg shadow-xl sm:p-xl">
-        <div className="mb-xl grid justify-items-center gap-sm text-center">
-          <span className="grid size-14 place-items-center rounded-full bg-primary-soft text-primary">
+    <main className="p-md sm:p-xl grid min-h-screen w-full place-items-center">
+      <section className="border-border bg-background p-lg sm:p-xl w-full max-w-[440px] rounded-2xl border shadow-xl">
+        <div className="mb-xl gap-sm grid justify-items-center text-center">
+          <span className="bg-primary-soft text-primary grid size-14 place-items-center rounded-full">
             <IconPizza aria-hidden="true" size={30} />
           </span>
           <Typography variant="h2">Вход для Super Admin</Typography>
@@ -62,7 +62,7 @@ const SuperAdminLoginPage = () => {
           validationSchema={superAdminLoginValidationSchema}
         >
           {({ isSubmitting }) => (
-            <Form className="grid gap-lg" noValidate>
+            <Form className="gap-lg grid" noValidate>
               <InputField
                 name="email"
                 autoComplete="email"

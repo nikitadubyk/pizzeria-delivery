@@ -12,6 +12,7 @@
     "lint": "eslint",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
+    "format": "prettier --write .",
     "docker:compose": "docker compose -f docker-compose.yml up -d --build --remove-orphans",
     "docker:compose:down": "docker compose -f docker-compose.yml down"
   },
@@ -35,6 +36,8 @@
     "jose": "^6.2.9",
     "next": "16.2.10",
     "pg": "^8.22.0",
+    "prettier": "^3.9.9",
+    "prettier-plugin-tailwindcss": "^0.8.1",
     "prisma": "^7.8.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",

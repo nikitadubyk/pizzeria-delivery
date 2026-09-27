@@ -43,10 +43,10 @@ function MenuSections() {
             <span className="text-primary-active">
               {getCategoryIcon(category.icon)}
             </span>
-            <h2 className="m-0 text-2xl font-extrabold text-text">
+            <h2 className="text-text m-0 text-2xl font-extrabold">
               {category.label}
             </h2>
-            <span className="text-sm text-muted">
+            <span className="text-muted text-sm">
               {category.products.length} позиции
             </span>
           </div>
@@ -58,7 +58,7 @@ function MenuSections() {
                 description={
                   <>
                     {product.description}
-                    <span className="mt-2 block font-bold text-text/70">
+                    <span className="text-text/70 mt-2 block font-bold">
                       {product.weight}
                     </span>
                   </>
@@ -83,7 +83,7 @@ export function HomePage() {
 
   return (
     <>
-      <main className="flex-1 bg-background pb-20 pt-6 text-text sm:pt-8">
+      <main className="bg-background text-text flex-1 pt-6 pb-20 sm:pt-8">
         <PageContainer>
           <h1 className="sr-only">Меню пиццерии Вкусно Дома</h1>
 
@@ -94,17 +94,17 @@ export function HomePage() {
           <section aria-labelledby="menu-title" className="mt-8" id="menu">
             <div className="mb-3 flex items-end justify-between gap-4">
               <div>
-                <p className="m-0 text-sm font-extrabold uppercase text-primary-active">
+                <p className="text-primary-active m-0 text-sm font-extrabold uppercase">
                   Готовим после заказа
                 </p>
                 <h2
-                  className="m-0 mt-1 text-3xl font-extrabold text-text"
+                  className="text-text m-0 mt-1 text-3xl font-extrabold"
                   id="menu-title"
                 >
                   Наше меню
                 </h2>
               </div>
-              <p className="m-0 hidden max-w-[24rem] text-right text-sm text-muted sm:block">
+              <p className="text-muted m-0 hidden max-w-[24rem] text-right text-sm sm:block">
                 Выберите категорию или прокрутите страницу — активная вкладка
                 переключится автоматически.
               </p>

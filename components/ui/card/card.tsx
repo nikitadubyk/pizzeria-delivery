@@ -44,14 +44,14 @@ export function Card({
   return (
     <MantineCard
       className={cn(
-        "flex min-h-[368px] overflow-hidden rounded-xl border border-border bg-background text-text hover:border-primary-hover active:border-primary-active",
+        "border-border bg-background text-text hover:border-primary-hover active:border-primary-active flex min-h-[368px] overflow-hidden rounded-xl border",
         interactiveTransitionClassName,
-        className,
+        className
       )}
       padding={0}
       {...props}
     >
-      <div className="relative grid aspect-[4/3] h-[216px] max-h-[216px] min-h-[216px] overflow-hidden bg-surface [background-image:repeating-linear-gradient(135deg,color-mix(in_srgb,var(--app-color-primary)_12%,transparent)_0_22px,transparent_22px_44px)] place-items-center">
+      <div className="bg-surface relative grid aspect-[4/3] h-[216px] max-h-[216px] min-h-[216px] place-items-center overflow-hidden [background-image:repeating-linear-gradient(135deg,color-mix(in_srgb,var(--app-color-primary)_12%,transparent)_0_22px,transparent_22px_44px)]">
         {imageSrc ? (
           <Box
             alt={imageAlt ?? ""}
@@ -61,26 +61,26 @@ export function Card({
             {...imageProps}
           />
         ) : (
-          <span className="max-w-[calc(100%-40px)] rounded-lg bg-white/85 px-2.5 py-1.5 text-center text-xs leading-tight text-muted">
+          <span className="text-muted max-w-[calc(100%-40px)] rounded-lg bg-white/85 px-2.5 py-1.5 text-center text-xs leading-tight">
             {imageLabel ?? "Photo placeholder"}
           </span>
         )}
       </div>
 
-      <div className="grid flex-1 gap-md p-[22px_18px_18px]">
-        <div className="grid content-start gap-xs">
-          <h3 className="m-0 text-lg font-extrabold leading-snug text-text">
+      <div className="gap-md grid flex-1 p-[22px_18px_18px]">
+        <div className="gap-xs grid content-start">
+          <h3 className="text-text m-0 text-lg leading-snug font-extrabold">
             {title}
           </h3>
           {description ? (
-            <p className="m-0 text-sm leading-snug text-muted">{description}</p>
+            <p className="text-muted m-0 text-sm leading-snug">{description}</p>
           ) : null}
         </div>
 
         {(price || actionLabel) && (
-          <div className="flex items-center justify-between gap-sm self-end">
+          <div className="gap-sm flex items-center justify-between self-end">
             {price ? (
-              <span className="text-xl font-black leading-tight text-text">
+              <span className="text-text text-xl leading-tight font-black">
                 {price}
               </span>
             ) : (

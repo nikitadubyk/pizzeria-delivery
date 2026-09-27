@@ -16,9 +16,14 @@
   from OWNER-managed publication. Products may have no variants. A simple priced
   product can use one unnamed variant so the storefront does not need to render
   a selector.
+- `models/catalog.prisma` also contains restaurant-owned ingredient references.
+  Ingredients are intentionally a small dictionary, not a product recipe.
+  `ProductRemovableIngredient` records only which ingredients a customer may
+  remove without changing the price. It does not model a complete recipe.
 - `models/addon.prisma` contains reusable paid add-ons owned by one restaurant.
   Their prices are positive integer kopecks; availability is a separate
-  operational stop-list flag. Product-to-add-on links are a later catalog step.
+  operational stop-list flag. `ProductAddon` selects which of them are allowed
+  for a product; its unique constraint prevents duplicate selection.
 - Add future bounded domains as separate files in `models/`, for example
   `menu.prisma`, `order.prisma`, and `delivery.prisma`.
 - `migrations/` contains generated database migrations and stays next to
@@ -191,6 +196,13 @@ variant ids are updated, omitted ids are deleted, rows without ids are created,
 and an empty array removes every variant. Variant ownership is constrained by
 the same `(restaurantId, productId)` pair as the parent product; client-supplied
 tenant ids are ignored.
+
+Ingredient APIs live under `/api/admin/ingredients`. OWNER can create, update,
+and delete ingredients through `MENU_MANAGE`; OWNER and EMPLOYEE can read them
+through `MENU_READ`. Product create and update requests atomically replace each
+submitted selection: removable ingredients and allowed paid add-ons are updated
+independently. The service checks every submitted id against the authenticated
+restaurant before it writes the links.
 
 The upload middleware verifies `MENU_MANAGE`, restricts files to JPEG, PNG, or
 WebP, and loads the product through the authenticated restaurant scope before

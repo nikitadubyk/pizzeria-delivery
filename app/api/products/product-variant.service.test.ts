@@ -32,7 +32,7 @@ describe("ProductVariantService", () => {
           isAvailable: false,
           sortOrder: 1,
         },
-      ],
+      ]
     );
   });
 
@@ -43,7 +43,7 @@ describe("ProductVariantService", () => {
       service.prepareForUpdate([
         { id: "variant-id", name: "30 см", price: 57_900 },
       ])[0].id,
-      "variant-id",
+      "variant-id"
     );
   });
 
@@ -65,16 +65,16 @@ describe("ProductVariantService", () => {
     assert.equal("restaurantId" in variant, false);
   });
 
-  it("uses the restaurant scalar when creating variants with a new product", () => {
+  it("lets the parent relation scope variants created with a new product", () => {
     const service = new ProductVariantService();
-    const [variant] = service.createForNewProduct("restaurant-id", [
+    const [variant] = service.createForNewProduct([
       {
         price: 57_900,
         sortOrder: 0,
       },
     ]);
 
-    assert.equal(variant.restaurantId, "restaurant-id");
+    assert.equal("restaurantId" in variant, false);
     assert.equal("restaurant" in variant, false);
   });
 });

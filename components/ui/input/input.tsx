@@ -11,11 +11,10 @@ import { cn, interactiveMotionTransitionClassName } from "@/lib/class-names";
 export type AppInputProps = TextInputProps;
 export type AppPasswordInputProps = PasswordInputProps;
 
-const inputClassName =
-  cn(
-    "min-h-11 w-full min-w-0 !cursor-text !border-border !bg-background !text-text hover:!border-primary-hover hover:!bg-primary-soft focus:!border-primary-active focus:!shadow-[0_0_0_2px_var(--app-color-primary-soft)] disabled:!cursor-not-allowed disabled:hover:!border-border disabled:hover:!bg-background",
-    interactiveMotionTransitionClassName,
-  );
+const inputClassName = cn(
+  "min-h-11 w-full min-w-0 !cursor-text !border-border !bg-background !text-text hover:!border-primary-hover hover:!bg-primary-soft focus:!border-primary-active focus:!shadow-[0_0_0_2px_var(--app-color-primary-soft)] disabled:!cursor-not-allowed disabled:hover:!border-border disabled:hover:!bg-background",
+  interactiveMotionTransitionClassName
+);
 const inputSlotClassNames = {
   error: "!text-danger",
   input: inputClassName,
@@ -66,7 +65,7 @@ export function PasswordInput({
           visibilityToggle: cn(
             "cursor-pointer hover:bg-primary-soft active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-active",
             interactiveMotionTransitionClassName,
-            classNames?.visibilityToggle,
+            classNames?.visibilityToggle
           ),
           wrapper: cn(inputSlotClassNames.wrapper, classNames?.wrapper),
         };

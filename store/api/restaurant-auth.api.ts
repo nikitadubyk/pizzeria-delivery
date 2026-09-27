@@ -18,7 +18,7 @@ const baseQuery = createAxiosBaseQuery(restaurantClient);
 const restaurantBaseQuery: ReturnType<typeof createAxiosBaseQuery> = (
   args,
   api,
-  extraOptions,
+  extraOptions
 ) => {
   const token = (api.getState() as RootState).restaurantAuth.token;
   return baseQuery(
@@ -30,7 +30,7 @@ const restaurantBaseQuery: ReturnType<typeof createAxiosBaseQuery> = (
           : undefined,
     },
     api,
-    extraOptions,
+    extraOptions
   );
 };
 

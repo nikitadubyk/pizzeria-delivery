@@ -1,8 +1,4 @@
-import {
-  IconChefHat,
-  IconPizza,
-  IconTruckDelivery,
-} from "@tabler/icons-react";
+import { IconChefHat, IconPizza, IconTruckDelivery } from "@tabler/icons-react";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Tabs } from ".";
 

@@ -35,6 +35,33 @@ describe("toProductDto", () => {
           updatedAt: new Date("2026-01-01T00:00:00.000Z"),
         },
       ],
+      removableIngredients: [
+        {
+          id: "product-ingredient-id",
+          restaurantId: "restaurant-id",
+          productId: "product-id",
+          ingredientId: "ingredient-id",
+          createdAt: new Date("2026-01-01T00:00:00.000Z"),
+          updatedAt: new Date("2026-01-01T00:00:00.000Z"),
+          ingredient: { id: "ingredient-id", name: "Моцарелла" },
+        },
+      ],
+      addons: [
+        {
+          id: "product-addon-id",
+          restaurantId: "restaurant-id",
+          productId: "product-id",
+          addonId: "addon-id",
+          createdAt: new Date("2026-01-01T00:00:00.000Z"),
+          updatedAt: new Date("2026-01-01T00:00:00.000Z"),
+          addon: {
+            id: "addon-id",
+            name: "Дополнительный сыр",
+            price: 12_000,
+            isAvailable: true,
+          },
+        },
+      ],
     };
 
     assert.deepEqual(toProductDto(product), {
@@ -57,6 +84,25 @@ describe("toProductDto", () => {
           weight: "520 г",
           isAvailable: true,
           sortOrder: 0,
+        },
+      ],
+      removableIngredients: [
+        {
+          id: "product-ingredient-id",
+          ingredientId: "ingredient-id",
+          ingredient: { id: "ingredient-id", name: "Моцарелла" },
+        },
+      ],
+      addons: [
+        {
+          id: "product-addon-id",
+          addonId: "addon-id",
+          addon: {
+            id: "addon-id",
+            name: "Дополнительный сыр",
+            price: 12_000,
+            isAvailable: true,
+          },
         },
       ],
       createdAt: "2026-01-01T00:00:00.000Z",

@@ -13,7 +13,7 @@ export type CategoryPage = {
 export interface CategoryRepository {
   findPage(
     restaurantId: string,
-    pagination: ResolvedSearchPaginationQuery,
+    pagination: ResolvedSearchPaginationQuery
   ): Promise<CategoryPage>;
   findOptions(restaurantId: string): Promise<Category[]>;
   findById(restaurantId: string, categoryId: string): Promise<Category | null>;
@@ -21,12 +21,12 @@ export interface CategoryRepository {
   update(
     restaurantId: string,
     categoryId: string,
-    data: UpdateCategoryRequest,
+    data: UpdateCategoryRequest
   ): Promise<Category>;
   updateVisibility(
     restaurantId: string,
     categoryId: string,
-    isPublished: boolean,
+    isPublished: boolean
   ): Promise<Category>;
   delete(restaurantId: string, categoryId: string): Promise<Category>;
 }

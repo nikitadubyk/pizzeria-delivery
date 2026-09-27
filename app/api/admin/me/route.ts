@@ -4,8 +4,12 @@ import { requireRestaurantPermission } from "../require-permission";
 
 export async function GET(request: Request) {
   try {
-    const user = await requireRestaurantPermission(request, RESTAURANT_PERMISSION.ADMIN_ACCESS);
+    const user = await requireRestaurantPermission(
+      request,
+      RESTAURANT_PERMISSION.ADMIN_ACCESS
+    );
     return Response.json(user, { headers: { "Cache-Control": "no-store" } });
+  } catch (error) {
+    return ApiResponse.fromError(error, "Не удалось проверить сессию");
   }
-  catch (error) { return ApiResponse.fromError(error, "Не удалось проверить сессию"); }
 }

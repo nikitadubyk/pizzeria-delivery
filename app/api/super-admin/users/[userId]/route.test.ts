@@ -10,7 +10,7 @@ describe("super-admin restaurant-user item route authorization", () => {
     const responses = await Promise.all([
       GET(
         new Request("http://localhost/api/super-admin/users/user-id"),
-        context,
+        context
       ),
       PATCH(
         new Request("http://localhost/api/super-admin/users/user-id", {
@@ -18,13 +18,13 @@ describe("super-admin restaurant-user item route authorization", () => {
           headers: { "content-type": "application/json" },
           body: JSON.stringify({ name: "Changed" }),
         }),
-        context,
+        context
       ),
       DELETE(
         new Request("http://localhost/api/super-admin/users/user-id", {
           method: "DELETE",
         }),
-        context,
+        context
       ),
     ]);
 

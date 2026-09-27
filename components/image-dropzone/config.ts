@@ -8,7 +8,7 @@ export const ACCEPTED_IMAGE_TYPES = [...PRODUCT_IMAGE_MIME_TYPES];
 
 export function getImageRejectionMessage(
   rejections: FileRejection[],
-  maxSize: number,
+  maxSize: number
 ) {
   switch (rejections[0]?.errors[0]?.code) {
     case "file-too-large":

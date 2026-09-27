@@ -15,7 +15,7 @@ export const restaurantLoginSchema: yup.ObjectSchema<RestaurantLoginInput> =
       .trim()
       .max(
         USER_EMAIL_MAX_LENGTH,
-        `Логин не должен превышать ${USER_EMAIL_MAX_LENGTH} символов`,
+        `Логин не должен превышать ${USER_EMAIL_MAX_LENGTH} символов`
       )
       .required("Введите email или телефон")
       .test(
@@ -24,13 +24,13 @@ export const restaurantLoginSchema: yup.ObjectSchema<RestaurantLoginInput> =
         (value) =>
           !value ||
           emailSchema.isValidSync(value) ||
-          USER_PHONE_PATTERN.test(value),
+          USER_PHONE_PATTERN.test(value)
       ),
     password: yup
       .string()
       .max(
         MAX_PASSWORD_LENGTH,
-        `Пароль не должен превышать ${MAX_PASSWORD_LENGTH} символов`,
+        `Пароль не должен превышать ${MAX_PASSWORD_LENGTH} символов`
       )
       .required("Введите пароль"),
   });

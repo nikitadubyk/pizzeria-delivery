@@ -15,7 +15,7 @@ export const toSuperAdminUserDto = (user: User): SuperAdminUserDto => ({
 });
 
 export const toRestaurantUserDto = (
-  user: RestaurantUser,
+  user: RestaurantUser
 ): RestaurantUserDto => ({
   id: user.id,
   restaurantId: user.restaurantId!,

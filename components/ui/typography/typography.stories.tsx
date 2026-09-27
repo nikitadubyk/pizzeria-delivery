@@ -11,7 +11,17 @@ const meta = {
   argTypes: {
     variant: {
       control: "select",
-      options: ["display", "h1", "h2", "h3", "h4", "body", "bodySm", "caption", "eyebrow"],
+      options: [
+        "display",
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "body",
+        "bodySm",
+        "caption",
+        "eyebrow",
+      ],
     },
   },
 } satisfies Meta<typeof Typography>;
@@ -23,7 +33,7 @@ export const Playground: Story = {};
 
 export const Scale: Story = {
   render: () => (
-    <div className="grid max-w-2xl gap-md">
+    <div className="gap-md grid max-w-2xl">
       <Typography variant="eyebrow">Menu typography</Typography>
       <Typography variant="display">Вкусно Дома</Typography>
       <Typography variant="h1">Горячая пицца за 35 минут</Typography>

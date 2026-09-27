@@ -63,7 +63,7 @@ const dialogSlotClassNames = {
   body: "!flex !min-h-0 !flex-1 !flex-col !overflow-hidden !px-4 !pb-4 !pt-0 sm:!px-6 sm:!pb-6",
   close: cn(
     "!cursor-pointer !rounded-full !text-muted hover:!bg-primary-soft hover:!text-primary-active active:!scale-95 focus-visible:!outline focus-visible:!outline-2 focus-visible:!outline-offset-2 focus-visible:!outline-primary-active",
-    interactiveMotionTransitionClassName,
+    interactiveMotionTransitionClassName
   ),
   content:
     "!flex !max-h-[calc(100dvh-2rem)] !flex-col !overflow-hidden !border !border-border !bg-background !text-text shadow-[0_24px_60px_rgb(36_25_17_/_18%)] sm:!max-h-[calc(100dvh-4rem)]",
@@ -100,13 +100,13 @@ export function Dialog({
         };
 
   const renderedTitle = title ? (
-    <span className="flex min-w-0 items-center gap-sm">
+    <span className="gap-sm flex min-w-0 items-center">
       {icon ? (
         <span
           aria-hidden="true"
           className={cn(
             "grid size-9 shrink-0 place-items-center rounded-full border sm:size-10",
-            toneClassNames[tone].icon,
+            toneClassNames[tone].icon
           )}
         >
           {icon}
@@ -142,28 +142,28 @@ export function Dialog({
           aria-hidden="true"
           className={cn(
             "-mx-4 mb-4 h-1 shrink-0 sm:-mx-6 sm:mb-5",
-            toneClassNames[tone].accent,
+            toneClassNames[tone].accent
           )}
         />
       ) : null}
 
       <div className="flex min-h-0 flex-1 flex-col">
-        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain [scrollbar-gutter:stable]">
-          <div className="grid min-w-0 gap-md pr-1">
+        <div className="min-h-0 flex-1 [scrollbar-gutter:stable] overflow-y-auto overscroll-contain">
+          <div className="gap-md grid min-w-0 pr-1">
             {description ? (
-              <p className="m-0 text-sm leading-snug text-muted">
+              <p className="text-muted m-0 text-sm leading-snug">
                 {description}
               </p>
             ) : null}
 
             {children ? (
-              <div className="min-w-0 text-text">{children}</div>
+              <div className="text-text min-w-0">{children}</div>
             ) : null}
           </div>
         </div>
 
         {actions ? (
-          <div className="mt-md flex shrink-0 flex-col-reverse gap-2 border-t border-border pt-md [&>*]:w-full md:flex-row md:flex-wrap md:justify-end md:[&>*]:w-auto">
+          <div className="mt-md border-border pt-md flex shrink-0 flex-col-reverse gap-2 border-t md:flex-row md:flex-wrap md:justify-end [&>*]:w-full md:[&>*]:w-auto">
             {actions}
           </div>
         ) : null}

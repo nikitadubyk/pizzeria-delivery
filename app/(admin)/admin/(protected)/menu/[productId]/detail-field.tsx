@@ -2,9 +2,9 @@ import type { DetailFieldProps } from "./types";
 
 export function DetailField({ label, value }: DetailFieldProps) {
   return (
-    <div className="grid min-w-0 gap-xs">
-      <dt className="text-sm text-muted">{label}</dt>
-      <dd className="m-0 min-w-0 break-words text-sm font-semibold text-text">
+    <div className="gap-xs grid min-w-0">
+      <dt className="text-muted text-sm">{label}</dt>
+      <dd className="text-text m-0 min-w-0 text-sm font-semibold break-words">
         {value === null || value === "" ? "Не указано" : value}
       </dd>
     </div>

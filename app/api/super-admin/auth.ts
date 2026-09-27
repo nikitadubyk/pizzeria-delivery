@@ -3,7 +3,7 @@ import { userService } from "@/app/api/users/user.service";
 import { getBearerToken } from "@/lib/auth/bearer-token";
 
 export const getCurrentSuperAdmin = async (
-  request: Request,
+  request: Request
 ): Promise<SuperAdminUserDto> => {
   return userService.getCurrentSuperAdmin(await getBearerToken(request));
 };

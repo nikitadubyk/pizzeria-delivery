@@ -26,7 +26,10 @@ export function AddonAvailabilityCell({
   }
 
   return (
-    <div className="flex items-center gap-xs" onClick={(event) => event.stopPropagation()}>
+    <div
+      className="gap-xs flex items-center"
+      onClick={(event) => event.stopPropagation()}
+    >
       <Toggle
         aria-label={addon.name + ": доступна для заказа"}
         checked={addon.isAvailable}
@@ -34,7 +37,7 @@ export function AddonAvailabilityCell({
         onChange={(event) => onChange(addon, event.currentTarget.checked)}
         size="sm"
       />
-      <span className="whitespace-nowrap text-xs text-muted">
+      <span className="text-muted text-xs whitespace-nowrap">
         {addon.isAvailable ? "Доступна" : "Стоп-лист"}
       </span>
     </div>
@@ -47,13 +50,34 @@ type AddonActionsCellProps = {
   onDelete: (addon: AddonDto) => void;
 };
 
-export function AddonActionsCell({ addon, onEdit, onDelete }: AddonActionsCellProps) {
+export function AddonActionsCell({
+  addon,
+  onEdit,
+  onDelete,
+}: AddonActionsCellProps) {
   return (
-    <div className="grid w-full grid-cols-1 gap-xs md:flex md:w-auto md:justify-end" onClick={(event) => event.stopPropagation()}>
-      <Button className="w-full md:w-auto" leftSection={<IconEdit aria-hidden="true" size={16} />}
-        onClick={() => onEdit(addon)} size="xs" variant="ghost">Изменить</Button>
-      <Button className="w-full md:w-auto" leftSection={<IconTrash aria-hidden="true" size={16} />}
-        onClick={() => onDelete(addon)} size="xs" variant="danger">Удалить</Button>
+    <div
+      className="gap-xs grid w-full grid-cols-1 md:flex md:w-auto md:justify-end"
+      onClick={(event) => event.stopPropagation()}
+    >
+      <Button
+        className="w-full md:w-auto"
+        leftSection={<IconEdit aria-hidden="true" size={16} />}
+        onClick={() => onEdit(addon)}
+        size="xs"
+        variant="ghost"
+      >
+        Изменить
+      </Button>
+      <Button
+        className="w-full md:w-auto"
+        leftSection={<IconTrash aria-hidden="true" size={16} />}
+        onClick={() => onDelete(addon)}
+        size="xs"
+        variant="danger"
+      >
+        Удалить
+      </Button>
     </div>
   );
 }

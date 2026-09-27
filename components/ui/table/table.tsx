@@ -85,7 +85,7 @@ export function Table<T>({
   const isInteractiveTarget = (target: EventTarget | null) =>
     target instanceof Element &&
     Boolean(
-      target.closest("button, a, input, select, textarea, [role='button']"),
+      target.closest("button, a, input, select, textarea, [role='button']")
     );
 
   const getInteractiveRowProps = (row: T, rowIndex: number) => {
@@ -114,21 +114,21 @@ export function Table<T>({
   return (
     <div
       className={cn(
-        "flex h-[clamp(28rem,65dvh,44rem)] min-h-[28rem] w-full min-w-0 max-w-full flex-none flex-col overflow-hidden bg-transparent md:h-auto md:min-h-0 md:flex-1 md:rounded-lg md:border md:border-border md:bg-background",
-        className,
+        "md:border-border md:bg-background flex h-[clamp(28rem,65dvh,44rem)] min-h-[28rem] w-full max-w-full min-w-0 flex-none flex-col overflow-hidden bg-transparent md:h-auto md:min-h-0 md:flex-1 md:rounded-lg md:border",
+        className
       )}
       style={minHeight === undefined ? undefined : { minHeight }}
     >
       <div
         className={cn(
-          "min-h-0 w-full min-w-0 max-w-full flex-1 flex-col overflow-hidden",
+          "min-h-0 w-full max-w-full min-w-0 flex-1 flex-col overflow-hidden",
           displayMode === "responsive" && "hidden md:flex",
           displayMode === "table" && "flex",
-          displayMode === "cards" && "hidden",
+          displayMode === "cards" && "hidden"
         )}
       >
         <MantineTable.ScrollContainer
-          className="h-full min-h-0 w-full min-w-0 max-w-full flex-1"
+          className="h-full min-h-0 w-full max-w-full min-w-0 flex-1"
           maxHeight={maxHeight}
           minWidth={minWidth}
           scrollAreaProps={{
@@ -158,8 +158,8 @@ export function Table<T>({
                 {columns.map((column) => (
                   <MantineTable.Th
                     className={cn(
-                      "whitespace-nowrap !bg-surface text-sm font-extrabold text-text",
-                      alignClassNames[column.align ?? "left"],
+                      "!bg-surface text-text text-sm font-extrabold whitespace-nowrap",
+                      alignClassNames[column.align ?? "left"]
                     )}
                     key={column.key}
                     scope="col"
@@ -177,7 +177,7 @@ export function Table<T>({
                   <MantineTable.Tr
                     className={cn(
                       onRowClick &&
-                        "cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary-active",
+                        "focus-visible:outline-primary-active cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px]"
                     )}
                     key={getRowKey(row, rowIndex)}
                     {...getInteractiveRowProps(row, rowIndex)}
@@ -185,8 +185,8 @@ export function Table<T>({
                     {columns.map((column) => (
                       <MantineTable.Td
                         className={cn(
-                          "text-sm text-text",
-                          alignClassNames[column.align ?? "left"],
+                          "text-text text-sm",
+                          alignClassNames[column.align ?? "left"]
                         )}
                         key={column.key}
                       >
@@ -198,7 +198,7 @@ export function Table<T>({
               ) : (
                 <MantineTable.Tr>
                   <MantineTable.Td
-                    className="py-10 text-center text-sm text-muted"
+                    className="text-muted py-10 text-center text-sm"
                     colSpan={Math.max(columns.length, 1)}
                   >
                     {emptyState}
@@ -213,43 +213,43 @@ export function Table<T>({
       <div
         aria-label={ariaLabel}
         className={cn(
-          "h-0 min-h-0 flex-1 touch-pan-y content-start auto-rows-max gap-2 overflow-y-auto overscroll-auto md:gap-3 md:overscroll-contain md:p-3",
+          "h-0 min-h-0 flex-1 touch-pan-y auto-rows-max content-start gap-2 overflow-y-auto overscroll-auto md:gap-3 md:overscroll-contain md:p-3",
           displayMode === "responsive" && "grid md:hidden",
           displayMode === "cards" && "grid",
-          displayMode === "table" && "hidden",
+          displayMode === "table" && "hidden"
         )}
         role="list"
       >
         {rows.length > 0 ? (
           rows.map((row, rowIndex) => {
             const visibleColumns = columns.filter(
-              (column) => column.mobileLayout !== "hidden",
+              (column) => column.mobileLayout !== "hidden"
             );
             const primaryColumns = visibleColumns.filter(
-              (column) => column.mobileLayout === "primary",
+              (column) => column.mobileLayout === "primary"
             );
             const detailColumns = visibleColumns.filter(
               (column) =>
                 column.mobileLayout !== "primary" &&
-                column.mobileLayout !== "full",
+                column.mobileLayout !== "full"
             );
             const fullWidthColumns = visibleColumns.filter(
-              (column) => column.mobileLayout === "full",
+              (column) => column.mobileLayout === "full"
             );
 
             return (
               <article
                 className={cn(
-                  "relative grid min-w-0 gap-3 rounded-lg border border-border bg-background p-3 shadow-sm md:gap-4 md:p-4",
+                  "border-border bg-background relative grid min-w-0 gap-3 rounded-lg border p-3 shadow-sm md:gap-4 md:p-4",
                   onRowClick &&
-                    "cursor-pointer transition-colors hover:bg-surface focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary-active",
+                    "hover:bg-surface focus-visible:outline-primary-active cursor-pointer transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px]"
                 )}
                 key={getRowKey(row, rowIndex)}
                 role="listitem"
                 {...getInteractiveRowProps(row, rowIndex)}
               >
                 {primaryColumns.length > 0 ? (
-                  <header className="grid gap-1 border-b border-border pb-2 text-lg font-extrabold leading-snug text-text md:pb-3">
+                  <header className="border-border text-text grid gap-1 border-b pb-2 text-lg leading-snug font-extrabold md:pb-3">
                     {primaryColumns.map((column) => (
                       <div key={column.key}>
                         <span className="sr-only">
@@ -266,14 +266,14 @@ export function Table<T>({
                     <div
                       className={cn(
                         "grid min-w-0 gap-1",
-                        column.mobileFullWidth && "col-span-2",
+                        column.mobileFullWidth && "col-span-2"
                       )}
                       key={column.key}
                     >
-                      <dt className="text-sm leading-snug text-muted">
+                      <dt className="text-muted text-sm leading-snug">
                         {column.mobileLabel ?? column.header}
                       </dt>
-                      <dd className="m-0 min-w-0 text-left text-sm font-semibold leading-snug text-text">
+                      <dd className="text-text m-0 min-w-0 text-left text-sm leading-snug font-semibold">
                         {column.render(row, rowIndex)}
                       </dd>
                     </div>
@@ -289,14 +289,14 @@ export function Table<T>({
             );
           })
         ) : (
-          <div className="rounded-lg border border-dashed border-border bg-surface px-4 py-8 text-center text-sm text-muted">
+          <div className="border-border bg-surface text-muted rounded-lg border border-dashed px-4 py-8 text-center text-sm">
             {emptyState}
           </div>
         )}
       </div>
 
       {pagination ? (
-        <div className="relative z-10 mt-2 flex shrink-0 justify-center rounded-lg border border-border bg-background px-2 py-1.5 md:mt-0 md:justify-end md:rounded-none md:border-x-0 md:border-b-0">
+        <div className="border-border bg-background relative z-10 mt-2 flex shrink-0 justify-center rounded-lg border px-2 py-1.5 md:mt-0 md:justify-end md:rounded-none md:border-x-0 md:border-b-0">
           <Pagination {...pagination} />
         </div>
       ) : null}

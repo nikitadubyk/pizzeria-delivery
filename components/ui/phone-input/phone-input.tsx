@@ -56,7 +56,7 @@ export function PhoneInput({
         aria-invalid={Boolean(error) || undefined}
         onChange={(nationalNumber) =>
           onChange?.(
-            nationalNumber ? (`+7${nationalNumber}` as Value) : undefined,
+            nationalNumber ? (`+7${nationalNumber}` as Value) : undefined
           )
         }
         className={cn(
@@ -65,7 +65,7 @@ export function PhoneInput({
             ? "border-danger! focus-within:border-danger! focus-within:shadow-[0_0_0_2px_var(--app-color-danger-soft)]!"
             : undefined,
           inputClassName,
-          className,
+          className
         )}
       />
     </MantineInput.Wrapper>

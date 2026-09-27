@@ -11,6 +11,7 @@ export type ProductFormValues = {
   name: string;
   description: string;
   baseComposition: string;
+  addonIds: string[];
   sortOrder: number;
   isPublished: boolean;
   image: File | null;

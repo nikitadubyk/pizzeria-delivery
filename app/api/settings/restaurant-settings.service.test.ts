@@ -10,7 +10,7 @@ import {
 } from "./restaurant-settings.service";
 
 const createRepository = (
-  overrides: Partial<RestaurantSettingsRepository> = {},
+  overrides: Partial<RestaurantSettingsRepository> = {}
 ): RestaurantSettingsRepository => ({
   find: async () => ({ deliveryPrice: 0 }),
   update: async (_restaurantId, data) => data,
@@ -25,7 +25,7 @@ describe("RestaurantSettingsService", () => {
           assert.equal(restaurantId, "restaurant-id");
           return { deliveryPrice: 30_000 };
         },
-      }),
+      })
     );
 
     assert.deepEqual(await service.get("restaurant-id"), {
@@ -41,25 +41,25 @@ describe("RestaurantSettingsService", () => {
           assert.deepEqual(data, { deliveryPrice: 45_000 });
           return data;
         },
-      }),
+      })
     );
 
     assert.deepEqual(
       await service.update("restaurant-id", { deliveryPrice: 45_000 }),
-      { deliveryPrice: 45_000 },
+      { deliveryPrice: 45_000 }
     );
   });
 
   it("returns not found when the scoped restaurant is missing", async () => {
     const service = new RestaurantSettingsService(
-      createRepository({ find: async () => null }),
+      createRepository({ find: async () => null })
     );
 
     await assert.rejects(
       service.get("restaurant-id"),
       (error: unknown) =>
         error instanceof RestaurantSettingsServiceError &&
-        error.status === HttpStatus.NOT_FOUND,
+        error.status === HttpStatus.NOT_FOUND
     );
   });
 });

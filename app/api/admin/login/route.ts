@@ -7,7 +7,10 @@ export async function POST(request: Request) {
   try {
     const input = await validateRequestBody(request, restaurantLoginSchema);
     const accessToken = await restaurantAuth.login(input);
-    return Response.json({ accessToken }, { headers: { "Cache-Control": "no-store" } });
+    return Response.json(
+      { accessToken },
+      { headers: { "Cache-Control": "no-store" } }
+    );
   } catch (error) {
     return ApiResponse.fromError(error, "Не удалось выполнить вход");
   }

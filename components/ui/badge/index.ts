@@ -4,4 +4,4 @@ export {
   type AppBadgeProps,
   type AppBadgeTone,
   type AppBadgeVariant,
-} from "./badge";
+} from './badge';

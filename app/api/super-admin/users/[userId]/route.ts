@@ -22,7 +22,7 @@ type RestaurantUserRouteContext = {
 
 export const GET = async (
   request: Request,
-  { params }: RestaurantUserRouteContext,
+  { params }: RestaurantUserRouteContext
 ) => {
   try {
     const [superAdminId, { userId }] = await Promise.all([
@@ -30,8 +30,8 @@ export const GET = async (
       params.then((value) =>
         validateRouteParams<RestaurantUserPathParams>(
           value,
-          restaurantUserPathParamsSchema,
-        ),
+          restaurantUserPathParamsSchema
+        )
       ),
     ]);
     const user = await userService.getRestaurantUserById(superAdminId, userId);
@@ -44,7 +44,7 @@ export const GET = async (
 
 export const PATCH = async (
   request: Request,
-  { params }: RestaurantUserRouteContext,
+  { params }: RestaurantUserRouteContext
 ) => {
   try {
     const [superAdminId, { userId }, input] = await Promise.all([
@@ -52,18 +52,18 @@ export const PATCH = async (
       params.then((value) =>
         validateRouteParams<RestaurantUserPathParams>(
           value,
-          restaurantUserPathParamsSchema,
-        ),
+          restaurantUserPathParamsSchema
+        )
       ),
       validateRequestBody<UpdateRestaurantUserRequest>(
         request,
-        updateRestaurantUserRequestSchema,
+        updateRestaurantUserRequestSchema
       ),
     ]);
     const user = await userService.updateRestaurantUser(
       superAdminId,
       userId,
-      input,
+      input
     );
 
     return ApiResponse.success<RestaurantUserDto>(toRestaurantUserDto(user));
@@ -74,7 +74,7 @@ export const PATCH = async (
 
 export const DELETE = async (
   request: Request,
-  { params }: RestaurantUserRouteContext,
+  { params }: RestaurantUserRouteContext
 ) => {
   try {
     const [superAdminId, { userId }] = await Promise.all([
@@ -82,8 +82,8 @@ export const DELETE = async (
       params.then((value) =>
         validateRouteParams<RestaurantUserPathParams>(
           value,
-          restaurantUserPathParamsSchema,
-        ),
+          restaurantUserPathParamsSchema
+        )
       ),
     ]);
     const user = await userService.deleteRestaurantUser(superAdminId, userId);

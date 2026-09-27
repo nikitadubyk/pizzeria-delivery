@@ -50,7 +50,7 @@ export const UserFormDialog = ({
 
   const handleSubmit = async (
     values: UserFormValues,
-    { resetForm }: FormikHelpers<UserFormValues>,
+    { resetForm }: FormikHelpers<UserFormValues>
   ) => {
     const data = {
       restaurantId: values.restaurantId,
@@ -139,7 +139,7 @@ export const UserFormDialog = ({
               isEditing ? "Редактировать пользователя" : "Новый пользователь"
             }
           >
-            <Form className="grid gap-md" id={USER_FORM_ID} noValidate>
+            <Form className="gap-md grid" id={USER_FORM_ID} noValidate>
               <SelectField
                 allowDeselect={false}
                 data={restaurantOptions}

@@ -8,7 +8,13 @@ import {
   PRODUCT_VARIANT_WEIGHT_MAX_LENGTH,
   PRODUCT_VARIANTS_MAX_COUNT,
 } from "@/api-contracts";
-import { Button, InputField, PriceInputField, ToggleField, Typography } from "@/components/ui";
+import {
+  Button,
+  InputField,
+  PriceInputField,
+  ToggleField,
+  Typography,
+} from "@/components/ui";
 
 import { createEmptyProductVariant } from "./product-form-page.config";
 import type { ProductFormValues } from "./product-form-page.types";
@@ -21,7 +27,7 @@ export function ProductVariantFields({ disabled }: ProductVariantFieldsProps) {
   const { errors, values } = useFormikContext<ProductFormValues>();
 
   return (
-    <div className="grid gap-md border-t border-border pt-lg">
+    <div className="gap-md border-border pt-lg grid border-t">
       <div>
         <Typography variant="h3">Варианты продукта</Typography>
         <Typography muted variant="bodySm">
@@ -32,10 +38,10 @@ export function ProductVariantFields({ disabled }: ProductVariantFieldsProps) {
 
       <FieldArray name="variants">
         {({ push, remove }) => (
-          <div className="grid gap-md">
+          <div className="gap-md grid">
             {values.variants.map((variant, index) => (
               <div
-                className="grid gap-md rounded-lg border border-border bg-surface p-md lg:grid-cols-2 lg:items-start xl:grid-cols-[minmax(10rem,1fr)_minmax(9rem,0.7fr)_minmax(10rem,1fr)_auto]"
+                className="gap-md border-border bg-surface p-md grid rounded-lg border lg:grid-cols-2 lg:items-start xl:grid-cols-[minmax(10rem,1fr)_minmax(9rem,0.7fr)_minmax(10rem,1fr)_auto]"
                 key={variant.id ?? `new-${index}`}
               >
                 <InputField
@@ -59,7 +65,7 @@ export function ProductVariantFields({ disabled }: ProductVariantFieldsProps) {
                   name={`variants.${index}.weight`}
                   placeholder="Например, 520 г или 500 мл"
                 />
-                <div className="mt-sm flex flex-col gap-sm lg:col-span-2 lg:flex-row lg:items-center lg:justify-between xl:col-span-1 xl:mt-lg xl:items-start xl:justify-start">
+                <div className="mt-sm gap-sm xl:mt-lg flex flex-col lg:col-span-2 lg:flex-row lg:items-center lg:justify-between xl:col-span-1 xl:items-start xl:justify-start">
                   <ToggleField
                     className="mt-2"
                     disabled={disabled}
@@ -74,7 +80,7 @@ export function ProductVariantFields({ disabled }: ProductVariantFieldsProps) {
                     type="button"
                     variant="danger"
                   >
-                    <span className="inline-flex items-center justify-center gap-xs">
+                    <span className="gap-xs inline-flex items-center justify-center">
                       <IconTrash aria-hidden="true" size={18} />
                       <span className="min-[769px]:sr-only">Удалить</span>
                     </span>

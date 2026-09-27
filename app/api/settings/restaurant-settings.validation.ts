@@ -10,7 +10,7 @@ export const updateRestaurantSettingsRequestSchema = yup.object({
     .min(0, "Цена доставки не должна быть отрицательной")
     .max(
       DELIVERY_PRICE_MAX,
-      `Цена доставки не должна превышать ${DELIVERY_PRICE_MAX} копеек`,
+      `Цена доставки не должна превышать ${DELIVERY_PRICE_MAX} копеек`
     )
     .required("Введите цену доставки"),
 });

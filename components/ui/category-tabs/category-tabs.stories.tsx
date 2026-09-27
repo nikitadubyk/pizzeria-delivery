@@ -57,18 +57,18 @@ const scrollDemoCategories: CategoryTabItem[] = categories.map((category) => ({
 function CategoryTabsScrollDemo() {
   const [activeId, setActiveId] = useState(scrollDemoCategories[0].id);
   const activeCategory = scrollDemoCategories.find(
-    (category) => category.id === activeId,
+    (category) => category.id === activeId
   );
 
   return (
     <div className="grid gap-4">
-      <div className="rounded-lg border border-border bg-surface p-4">
-        <h2 className="m-0 text-xl font-extrabold text-text">Меню</h2>
-        <p className="m-0 mt-1 text-sm text-muted">
+      <div className="border-border bg-surface rounded-lg border p-4">
+        <h2 className="text-text m-0 text-xl font-extrabold">Меню</h2>
+        <p className="text-muted m-0 mt-1 text-sm">
           Нажмите на категорию или прокрутите список вниз. Активная вкладка
           изменится, когда соответствующая секция подойдет к навигации.
         </p>
-        <p className="m-0 mt-3 text-sm font-extrabold text-primary-active">
+        <p className="text-primary-active m-0 mt-3 text-sm font-extrabold">
           Активная категория: {activeCategory?.label}
         </p>
       </div>
@@ -88,13 +88,13 @@ function CategoryTabsScrollDemo() {
           return (
             <section
               key={category.id}
-              className="scroll-mt-28 rounded-lg border border-border bg-background p-5"
+              className="border-border bg-background scroll-mt-28 rounded-lg border p-5"
               id={category.id}
             >
-              <h3 className="m-0 text-2xl font-extrabold text-text">
+              <h3 className="text-text m-0 text-2xl font-extrabold">
                 {category.label}
               </h3>
-              <p className="m-0 mt-1 text-sm text-muted">
+              <p className="text-muted m-0 mt-1 text-sm">
                 Секция категории в общем списке меню.
               </p>
 
@@ -102,17 +102,17 @@ function CategoryTabsScrollDemo() {
                 {categoryProducts[sourceId].map((product) => (
                   <article
                     key={product}
-                    className="grid min-h-44 content-between rounded-lg border border-border bg-surface p-4"
+                    className="border-border bg-surface grid min-h-44 content-between rounded-lg border p-4"
                   >
                     <div>
-                      <h4 className="m-0 text-md font-extrabold text-text">
+                      <h4 className="text-md text-text m-0 font-extrabold">
                         {product}
                       </h4>
-                      <p className="m-0 mt-1 text-sm text-muted">
+                      <p className="text-muted m-0 mt-1 text-sm">
                         Описание блюда, состав и короткие детали.
                       </p>
                     </div>
-                    <span className="mt-6 text-lg font-black text-text">
+                    <span className="text-text mt-6 text-lg font-black">
                       590 ₽
                     </span>
                   </article>
@@ -147,9 +147,9 @@ export const MenuNavigation: Story = {
   args: {},
   render: () => (
     <div className="grid gap-4">
-      <div className="rounded-lg border border-border bg-surface p-4">
-        <h2 className="m-0 text-xl font-extrabold text-text">Меню</h2>
-        <p className="m-0 mt-1 text-sm text-muted">
+      <div className="border-border bg-surface rounded-lg border p-4">
+        <h2 className="text-text m-0 text-xl font-extrabold">Меню</h2>
+        <p className="text-muted m-0 mt-1 text-sm">
           Прокрутите список или выберите категорию в навигации.
         </p>
       </div>
@@ -160,27 +160,27 @@ export const MenuNavigation: Story = {
         {categories.map((category) => (
           <section
             key={category.id}
-            className="scroll-mt-24 rounded-lg border border-border bg-background p-4"
+            className="border-border bg-background scroll-mt-24 rounded-lg border p-4"
             id={category.id}
           >
-            <h3 className="m-0 text-xl font-extrabold text-text">
+            <h3 className="text-text m-0 text-xl font-extrabold">
               {category.label}
             </h3>
             <div className="mt-4 grid gap-3 md:grid-cols-3">
               {categoryProducts[category.id].map((product) => (
                 <article
                   key={product}
-                  className="grid min-h-36 content-between rounded-lg border border-border bg-surface p-4"
+                  className="border-border bg-surface grid min-h-36 content-between rounded-lg border p-4"
                 >
                   <div>
-                    <h4 className="m-0 text-md font-extrabold text-text">
+                    <h4 className="text-md text-text m-0 font-extrabold">
                       {product}
                     </h4>
-                    <p className="m-0 mt-1 text-sm text-muted">
+                    <p className="text-muted m-0 mt-1 text-sm">
                       Соус, сыр и свежие ингредиенты.
                     </p>
                   </div>
-                  <span className="mt-6 text-lg font-black text-text">
+                  <span className="text-text mt-6 text-lg font-black">
                     590 ₽
                   </span>
                 </article>

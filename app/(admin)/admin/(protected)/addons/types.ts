@@ -11,6 +11,9 @@ export type AddonFormDialogProps = {
   opened: boolean;
   onClose: () => void;
   onCreated: () => void;
-  onSave: (addon: AddonDto | null, data: CreateAddonRequest) => Promise<boolean>;
+  onSave: (
+    addon: AddonDto | null,
+    data: CreateAddonRequest
+  ) => Promise<boolean>;
   isSaving: boolean;
 };

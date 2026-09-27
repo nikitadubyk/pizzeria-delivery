@@ -25,7 +25,7 @@ const createSuperAdmin = (overrides: Partial<User> = {}): User => ({
 });
 
 const createRestaurantUser = (
-  overrides: Partial<RestaurantUser> = {},
+  overrides: Partial<RestaurantUser> = {}
 ): RestaurantUser => ({
   ...createSuperAdmin({
     id: "user-id",
@@ -120,7 +120,7 @@ describe("UserService", () => {
         findSuperAdminByEmail: async () => createSuperAdmin({ password }),
         findSuperAdminById: async () => null,
       },
-      tokenService,
+      tokenService
     );
 
     await assert.rejects(
@@ -130,7 +130,7 @@ describe("UserService", () => {
       }),
       (error: unknown) =>
         error instanceof UserServiceError &&
-        error.message === "Неверный email или пароль",
+        error.message === "Неверный email или пароль"
     );
   });
 
@@ -144,7 +144,7 @@ describe("UserService", () => {
           return createSuperAdmin();
         },
       },
-      tokenService,
+      tokenService
     );
 
     const result = await service.refresh({ refreshToken: "valid-token" });
@@ -162,7 +162,7 @@ describe("UserService", () => {
         findSuperAdminByEmail: async () => null,
         findSuperAdminById: async () => createSuperAdmin(),
       },
-      tokenService,
+      tokenService
     );
 
     const user = await service.getCurrentSuperAdmin("access-token");
@@ -183,7 +183,7 @@ describe("UserService", () => {
           return { items, total: 11 };
         },
       },
-      tokenService,
+      tokenService
     );
 
     assert.deepEqual(
@@ -191,7 +191,7 @@ describe("UserService", () => {
         page: 2,
         limit: 10,
       }),
-      { items, total: 11 },
+      { items, total: 11 }
     );
   });
 
@@ -206,12 +206,12 @@ describe("UserService", () => {
           assert.notEqual(data.password, "strong-password");
           assert.equal(
             await bcrypt.compare("strong-password", data.password),
-            true,
+            true
           );
           return createRestaurantUser(data);
         },
       },
-      tokenService,
+      tokenService
     );
 
     const user = await service.createRestaurantUser("super-admin-id", {
@@ -239,7 +239,7 @@ describe("UserService", () => {
       }),
       (error: unknown) =>
         error instanceof UserServiceError &&
-        error.status === HttpStatus.NOT_FOUND,
+        error.status === HttpStatus.NOT_FOUND
     );
   });
 
@@ -255,18 +255,18 @@ describe("UserService", () => {
           assert.notEqual(data.password, "new-strong-password");
           assert.equal(
             await bcrypt.compare("new-strong-password", data.password),
-            true,
+            true
           );
           return createRestaurantUser({ name: data.name ?? "Updated" });
         },
       },
-      tokenService,
+      tokenService
     );
 
     const user = await service.updateRestaurantUser(
       "super-admin-id",
       "user-id",
-      { name: "Новое имя", password: "new-strong-password" },
+      { name: "Новое имя", password: "new-strong-password" }
     );
 
     assert.equal(user.name, "Новое имя");
@@ -285,7 +285,7 @@ describe("UserService", () => {
           return createRestaurantUser();
         },
       },
-      tokenService,
+      tokenService
     );
 
     await service.deleteRestaurantUser("super-admin-id", "user-id");
@@ -308,7 +308,7 @@ describe("UserService", () => {
           return createRestaurantUser();
         },
       },
-      tokenService,
+      tokenService
     );
 
     for (const operation of [
@@ -322,7 +322,7 @@ describe("UserService", () => {
         operation(),
         (error: unknown) =>
           error instanceof UserServiceError &&
-          error.status === HttpStatus.NOT_FOUND,
+          error.status === HttpStatus.NOT_FOUND
       );
     }
 
@@ -338,14 +338,14 @@ describe("UserService", () => {
           throw prismaError("P2002");
         },
       },
-      tokenService,
+      tokenService
     );
 
     await assert.rejects(
       service.createRestaurantUser("super-admin-id", userInput),
       (error: unknown) =>
         error instanceof UserServiceError &&
-        error.status === HttpStatus.CONFLICT,
+        error.status === HttpStatus.CONFLICT
     );
   });
 
@@ -358,14 +358,14 @@ describe("UserService", () => {
           throw prismaError("P2003");
         },
       },
-      tokenService,
+      tokenService
     );
 
     await assert.rejects(
       service.createRestaurantUser("super-admin-id", userInput),
       (error: unknown) =>
         error instanceof UserServiceError &&
-        error.status === HttpStatus.NOT_FOUND,
+        error.status === HttpStatus.NOT_FOUND
     );
   });
 
@@ -381,7 +381,7 @@ describe("UserService", () => {
           throw prismaError("P2025");
         },
       },
-      tokenService,
+      tokenService
     );
 
     for (const operation of [
@@ -395,7 +395,7 @@ describe("UserService", () => {
         operation(),
         (error: unknown) =>
           error instanceof UserServiceError &&
-          error.status === HttpStatus.NOT_FOUND,
+          error.status === HttpStatus.NOT_FOUND
       );
     }
   });
